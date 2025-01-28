@@ -1,0 +1,39 @@
+{
+    "data": {
+      "jittaRanking": {
+        "count": 841,
+        "data": [
+          {
+            "id": "BKK:LST",
+            "stockId": 439,
+            "symbol": "LST",
+            "title": "Lam Soon (Thailand)",
+            "jittaScore": 5.3,
+            "currency": "฿",
+            "latestPrice": 4.9,
+            "industry": "Food Products",
+            "sector": {
+              "id": "CONSUMER_STAPLES",
+              "name": "Consumer staples"
+            },
+            "updatedAt": "2025-01-27T12:13:51.667Z"
+          },
+          {
+            "id": "BKK:CWT",
+            "stockId": 208,
+            "symbol": "CWT",
+            "title": "Chai Watana Tannery Group",
+            "jittaScore": 4.45,
+            "currency": "฿",
+            "latestPrice": 0.75,
+            "industry": "Textiles, Apparel and Luxury Goods",
+            "sector": {
+              "id": "CONSUMER_DISCRETIONARY",
+              "name": "Consumer discretionary"
+            },
+            "updatedAt": "2025-01-27T12:12:16.609Z"
+          }
+        ]
+      }
+    }
+  }

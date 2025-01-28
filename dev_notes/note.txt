@@ -1,0 +1,73 @@
+- using clean architecture
+- using bloc pattern for state management
+- using graphql for api
+- support offline mode
+
+// main dependencies
+flutter_bloc: ^8.1.3
+graphql_flutter: ^5.1.2
+hive: ^2.2.3
+internet_connection_checker: ^1.0.0
+
+// TODO:
+- 
+
+// query
+- get stocks by ranking
+query stocksByRanking($filter: RankingInput) {
+  jittaRanking(filter: $filter) {
+    count
+    data {
+      id
+      stockId
+      symbol
+      title
+      jittaScore
+      currency
+      latestPrice
+      industry
+      sector {
+        id
+        name
+      }
+      updatedAt
+    } 
+  }
+}
+
+{
+  "filter": {
+    "limit": 20,
+    "market": "TH",
+    "page": 1,
+    "sectors": []
+  }
+}
+
+- get stock by id (stockId) - simple first
+query stockById($stockId: Int) {
+  stock(stockId: $stockId) {
+    id
+    stockId
+    currency_sign
+    currency
+    title
+    symbol
+    summary
+    fundamental {
+      eps
+      market_cap
+      shares
+      dividend_per_share
+      pe
+      dividend
+      beta
+      yield
+    }
+  }
+}
+
+// 185 = CPALL
+{
+  "stockId": 185, 
+}

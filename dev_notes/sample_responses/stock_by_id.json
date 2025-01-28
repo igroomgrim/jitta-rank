@@ -1,0 +1,23 @@
+{
+    "data": {
+      "stock": {
+        "id": "BKK:CPALL",
+        "stockId": 185,
+        "currency_sign": "฿",
+        "currency": "THB",
+        "title": "CP ALL",
+        "symbol": "CPALL",
+        "summary": "CP ALL Public Company Limited, together with its subsidiaries, operates and franchises convenience stores under the 7-Eleven name to other retailers primarily in Thailand. It operates through four segments: Convenience stores, Wholesale, Retail and Mall, and Other. The company also operates frozen food plants and bakeries; distributes various commercial cards and tickets, catalog merchandises, and food and non-food products; and retails health and beauty products. In addition, it offers bill payment, software development, information system design and development, logistics, digital healthcare, medical consultancy, delivery rental, storage, marketing and consulting, research and development, and microbiologic and scientific laboratory services. Further, the company engages in the e-commerce, insurance broker, and telecommunication businesses. Additionally, it operates training centers and educational institutions; produces ready meals; and trades and retails equipment, as well as offers maintenance of convenience stores equipment. The company was formerly known as C.P. Seven Eleven Public Company Limited. The company was founded in 1988 and is headquartered in Nonthaburi, Thailand.",
+        "fundamental": {
+          "eps": 2.006248,
+          "market_cap": 496316.349477,
+          "shares": 8983.101348,
+          "dividend_per_share": 1.1,
+          "pe": 21.390502,
+          "dividend": 1,
+          "beta": 0.47482,
+          "yield": 1.8099
+        }
+      }
+    }
+  }
