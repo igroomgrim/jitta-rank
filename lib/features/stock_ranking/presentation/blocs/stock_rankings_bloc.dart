@@ -10,7 +10,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     on<GetStockRankingsEvent>((event, emit) async {
       emit(StockRankingsLoading());
       try {
-        final rankedStocks = await getStockRankings.call();
+        final rankedStocks = await getStockRankings.call(event.limit, event.market, event.page, event.sectors);
         emit(StockRankingsLoaded(rankedStocks));
       } catch (e) {
         emit(StockRankingsError(e.toString()));

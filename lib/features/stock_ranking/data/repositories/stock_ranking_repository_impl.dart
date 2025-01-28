@@ -8,33 +8,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
   StockRankingRepositoryImpl(this.stockRankingGraphqlDatasource);
 
   @override
-  Future<List<RankedStock>> getStockRankings() async {
-    // List<RankedStock> mockRankedStocks = [
-    //   RankedStock(
-    //     id: '1',
-    //     stockId: 1,
-    //     symbol: 'AAPL',
-    //     title: 'Apple',
-    //     jittaScore: 100,
-    //     currency: 'USD',
-    //     latestPrice: 100,
-    //     industry: 'Technology',
-    //     sector: Sector(id: '1', name: 'Consumer Electronics'),
-    //     updatedAt: DateTime.now(),
-    //   ),
-    //   RankedStock(
-    //     id: '2',
-    //     stockId: 2,
-    //     symbol: 'GOOGL',
-    //     title: 'Google',
-    //     jittaScore: 90,
-    //     currency: 'USD',
-    //     latestPrice: 200,
-    //     industry: 'Technology',
-    //     sector: Sector(id: '2', name: 'Consumer Electronics'),
-    //     updatedAt: DateTime.now(),
-    //   ),
-    // ];
-    return await stockRankingGraphqlDatasource.getStockRankings();
+  Future<List<RankedStock>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
+    return await stockRankingGraphqlDatasource.getStockRankings(limit, market, page, sectors);
   }
 }

@@ -8,7 +8,7 @@ class StockRankingGraphqlDatasource extends StockRankingDatasource {
   StockRankingGraphqlDatasource(this.graphqlService);
 
   @override
-  Future<List<RankedStockModel>> getStockRankings() async {
+  Future<List<RankedStockModel>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
     String stockByRankingQuery = '''
     query stockByRanking(\$market: String!, \$sectors: [String], \$page: Int, \$limit: Int) {
       jittaRanking(filter: { market: \$market, sectors: \$sectors, page: \$page, limit: \$limit }) {
@@ -33,11 +33,11 @@ class StockRankingGraphqlDatasource extends StockRankingDatasource {
   ''';
 
     try {
-      final result = await graphqlService.performQuery(stockByRankingQuery, const {
-        'market': 'TH', // TODO: make this dynamic, but prefer TH market for default value
-        'sectors': [],
-        'page': 1,
-        'limit': 20,
+      final result = await graphqlService.performQuery(stockByRankingQuery, {
+        'limit': limit,
+        'market': market,
+        'page': page,
+        'sectors': sectors,
       });
 
       if (result.hasException) {

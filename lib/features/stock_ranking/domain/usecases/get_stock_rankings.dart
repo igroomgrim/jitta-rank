@@ -6,7 +6,7 @@ class GetStockRankingsUsecase {
 
   GetStockRankingsUsecase(this.repository);
 
-  Future<List<RankedStock>> call() async {
-    return await repository.getStockRankings();
+  Future<List<RankedStock>> call(int limit, String market, int page, List<String> sectors) async {
+    return await repository.getStockRankings(limit, market, page, sectors);
   }
 }
