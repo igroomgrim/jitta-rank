@@ -4,7 +4,12 @@ import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 import 'package:jitta_rank/core/networking/graphql_service.dart';
 
 class StockDetailScreen extends StatelessWidget {
-  const StockDetailScreen({super.key});
+  final int stockId;
+  
+  const StockDetailScreen({
+    required this.stockId,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,7 @@ class StockDetailScreen extends StatelessWidget {
         child: BlocBuilder<StockDetailBloc, StockDetailState>(
           builder: (context, state) {
             if (state is StockDetailInitial) {
-              context.read<StockDetailBloc>().add(GetStockDetailEvent(185)); // TODO: Receive stockId from route
+              context.read<StockDetailBloc>().add(GetStockDetailEvent(stockId));
               return const Center(child: CircularProgressIndicator());
             } else if (state is StockDetailLoading) {
               return const Center(child: CircularProgressIndicator());

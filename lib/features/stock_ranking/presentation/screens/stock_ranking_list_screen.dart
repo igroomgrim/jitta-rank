@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 import 'package:jitta_rank/core/networking/graphql_service.dart';
+import 'package:jitta_rank/features/stock_detail/presentation/screens/stock_detail_screen.dart';
+
 class StockRankingListScreen extends StatelessWidget {
   const StockRankingListScreen({super.key});
 
@@ -34,12 +36,12 @@ class StockRankingListScreen extends StatelessWidget {
     return ListView.builder(
       itemCount: rankedStocks.length,
       itemBuilder: (context, index) {
-        return _buildStockRankingItem(rankedStocks[index]);
+        return _buildStockRankingItem(context, rankedStocks[index]);
       },
     );
   }
 
-  Widget _buildStockRankingItem(RankedStock rankedStock) {
+  Widget _buildStockRankingItem(BuildContext context, RankedStock rankedStock) {
     return ListTile(
       title: Text('${rankedStock.symbol} - ${rankedStock.title}'),
       subtitle: Column(
@@ -49,6 +51,14 @@ class StockRankingListScreen extends StatelessWidget {
           Text('Latest Price: ${rankedStock.currency}${rankedStock.latestPrice}'),
         ],
       ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StockDetailScreen(stockId: rankedStock.stockId),
+          ),
+        );
+      },
     );
   }
 }
