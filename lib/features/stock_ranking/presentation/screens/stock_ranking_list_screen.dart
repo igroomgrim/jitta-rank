@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
-
+import 'package:jitta_rank/core/networking/graphql_service.dart';
 class StockRankingListScreen extends StatelessWidget {
   const StockRankingListScreen({super.key});
 
@@ -12,7 +12,7 @@ class StockRankingListScreen extends StatelessWidget {
         title: Text('Stock Ranking'),
       ),
       body: BlocProvider(
-        create: (context) => StockRankingsBloc(GetStockRankingsUsecase(StockRankingRepositoryImpl())),
+        create: (context) => StockRankingsBloc(GetStockRankingsUsecase(StockRankingRepositoryImpl(StockRankingGraphqlDatasource(GraphqlService())))),
         child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
           builder: (context, state) {
             if (state is StockRankingsInitial) {
@@ -41,8 +41,14 @@ class StockRankingListScreen extends StatelessWidget {
 
   Widget _buildStockRankingItem(RankedStock rankedStock) {
     return ListTile(
-      title: Text(rankedStock.title),
-      subtitle: Text('${rankedStock.symbol} - ${rankedStock.latestPrice}'),
+      title: Text('${rankedStock.symbol} - ${rankedStock.title}'),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Jitta Score: ${rankedStock.jittaScore}'),
+          Text('Latest Price: ${rankedStock.currency}${rankedStock.latestPrice}'),
+        ],
+      ),
     );
   }
 }

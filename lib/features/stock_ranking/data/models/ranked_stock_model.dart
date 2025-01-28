@@ -24,8 +24,22 @@ class RankedStockModel extends RankedStock {
       currency: json['currency'],
       latestPrice: json['latestPrice'],
       industry: json['industry'],
-      sector: json['sector'],
+      sector: SectorModel.fromJson(json['sector']),
       updatedAt: json['updatedAt'],
+    );
+  }
+}
+
+class SectorModel extends Sector {
+  SectorModel({
+    required super.id,
+    required super.name,
+  });
+
+  factory SectorModel.fromJson(Map<String, dynamic> json) {
+    return SectorModel(
+      id: json['id'],
+      name: json['name'],
     );
   }
 }

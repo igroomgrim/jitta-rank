@@ -1,5 +1,6 @@
 // data
 export 'data/repositories/stock_ranking_repository_impl.dart';
+export 'data/datasources/stock_ranking_graphql_datasource.dart';
 
 // domain
 export 'domain/entities/ranked_stock.dart';
