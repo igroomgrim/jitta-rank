@@ -1,10 +1,10 @@
 import '../repositories/stock_ranking_repository.dart';
 import '../entities/ranked_stock.dart';
 
-class GetStockRankings {
+class GetStockRankingsUsecase {
   final StockRankingRepository repository;
 
-  GetStockRankings(this.repository);
+  GetStockRankingsUsecase(this.repository);
 
   Future<List<RankedStock>> call() async {
     return await repository.getStockRankings();
