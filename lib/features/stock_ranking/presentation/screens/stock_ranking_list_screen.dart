@@ -31,7 +31,7 @@ class StockRankingListScreen extends StatelessWidget {
               } else if (state is StockRankingsLoading) {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is StockRankingsLoaded) {
-                return _buildStockRankingList(state);
+                return _buildStockRankingList(context, state);
               }
               return const SizedBox.shrink();
             },
@@ -41,20 +41,25 @@ class StockRankingListScreen extends StatelessWidget {
     ); // Scaffold
   }
 
-  Widget _buildStockRankingList(StockRankingsLoaded state) {
-    return ListView.builder(
-      itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
-      itemBuilder: (context, index) {
-        if (index >= state.rankedStocks.length) {
-          final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
-          context.read<StockRankingsBloc>().add(
-            GetStockRankingsEvent(page: nextPage)
-          );
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return _buildStockRankingItem(context, state.rankedStocks[index]);
+  Widget _buildStockRankingList(BuildContext context, StockRankingsLoaded state) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent());
       },
+      child: ListView.builder(
+        itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
+        itemBuilder: (context, index) {
+          if (index >= state.rankedStocks.length) {
+            final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
+            context.read<StockRankingsBloc>().add(
+              GetStockRankingsEvent(page: nextPage)
+            );
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return _buildStockRankingItem(context, state.rankedStocks[index]);
+        },
+      ),
     );
   }
 

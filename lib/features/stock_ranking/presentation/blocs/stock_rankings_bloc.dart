@@ -7,13 +7,14 @@ import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.d
 
 class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   final GetStockRankingsUsecase getStockRankings;
-  final int _limit = 20;
+  final int _limit = ApiConstants.defaultLoadLimit;
   String _currentMarket = ApiConstants.defaultMarket;
   List<String> _currentSectors = [];
   List<RankedStock> _loadedRankedStocks = [];
 
   StockRankingsBloc(this.getStockRankings) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
+    on<RefreshStockRankingsEvent>(_onRefreshStockRankings);
   }
 
   void _onGetStockRankings(GetStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
@@ -46,5 +47,13 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     } catch (e) {
       emit(StockRankingsError(e.toString()));
     }
+  }
+
+  void _onRefreshStockRankings(RefreshStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
+    _loadedRankedStocks.clear();
+    emit(StockRankingsLoading());
+    final rankedStocks = await getStockRankings.call(_limit, _currentMarket, 1, _currentSectors);
+    _loadedRankedStocks = rankedStocks;
+    emit(StockRankingsLoaded(rankedStocks: _loadedRankedStocks, hasReachedMaxData: false));
   }
 }

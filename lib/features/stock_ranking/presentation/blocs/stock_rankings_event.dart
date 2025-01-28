@@ -22,3 +22,5 @@ class GetStockRankingsEvent extends StockRankingsEvent {
   @override
   List<Object> get props => [limit, market, page, sectors];
 }
+
+class RefreshStockRankingsEvent extends StockRankingsEvent {}
