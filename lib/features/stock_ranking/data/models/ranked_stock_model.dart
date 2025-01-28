@@ -15,16 +15,21 @@ class RankedStockModel extends RankedStock {
   });
 
   factory RankedStockModel.fromJson(Map<String, dynamic> json) {
+    final sectorJson = json['sector'];
+    final sector = sectorJson != null 
+      ? SectorModel.fromJson(sectorJson as Map<String, dynamic>)
+      : Sector(id: 'Unknown', name: 'Unknown');
+
     return RankedStockModel(
       id: json['id'],
       stockId: json['stockId'],
       symbol: json['symbol'],
       title: json['title'],
-      jittaScore: json['jittaScore'],
+      jittaScore: json['jittaScore']?.toDouble() ?? 0.0,
       currency: json['currency'],
-      latestPrice: json['latestPrice'],
-      industry: json['industry'],
-      sector: SectorModel.fromJson(json['sector']),
+      latestPrice: json['latestPrice']?.toDouble() ?? 0.0,
+      industry: json['industry']?.toString() ?? 'Unknown',
+      sector: sector,
       updatedAt: json['updatedAt'],
     );
   }

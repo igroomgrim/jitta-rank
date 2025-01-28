@@ -4,7 +4,7 @@ import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 import 'package:jitta_rank/core/networking/graphql_service.dart';
 import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
 import 'package:jitta_rank/core/navigation/app_router.dart';
-
+import 'package:jitta_rank/core/constants/api_constants.dart';
 class StockRankingListScreen extends StatelessWidget {
   const StockRankingListScreen({super.key});
 
@@ -31,7 +31,7 @@ class StockRankingListScreen extends StatelessWidget {
               } else if (state is StockRankingsLoading) {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is StockRankingsLoaded) {
-                return _buildStockRankingList(state.rankedStocks);
+                return _buildStockRankingList(state);
               }
               return const SizedBox.shrink();
             },
@@ -41,11 +41,19 @@ class StockRankingListScreen extends StatelessWidget {
     ); // Scaffold
   }
 
-  Widget _buildStockRankingList(List<RankedStock> rankedStocks) {
+  Widget _buildStockRankingList(StockRankingsLoaded state) {
     return ListView.builder(
-      itemCount: rankedStocks.length,
+      itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
       itemBuilder: (context, index) {
-        return _buildStockRankingItem(context, rankedStocks[index]);
+        if (index >= state.rankedStocks.length) {
+          final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
+          context.read<StockRankingsBloc>().add(
+            GetStockRankingsEvent(page: nextPage)
+          );
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return _buildStockRankingItem(context, state.rankedStocks[index]);
       },
     );
   }

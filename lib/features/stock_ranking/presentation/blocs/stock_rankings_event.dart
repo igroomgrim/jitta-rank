@@ -15,7 +15,10 @@ class GetStockRankingsEvent extends StockRankingsEvent {
   GetStockRankingsEvent({
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
-    this.limit = 5, // TODO: make this dynamic or set to proper value
-    this.page = 1,
+    this.limit = ApiConstants.defaultLoadLimit,
+    this.page = ApiConstants.defaultLoadPage,
   });
+
+  @override
+  List<Object> get props => [limit, market, page, sectors];
 }

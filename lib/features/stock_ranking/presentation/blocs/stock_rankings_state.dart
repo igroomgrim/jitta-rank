@@ -11,11 +11,15 @@ class StockRankingsLoading extends StockRankingsState {}
 
 class StockRankingsLoaded extends StockRankingsState {
   final List<RankedStock> rankedStocks;
+  final bool hasReachedMaxData;
 
-  StockRankingsLoaded(this.rankedStocks);
+  StockRankingsLoaded({
+    this.rankedStocks = const [], 
+    this.hasReachedMaxData = false
+  });
 
   @override
-  List<Object> get props => [rankedStocks];
+  List<Object> get props => [rankedStocks, hasReachedMaxData];
 }
 
 class StockRankingsError extends StockRankingsState {
