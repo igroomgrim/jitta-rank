@@ -109,7 +109,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   Widget _buildStockRankingList(BuildContext context, StockRankingsLoaded state) {
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent());
+        context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent(sectors: _selectedSectors));
       },
       child: ListView.builder(
         itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
