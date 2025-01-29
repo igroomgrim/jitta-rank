@@ -24,18 +24,24 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('Stock Ranking'),
+            const Text(
+              'Stock Rankings',
+              textAlign: TextAlign.center,
+            ),
             Text(
               MarketFilter.getMarketName(_selectedMarket),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey,
-                  decoration: TextDecoration.none,
-                ),
+                color: Colors.grey,
+                decoration: TextDecoration.none,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {
