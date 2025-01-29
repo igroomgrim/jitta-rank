@@ -15,30 +15,53 @@ class StockRankingListScreen extends StatelessWidget {
         title: Text('Stock Ranking'),
       ),
       body: BlocProvider(
-        create: (context) => StockRankingsBloc(GetStockRankingsUsecase(StockRankingRepositoryImpl(StockRankingGraphqlDatasource(GraphqlService())))),
+        create: (context) => StockRankingsBloc(
+          GetStockRankingsUsecase(
+            StockRankingRepositoryImpl(
+              StockRankingGraphqlDatasource(GraphqlService())
+            )
+          )
+        ),
         child: BlocListener<NavigationCubit, NavigationState?>(
           listener: (context, state) {
             if (state is NavigateToStockDetailScreen) {
-              Navigator.pushNamed(context, AppRouter.stockDetailScreen, arguments: state.stockId);
+                Navigator.pushNamed(context, AppRouter.stockDetailScreen, arguments: state.stockId);
             }
             context.read<NavigationCubit>().resetNavigation();
           },
           child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
             builder: (context, state) {
               if (state is StockRankingsInitial) {
-                context.read<StockRankingsBloc>().add(GetStockRankingsEvent());
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is StockRankingsLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is StockRankingsLoaded) {
-                return _buildStockRankingList(context, state);
-              }
-              return const SizedBox.shrink();
-            },
+                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent());
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is StockRankingsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is StockRankingsLoaded) {
+                  return _buildStockRankingList(context, state);
+                } else if (state is StockRankingsError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(state.message),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            print('Reload Stocks Button Pressed');
+                            context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent());
+                          },
+                          child: const Text('Reload Stocks'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
         ),
-      ),
-    ); // Scaffold
+      );
   }
 
   Widget _buildStockRankingList(BuildContext context, StockRankingsLoaded state) {

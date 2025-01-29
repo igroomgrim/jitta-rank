@@ -51,9 +51,6 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
 
   void _onRefreshStockRankings(RefreshStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     _loadedRankedStocks.clear();
-    emit(StockRankingsLoading());
-    final rankedStocks = await getStockRankings.call(_limit, _currentMarket, 1, _currentSectors);
-    _loadedRankedStocks = rankedStocks;
-    emit(StockRankingsLoaded(rankedStocks: _loadedRankedStocks, hasReachedMaxData: false));
+    emit(StockRankingsInitial());
   }
 }
