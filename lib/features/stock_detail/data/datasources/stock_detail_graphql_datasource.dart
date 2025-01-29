@@ -12,26 +12,79 @@ class StockDetailGraphqlDatasource extends StockDetailDatasource {
     String stockByIdQuery = '''
     query stockById(\$stockId: Int) {
       stock(stockId: \$stockId) {
-        id
         stockId
-        currency_sign
-        currency
-        title
         symbol
-        summary
-        fundamental {
-          eps
-          market_cap
-          shares
-          dividend_per_share
-          pe
-          dividend
-          beta
-          yield
+        name
+        nativeName
+        price {
+          latest {
+            close
+            latest_price_timestamp
+          }
         }
+        currency
+        currency_sign
+        industry
+        market
+        jittaRankScore
+        jitta {
+          score {
+            total
+            last {
+              value
+            }
+          }
+          priceDiff {
+            last {
+              value
+            }
+          }
+          factor {
+            last {
+              value {
+                growth {
+                  value
+                  name
+                  level
+                }
+                financial {
+                  value
+                  name
+                  level
+                }
+                management {
+                  level
+                  name
+                  value
+                }
+              }
+            }
+          }
+        }
+        loss_chance {
+          last
+        }
+        sector {
+          name
+        }
+        company {
+          link {
+            url
+          }
+          ipo_date
+        }
+        graph_price {
+          first_graph_period
+          graphs {
+            stockPrice
+            linePrice
+          }
+        }
+        summary
+        updatedAt
       }
     }
-  ''';
+    ''';
 
     try {
       final result = await graphqlService.performQuery(stockByIdQuery, {
