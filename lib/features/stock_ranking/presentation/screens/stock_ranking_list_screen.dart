@@ -7,8 +7,15 @@ import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/debounced_search_field.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/sector_filter.dart';
 
-class StockRankingListScreen extends StatelessWidget {
+class StockRankingListScreen extends StatefulWidget {
   const StockRankingListScreen({super.key});
+
+  @override
+  State<StockRankingListScreen> createState() => _StockRankingListScreenState();
+}
+
+class _StockRankingListScreenState extends State<StockRankingListScreen> {
+  List<String> _selectedSectors = [];
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +45,18 @@ class StockRankingListScreen extends StatelessWidget {
                 },
               ),
               SectorFilter(
-                selectedSectors: [],
+                selectedSectors: _selectedSectors,
                 onSectorSelected: (sector) {
-                  print('Sector selected: $sector');
+                  setState(() {
+                    if (_selectedSectors.contains(sector)) {
+                      _selectedSectors.remove(sector);
+                    } else {
+                      _selectedSectors.add(sector);
+                    }
+                  });
+
+                  context.read<StockRankingsBloc>().add(ClearLoadedStockRankingsEvent());
+                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(sectors: _selectedSectors));
                 },
               ),
             ],
@@ -120,6 +136,7 @@ class StockRankingListScreen extends StatelessWidget {
         children: [
           Text('Jitta Score: ${rankedStock.jittaScore}'),
           Text('Latest Price: ${rankedStock.currency}${rankedStock.latestPrice}'),
+          Text('Sector: ${rankedStock.sector?.name}'),
         ],
       ),
       onTap: () {

@@ -16,10 +16,17 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     on<GetStockRankingsEvent>(_onGetStockRankings);
     on<RefreshStockRankingsEvent>(_onRefreshStockRankings);
     on<SearchStockRankingsEvent>(_onSearchStockRankings);
+    on<ClearLoadedStockRankingsEvent>(_onClearLoadedStockRankings);
   }
 
   void _onGetStockRankings(GetStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     try {
+      // If the sectors have changed, clear the loaded stocks
+      if (event.sectors != _currentSectors) {
+        _currentSectors = event.sectors;
+        _loadedRankedStocks.clear();
+      }
+
       if (state is StockRankingsInitial) {
         emit(StockRankingsLoading());
 
@@ -85,5 +92,10 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
         ));
       }
     }
+  }
+
+  void _onClearLoadedStockRankings(ClearLoadedStockRankingsEvent event, Emitter<StockRankingsState> emit) {
+    _loadedRankedStocks.clear();
+    emit(StockRankingsInitial());
   }
 }

@@ -33,3 +33,5 @@ class SearchStockRankingsEvent extends StockRankingsEvent {
   @override
   List<Object> get props => [query];
 }
+
+class ClearLoadedStockRankingsEvent extends StockRankingsEvent {}
