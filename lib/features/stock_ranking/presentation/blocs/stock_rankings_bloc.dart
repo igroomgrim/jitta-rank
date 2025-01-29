@@ -76,9 +76,10 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   }
 
   void _onSearchStockRankings(SearchStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
-    if (state is StockRankingsLoaded) {
-      final loadedState = state as StockRankingsLoaded;
-      if (event.searchFieldValue.isEmpty) {
+    try {
+      if (state is StockRankingsLoaded) {
+        final loadedState = state as StockRankingsLoaded;
+        if (event.searchFieldValue.isEmpty) {
         emit(StockRankingsLoaded(
           rankedStocks: _loadedRankedStocks,
           hasReachedMaxData: loadedState.hasReachedMaxData,
@@ -102,14 +103,21 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
 
         emit(StockRankingsLoaded(
           rankedStocks: uniqueStocks,
-          hasReachedMaxData: true, // Disable pagination during search
-        ));
+            hasReachedMaxData: true, // Disable pagination during search
+          ));
+        }
       }
+    } catch (e) {
+      emit(StockRankingsError(e.toString()));
     }
   }
 
   void _onClearLoadedStockRankings(ClearLoadedStockRankingsEvent event, Emitter<StockRankingsState> emit) {
-    _loadedRankedStocks.clear();
-    emit(StockRankingsInitial());
+    try {
+      _loadedRankedStocks.clear();
+      emit(StockRankingsInitial());
+    } catch (e) {
+      emit(StockRankingsError(e.toString()));
+    }
   }
 }
