@@ -18,7 +18,8 @@ class StockRankingListScreen extends StatefulWidget {
 class _StockRankingListScreenState extends State<StockRankingListScreen> {
   List<String> _selectedSectors = [];
   String _selectedMarket = ApiConstants.defaultMarket;
-
+  String _currentSearchFieldValue = '';
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,13 +60,15 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 child: DebouncedSearchField(
                   hintText: 'Search by symbol or title...',
                   onSearch: (searchFieldValue) {
+                    setState(() {
+                      _currentSearchFieldValue = searchFieldValue;
+                    });
+
                     if (searchFieldValue.isEmpty) {
                       context.read<StockRankingsBloc>().add(
-                        GetStockRankingsEvent(
-                          market: _selectedMarket,
-                          sectors: _selectedSectors
-                        )
-                      );
+                          GetStockRankingsEvent(
+                              market: _selectedMarket,
+                              sectors: _selectedSectors));
                     } else {
                       context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(searchFieldValue));
                     }
@@ -137,7 +140,12 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   Widget _buildStockRankingList(BuildContext context, StockRankingsLoaded state) {
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent(sectors: _selectedSectors));
+        if (_currentSearchFieldValue.isEmpty) {
+          context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent(sectors: _selectedSectors));
+        }
+      },
+      notificationPredicate: (ScrollNotification scrollInfo) {
+        return _currentSearchFieldValue.isEmpty;
       },
       child: ListView.builder(
         itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
