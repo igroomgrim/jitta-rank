@@ -5,6 +5,8 @@ import 'package:jitta_rank/core/networking/graphql_service.dart';
 import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
 import 'package:jitta_rank/core/navigation/app_router.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
+import 'package:jitta_rank/features/stock_ranking/presentation/widgets/debounced_search_field.dart';
+
 class StockRankingListScreen extends StatelessWidget {
   const StockRankingListScreen({super.key});
 
@@ -13,15 +15,30 @@ class StockRankingListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Stock Ranking'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              print('Filter Button Pressed');
+            },
+            icon: Icon(Icons.filter_list),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: DebouncedSearchField(
+            hintText: 'Search by symbol or title...',
+            onSearch: (query) {
+              if (query.isEmpty) {
+                context.read<StockRankingsBloc>().add(GetStockRankingsEvent());
+              } else {
+                context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
+              }
+            },
+          ),
+        ),
       ),
       body: BlocProvider(
-        create: (context) => StockRankingsBloc(
-          GetStockRankingsUsecase(
-            StockRankingRepositoryImpl(
-              StockRankingGraphqlDatasource(GraphqlService())
-            )
-          )
-        ),
+        create: (context) => context.read<StockRankingsBloc>(),
         child: BlocListener<NavigationCubit, NavigationState?>(
           listener: (context, state) {
             if (state is NavigateToStockDetailScreen) {
@@ -47,7 +64,6 @@ class StockRankingListScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
-                            print('Reload Stocks Button Pressed');
                             context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent());
                           },
                           child: const Text('Reload Stocks'),

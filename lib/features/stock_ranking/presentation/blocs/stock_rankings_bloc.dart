@@ -15,6 +15,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   StockRankingsBloc(this.getStockRankings) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
     on<RefreshStockRankingsEvent>(_onRefreshStockRankings);
+    on<SearchStockRankingsEvent>(_onSearchStockRankings);
   }
 
   void _onGetStockRankings(GetStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
@@ -22,26 +23,26 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
       if (state is StockRankingsInitial) {
         emit(StockRankingsLoading());
 
-        final rankedStocks = await getStockRankings.call(_limit, _currentMarket, 1, _currentSectors);
+        final rankedStocks = await getStockRankings.call(
+            _limit, _currentMarket, 1, _currentSectors);
         _loadedRankedStocks = rankedStocks;
-        emit(StockRankingsLoaded(rankedStocks: rankedStocks, hasReachedMaxData: false));
+        emit(StockRankingsLoaded(
+            rankedStocks: rankedStocks, hasReachedMaxData: false));
         return;
       }
 
       if (state is StockRankingsLoaded) {
         final page = event.page;
         final rankedStocks = await getStockRankings.call(
-          _limit, 
-          _currentMarket, 
-          page, 
-          _currentSectors
-        );
-        
+            _limit, _currentMarket, page, _currentSectors);
+
         if (rankedStocks.isNotEmpty) {
           _loadedRankedStocks = [..._loadedRankedStocks, ...rankedStocks];
-          emit(StockRankingsLoaded(rankedStocks: _loadedRankedStocks, hasReachedMaxData: false));
+          emit(StockRankingsLoaded(
+              rankedStocks: _loadedRankedStocks, hasReachedMaxData: false));
         } else {
-          emit(StockRankingsLoaded(rankedStocks: _loadedRankedStocks, hasReachedMaxData: true));
+          emit(StockRankingsLoaded(
+              rankedStocks: _loadedRankedStocks, hasReachedMaxData: true));
         }
       }
     } catch (e) {
@@ -52,5 +53,37 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   void _onRefreshStockRankings(RefreshStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     _loadedRankedStocks.clear();
     emit(StockRankingsInitial());
+  }
+
+  void _onSearchStockRankings(SearchStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
+    if (state is StockRankingsLoaded) {
+      final loadedState = state as StockRankingsLoaded;
+      if (event.query.isEmpty) {
+        emit(StockRankingsLoaded(
+          rankedStocks: _loadedRankedStocks,
+          hasReachedMaxData: loadedState.hasReachedMaxData,
+        ));
+      } else {
+        final filteredStocks = _loadedRankedStocks
+            .where((stock) =>
+                stock.symbol.toLowerCase().contains(event.query.toLowerCase()) ||
+                stock.title.toLowerCase().contains(event.query.toLowerCase())
+            )
+            .toList();
+
+        final uniqueStocks = filteredStocks.fold<Map<String, RankedStock>>({}, 
+          (map, stock) {
+            if (!map.containsKey(stock.symbol)) {
+              map[stock.symbol] = stock;
+            }
+            return map;
+          }).values.toList();
+
+        emit(StockRankingsLoaded(
+          rankedStocks: uniqueStocks,
+          hasReachedMaxData: true, // Disable pagination during search
+        ));
+      }
+    }
   }
 }

@@ -24,3 +24,12 @@ class GetStockRankingsEvent extends StockRankingsEvent {
 }
 
 class RefreshStockRankingsEvent extends StockRankingsEvent {}
+
+class SearchStockRankingsEvent extends StockRankingsEvent {
+  final String query;
+
+  SearchStockRankingsEvent(this.query);
+
+  @override
+  List<Object> get props => [query];
+}
