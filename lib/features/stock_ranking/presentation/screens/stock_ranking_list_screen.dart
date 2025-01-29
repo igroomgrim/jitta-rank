@@ -38,7 +38,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 hintText: 'Search by symbol or title...',
                 onSearch: (query) {
               if (query.isEmpty) {
-                context.read<StockRankingsBloc>().add(GetStockRankingsEvent());
+                context.read<StockRankingsBloc>().add(GetStockRankingsEvent(sectors: _selectedSectors));
               } else {
                     context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
                   }
@@ -117,7 +117,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           if (index >= state.rankedStocks.length) {
             final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
             context.read<StockRankingsBloc>().add(
-              GetStockRankingsEvent(page: nextPage)
+              GetStockRankingsEvent(page: nextPage, sectors: _selectedSectors)
             );
             return const Center(child: CircularProgressIndicator());
           }
