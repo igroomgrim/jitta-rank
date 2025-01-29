@@ -37,12 +37,12 @@ class RefreshStockRankingsEvent extends StockRankingsEvent {
 }
 
 class SearchStockRankingsEvent extends StockRankingsEvent {
-  final String query;
+  final String searchFieldValue;
 
-  SearchStockRankingsEvent(this.query);
+  SearchStockRankingsEvent(this.searchFieldValue);
 
   @override
-  List<Object> get props => [query];
+  List<Object> get props => [searchFieldValue];
 }
 
 class ClearLoadedStockRankingsEvent extends StockRankingsEvent {}

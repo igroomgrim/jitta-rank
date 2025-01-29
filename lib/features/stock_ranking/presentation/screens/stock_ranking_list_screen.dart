@@ -52,8 +52,8 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
                 child: DebouncedSearchField(
                   hintText: 'Search by symbol or title...',
-                  onSearch: (query) {
-                    if (query.isEmpty) {
+                  onSearch: (searchFieldValue) {
+                    if (searchFieldValue.isEmpty) {
                       context.read<StockRankingsBloc>().add(
                         GetStockRankingsEvent(
                           market: _selectedMarket,
@@ -61,7 +61,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                         )
                       );
                     } else {
-                      context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
+                      context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(searchFieldValue));
                     }
                   },
                 ),

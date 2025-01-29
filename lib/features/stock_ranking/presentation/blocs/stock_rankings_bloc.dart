@@ -78,7 +78,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   void _onSearchStockRankings(SearchStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     if (state is StockRankingsLoaded) {
       final loadedState = state as StockRankingsLoaded;
-      if (event.query.isEmpty) {
+      if (event.searchFieldValue.isEmpty) {
         emit(StockRankingsLoaded(
           rankedStocks: _loadedRankedStocks,
           hasReachedMaxData: loadedState.hasReachedMaxData,
@@ -86,18 +86,19 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
       } else {
         final filteredStocks = _loadedRankedStocks
             .where((stock) =>
-                stock.symbol.toLowerCase().contains(event.query.toLowerCase()) ||
-                stock.title.toLowerCase().contains(event.query.toLowerCase())
-            )
+                stock.symbol.toLowerCase().contains(event.searchFieldValue.toLowerCase()) ||
+                stock.title.toLowerCase().contains(event.searchFieldValue.toLowerCase()))
             .toList();
 
-        final uniqueStocks = filteredStocks.fold<Map<String, RankedStock>>({}, 
-          (map, stock) {
-            if (!map.containsKey(stock.symbol)) {
-              map[stock.symbol] = stock;
-            }
-            return map;
-          }).values.toList();
+        final uniqueStocks = filteredStocks
+            .fold<Map<String, RankedStock>>({}, (map, stock) {
+              if (!map.containsKey(stock.symbol)) {
+                map[stock.symbol] = stock;
+              }
+              return map;
+            })
+            .values
+            .toList();
 
         emit(StockRankingsLoaded(
           rankedStocks: uniqueStocks,
