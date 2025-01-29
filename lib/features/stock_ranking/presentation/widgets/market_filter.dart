@@ -68,4 +68,8 @@ class MarketFilter extends StatelessWidget {
       ],
     );
   }
+
+  static String getMarketName(String marketCode) {
+    return MarketFilter.markets.firstWhere((market) => market['code'] == marketCode)['name']!;
+  }
 }

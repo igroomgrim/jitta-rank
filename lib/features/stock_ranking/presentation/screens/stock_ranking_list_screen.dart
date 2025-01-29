@@ -23,7 +23,19 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stock Ranking'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text('Stock Ranking'),
+            Text(
+              MarketFilter.getMarketName(_selectedMarket),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey,
+                  decoration: TextDecoration.none,
+                ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () {
