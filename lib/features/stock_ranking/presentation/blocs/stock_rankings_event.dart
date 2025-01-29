@@ -45,4 +45,15 @@ class SearchStockRankingsEvent extends StockRankingsEvent {
   List<Object> get props => [searchFieldValue];
 }
 
-class ClearLoadedStockRankingsEvent extends StockRankingsEvent {}
+class FilterStockRankingsEvent extends StockRankingsEvent {
+  final String market;
+  final List<String> sectors;
+
+  FilterStockRankingsEvent({
+    this.market = ApiConstants.defaultMarket,
+    this.sectors = const [],
+  });
+
+  @override
+  List<Object> get props => [market, sectors];
+}

@@ -16,7 +16,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     on<GetStockRankingsEvent>(_onGetStockRankings);
     on<RefreshStockRankingsEvent>(_onRefreshStockRankings);
     on<SearchStockRankingsEvent>(_onSearchStockRankings);
-    on<ClearLoadedStockRankingsEvent>(_onClearLoadedStockRankings);
+    on<FilterStockRankingsEvent>(_onFilterStockRankings);
   }
 
   void _onGetStockRankings(GetStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
@@ -112,10 +112,15 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     }
   }
 
-  void _onClearLoadedStockRankings(ClearLoadedStockRankingsEvent event, Emitter<StockRankingsState> emit) {
+  void _onFilterStockRankings(FilterStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     try {
-      _loadedRankedStocks.clear();
-      emit(StockRankingsInitial());
+      emit(StockRankingsLoading());
+
+      final rankedStocks =
+          await getStockRankings.call(_limit, event.market, 1, event.sectors);
+      _loadedRankedStocks = rankedStocks;
+      emit(StockRankingsLoaded(
+          rankedStocks: rankedStocks, hasReachedMaxData: false));
     } catch (e) {
       emit(StockRankingsError(e.toString()));
     }

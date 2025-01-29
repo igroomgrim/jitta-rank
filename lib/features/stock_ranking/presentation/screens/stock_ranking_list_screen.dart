@@ -86,8 +86,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                     }
                   });
 
-                  context.read<StockRankingsBloc>().add(ClearLoadedStockRankingsEvent());
-                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
+                  context.read<StockRankingsBloc>().add(FilterStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
                 },
               ),
             ],
@@ -106,7 +105,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
             builder: (context, state) {
               if (state is StockRankingsInitial) {
-                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent());
+                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is StockRankingsLoading) {
                   return const Center(child: CircularProgressIndicator());
@@ -128,8 +127,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                       ],
                     ),
                   );
+                } else {
+                  return const SizedBox.shrink();
                 }
-                return const SizedBox.shrink();
               },
             ),
           ),
@@ -138,6 +138,10 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   }
 
   Widget _buildStockRankingList(BuildContext context, StockRankingsLoaded state) {
+    if (state.rankedStocks.isEmpty) {
+      return const Center(child: Text("No stocks found!"));
+    }
+
     return RefreshIndicator(
       onRefresh: () async {
         if (_currentSearchFieldValue.isEmpty) {
@@ -150,7 +154,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
       child: ListView.builder(
         itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
         itemBuilder: (context, index) {
-          if (index >= state.rankedStocks.length) {
+          if (index >= state.rankedStocks.length && state.rankedStocks.isNotEmpty) {
             final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
             context.read<StockRankingsBloc>().add(
               GetStockRankingsEvent(page: nextPage, market: _selectedMarket, sectors: _selectedSectors)
@@ -197,8 +201,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
             _selectedMarket = market;
           });
 
-          context.read<StockRankingsBloc>().add(ClearLoadedStockRankingsEvent());
-          context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
+          context.read<StockRankingsBloc>().add(FilterStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
         }
       }
     });
