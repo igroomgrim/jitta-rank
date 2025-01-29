@@ -27,6 +27,12 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
         _loadedRankedStocks.clear();
       }
 
+      // If the market has changed, clear the loaded stocks
+      if (event.market != _currentMarket) {
+        _currentMarket = event.market;
+        _loadedRankedStocks.clear();
+      }
+
       if (state is StockRankingsInitial) {
         emit(StockRankingsLoading());
 

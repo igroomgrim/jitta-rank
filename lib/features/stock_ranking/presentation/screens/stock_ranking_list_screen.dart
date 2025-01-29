@@ -6,6 +6,7 @@ import 'package:jitta_rank/core/navigation/app_router.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/debounced_search_field.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/sector_filter.dart';
+import 'package:jitta_rank/features/stock_ranking/presentation/widgets/market_filter.dart';
 
 class StockRankingListScreen extends StatefulWidget {
   const StockRankingListScreen({super.key});
@@ -16,6 +17,7 @@ class StockRankingListScreen extends StatefulWidget {
 
 class _StockRankingListScreenState extends State<StockRankingListScreen> {
   List<String> _selectedSectors = [];
+  String _selectedMarket = ApiConstants.defaultMarket;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              print('Filter Button Pressed');
+              _showMarketFilterDialog(context);
             },
             icon: Icon(Icons.filter_list),
           ),
@@ -38,7 +40,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 hintText: 'Search by symbol or title...',
                 onSearch: (query) {
               if (query.isEmpty) {
-                context.read<StockRankingsBloc>().add(GetStockRankingsEvent(sectors: _selectedSectors));
+                context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
               } else {
                     context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
                   }
@@ -56,7 +58,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                   });
 
                   context.read<StockRankingsBloc>().add(ClearLoadedStockRankingsEvent());
-                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(sectors: _selectedSectors));
+                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
                 },
               ),
             ],
@@ -117,7 +119,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           if (index >= state.rankedStocks.length) {
             final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
             context.read<StockRankingsBloc>().add(
-              GetStockRankingsEvent(page: nextPage, sectors: _selectedSectors)
+              GetStockRankingsEvent(page: nextPage, market: _selectedMarket, sectors: _selectedSectors)
             );
             return const Center(child: CircularProgressIndicator());
           }
@@ -143,5 +145,28 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           context.read<NavigationCubit>().navigateToStockDetailScreen(rankedStock.stockId);
       },
     );
+  }
+
+  void _showMarketFilterDialog(BuildContext context) {
+    showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) => MarketFilter(selectedMarket: _selectedMarket, onMarketSelected: (market) {
+        Navigator.pop(context, {
+          'market': market,
+        });
+      }),
+    ).then((result) {
+      if (result != null) {
+        final market = result['market'] ?? ApiConstants.defaultMarket;
+        if (market != _selectedMarket) {
+          setState(() {
+            _selectedMarket = market;
+          });
+
+          context.read<StockRankingsBloc>().add(ClearLoadedStockRankingsEvent());
+          context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
+        }
+      }
+    });
   }
 }
