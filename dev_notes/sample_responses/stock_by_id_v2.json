@@ -1,0 +1,92 @@
+{
+    "data": {
+      "stock": {
+        "stockId": 185,
+        "symbol": "CPALL",
+        "name": "CP ALL Public Company Limited",
+        "nativeName": "บริษัท ซีพี ออลล์ จำกัด (มหาชน)",
+        "price": {
+          "latest": {
+            "close": 55.75,
+            "latest_price_timestamp": "2025-01-27T00:00:00.000Z"
+          }
+        },
+        "currency": "THB",
+        "currency_sign": "฿",
+        "industry": "Consumer Staples Distribution and Retail",
+        "market": "TH",
+        "jittaRankScore": 10645.542953824122,
+        "jitta": {
+          "score": {
+            "total": 129,
+            "last": {
+              "value": 5.9352425930151185
+            }
+          },
+          "priceDiff": {
+            "last": {
+              "value": -0.5400368468051762
+            }
+          },
+          "factor": {
+            "last": {
+              "value": {
+                "growth": {
+                  "value": 62,
+                  "name": "Growth Opportunity",
+                  "level": "MEDIUM"
+                },
+                "financial": {
+                  "value": 58,
+                  "name": "Financial Strength",
+                  "level": "MEDIUM"
+                },
+                "management": {
+                  "level": "MEDIUM",
+                  "name": "Competitive Advantage",
+                  "value": 68
+                }
+              }
+            }
+          }
+        },
+        "loss_chance": {
+          "last": 0.4275705606928843
+        },
+        "sector": {
+          "name": "Consumer staples"
+        },
+        "company": {
+          "link": [
+            {
+              "url": "www.cpall.co.th"
+            }
+          ],
+          "ipo_date": "2003-10-15T00:00:00.000Z"
+        },
+        "graph_price": {
+          "first_graph_period": "2015-1",
+          "graphs": [
+            {
+              "stockPrice": 41.5,
+              "linePrice": 32.1
+            },
+            {
+              "stockPrice": 40,
+              "linePrice": 32.43
+            },
+            {
+              "stockPrice": 41,
+              "linePrice": 32.76
+            },
+            {
+              "stockPrice": 42,
+              "linePrice": null
+            }
+          ]
+        },
+        "summary": "CP ALL Public Company Limited, together with its subsidiaries, operates and franchises convenience stores under the 7-Eleven name to other retailers primarily in Thailand. It operates through four segments: Convenience stores, Wholesale, Retail and Mall, and Other. The company also operates frozen food plants and bakeries; distributes various commercial cards and tickets, catalog merchandises, and food and non-food products; and retails health and beauty products. In addition, it offers bill payment, software development, information system design and development, logistics, digital healthcare, medical consultancy, delivery rental, storage, marketing and consulting, research and development, and microbiologic and scientific laboratory services. Further, the company engages in the e-commerce, insurance broker, and telecommunication businesses. Additionally, it operates training centers and educational institutions; produces ready meals; and trades and retails equipment, as well as offers maintenance of convenience stores equipment. The company was formerly known as C.P. Seven Eleven Public Company Limited. The company was founded in 1988 and is headquartered in Nonthaburi, Thailand.",
+        "updatedAt": "2025-01-27T12:30:08.703Z"
+      }
+    }
+  }
