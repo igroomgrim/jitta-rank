@@ -13,3 +13,12 @@ class GetStockDetailEvent extends StockDetailEvent {
   @override
   List<Object> get props => [stockId];
 }
+
+class RefreshStockDetailEvent extends StockDetailEvent {
+  final int stockId;
+
+  RefreshStockDetailEvent(this.stockId);
+
+  @override
+  List<Object> get props => [stockId];
+}

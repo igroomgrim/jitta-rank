@@ -7,14 +7,21 @@ class StockDetailBloc extends Bloc<StockDetailEvent, StockDetailState> {
   final GetStockDetailUsecase getStockDetail;
 
   StockDetailBloc(this.getStockDetail) : super(StockDetailInitial()) {
-    on<GetStockDetailEvent>((event, emit) async {
-      emit(StockDetailLoading());
-      try {
-        final stock = await getStockDetail.call(event.stockId);
+    on<GetStockDetailEvent>(_onGetStockDetail);
+    on<RefreshStockDetailEvent>(_onRefreshStockDetail);
+  }
+
+  void _onGetStockDetail(GetStockDetailEvent event, Emitter<StockDetailState> emit) async {
+    emit(StockDetailLoading());
+    try {
+      final stock = await getStockDetail.call(event.stockId);
         emit(StockDetailLoaded(stock));
       } catch (e) {
         emit(StockDetailError(e.toString()));
-      }
-    });
+    }
+  }
+
+  void _onRefreshStockDetail(RefreshStockDetailEvent event, Emitter<StockDetailState> emit) async {
+    emit(StockDetailInitial());
   }
 }
