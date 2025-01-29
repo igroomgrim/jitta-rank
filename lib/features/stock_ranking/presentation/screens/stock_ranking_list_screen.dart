@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
-import 'package:jitta_rank/core/networking/graphql_service.dart';
 import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
 import 'package:jitta_rank/core/navigation/app_router.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/debounced_search_field.dart';
+import 'package:jitta_rank/features/stock_ranking/presentation/widgets/sector_filter.dart';
 
 class StockRankingListScreen extends StatelessWidget {
   const StockRankingListScreen({super.key});
@@ -24,16 +24,26 @@ class StockRankingListScreen extends StatelessWidget {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: DebouncedSearchField(
-            hintText: 'Search by symbol or title...',
-            onSearch: (query) {
+          preferredSize: Size.fromHeight(100),
+          child: Column(
+            children: [
+              DebouncedSearchField(
+                hintText: 'Search by symbol or title...',
+                onSearch: (query) {
               if (query.isEmpty) {
                 context.read<StockRankingsBloc>().add(GetStockRankingsEvent());
               } else {
-                context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
-              }
-            },
+                    context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
+                  }
+                },
+              ),
+              SectorFilter(
+                selectedSectors: [],
+                onSectorSelected: (sector) {
+                  print('Sector selected: $sector');
+                },
+              ),
+            ],
           ),
         ),
       ),
