@@ -45,18 +45,26 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(100),
+          preferredSize: Size.fromHeight(112),
           child: Column(
             children: [
-              DebouncedSearchField(
-                hintText: 'Search by symbol or title...',
-                onSearch: (query) {
-              if (query.isEmpty) {
-                context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
-              } else {
-                    context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
-                  }
-                },
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                child: DebouncedSearchField(
+                  hintText: 'Search by symbol or title...',
+                  onSearch: (query) {
+                    if (query.isEmpty) {
+                      context.read<StockRankingsBloc>().add(
+                        GetStockRankingsEvent(
+                          market: _selectedMarket,
+                          sectors: _selectedSectors
+                        )
+                      );
+                    } else {
+                      context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(query));
+                    }
+                  },
+                ),
               ),
               SectorFilter(
                 selectedSectors: _selectedSectors,
