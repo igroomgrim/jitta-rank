@@ -19,9 +19,9 @@ class RankedStock {
     required this.currency,
     required this.latestPrice,
     required this.industry,
-    required String updatedAt,
+    required this.updatedAt,
     this.sector,
-  }) : updatedAt = DateTime.parse(updatedAt);
+  });
 }
 
 class Sector {
