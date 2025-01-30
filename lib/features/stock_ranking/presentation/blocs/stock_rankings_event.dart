@@ -23,6 +23,21 @@ class GetStockRankingsEvent extends StockRankingsEvent {
   List<Object> get props => [limit, market, page, sectors];
 }
 
+class LoadMoreStockRankingsEvent extends StockRankingsEvent {
+  final int page;
+  final String market;
+  final List<String> sectors;
+
+  LoadMoreStockRankingsEvent({
+    this.page = ApiConstants.defaultLoadPage,
+    this.market = ApiConstants.defaultMarket,
+    this.sectors = const [],
+  });
+
+  @override
+  List<Object> get props => [page, market, sectors];
+}
+
 class PullToRefreshStockRankingsEvent extends StockRankingsEvent {
   final String market;
   final List<String> sectors;

@@ -20,7 +20,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   List<String> _selectedSectors = [];
   String _selectedMarket = ApiConstants.defaultMarket;
   String _currentSearchFieldValue = '';
-
+  
   @override
   void initState() {
     super.initState();
@@ -176,9 +176,11 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
         itemBuilder: (context, index) {
           if (index >= state.rankedStocks.length && state.rankedStocks.isNotEmpty) {
             final nextPage = (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) + 1; // TODO: Should calculate max next page from count
-            context.read<StockRankingsBloc>().add(
-              GetStockRankingsEvent(page: nextPage, market: _selectedMarket, sectors: _selectedSectors)
-            );
+            context.read<StockRankingsBloc>().add(LoadMoreStockRankingsEvent(
+                page: nextPage,
+                market: _selectedMarket,
+                sectors: _selectedSectors
+            ));
             return const Center(child: CircularProgressIndicator());
           }
 

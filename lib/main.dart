@@ -37,12 +37,37 @@ void main() async {
   // TODO: move to the right place - maybe dependency injection?
 
   final networkInfoService = NetworkInfoServiceImpl();
-  runApp(MyApp(networkInfoService: networkInfoService));
+  final graphqlService = GraphqlService();
+  final stockRankingGraphqlDatasource = StockRankingGraphqlDatasource(graphqlService);
+  final stockRankingLocalDatasource = StockRankingLocalDatasourceImpl();
+
+  runApp(MyApp(
+    networkInfoService: networkInfoService,
+    graphqlService: graphqlService,
+    stockRankingGraphqlDatasource: stockRankingGraphqlDatasource,
+    stockRankingLocalDatasource: stockRankingLocalDatasource,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final NetworkInfoService networkInfoService;
-  const MyApp({super.key, required this.networkInfoService});
+  final GraphqlService graphqlService;
+  final StockRankingGraphqlDatasource stockRankingGraphqlDatasource;
+  final StockRankingLocalDatasource stockRankingLocalDatasource;
+
+  final StockRankingRepository stockRankingRepository;
+
+  MyApp({
+    super.key,
+    required this.networkInfoService,
+    required this.graphqlService,
+    required this.stockRankingGraphqlDatasource,
+    required this.stockRankingLocalDatasource,
+  }) : stockRankingRepository = StockRankingRepositoryImpl(
+          stockRankingGraphqlDatasource,
+          stockRankingLocalDatasource,
+          networkInfoService,
+        );
 
   // This widget is the root of your application.
   @override
@@ -54,8 +79,15 @@ class MyApp extends StatelessWidget {
             create: (context) => StockRankingsBloc(
                   GetStockRankingsUsecase(
                     StockRankingRepositoryImpl(
-                      StockRankingGraphqlDatasource(GraphqlService()),
-                      StockRankingLocalDatasourceImpl(),
+                      stockRankingGraphqlDatasource,
+                      stockRankingLocalDatasource,
+                      networkInfoService,
+                    ),
+                  ),
+                  LoadMoreStockRankingsUsecase(
+                    StockRankingRepositoryImpl(
+                      stockRankingGraphqlDatasource,
+                      stockRankingLocalDatasource,
                       networkInfoService,
                     ),
                   ),

@@ -22,7 +22,7 @@ class RankedStockModel extends RankedStock {
   @HiveField(7)
   final String industry;
   @HiveField(8)
-  final Sector sector;
+  final SectorModel? sector;
   @HiveField(9)
   final DateTime updatedAt;
 
@@ -54,7 +54,7 @@ class RankedStockModel extends RankedStock {
     final sectorJson = json['sector'];
     final sector = sectorJson != null 
       ? SectorModel.fromJson(sectorJson as Map<String, dynamic>)
-      : Sector(id: 'Unknown', name: 'Unknown');
+      : null;
 
     return RankedStockModel(
       id: json['id'],
