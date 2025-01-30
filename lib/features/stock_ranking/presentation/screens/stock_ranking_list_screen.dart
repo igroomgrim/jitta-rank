@@ -90,7 +90,11 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                               market: _selectedMarket,
                               sectors: _selectedSectors));
                     } else {
-                      context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(searchFieldValue));
+                      context.read<StockRankingsBloc>().add(SearchStockRankingsEvent(
+                        searchFieldValue: searchFieldValue,
+                        market: _selectedMarket,
+                        sectors: _selectedSectors,
+                      ));
                     }
                   },
                 ),
@@ -198,7 +202,8 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
         children: [
           Text('Jitta Score: ${rankedStock.jittaScore}'),
           Text('Latest Price: ${rankedStock.currency}${rankedStock.latestPrice}'),
-          Text('Sector: ${rankedStock.sector?.name}'),
+          Text('Sector: ${rankedStock.sector?.name ?? '-'}'),
+          Text('Market: ${rankedStock.market}'),
         ],
       ),
       onTap: () {

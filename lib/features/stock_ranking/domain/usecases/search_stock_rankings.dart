@@ -6,7 +6,7 @@ class SearchStockRankingsUsecase {
 
   SearchStockRankingsUsecase(this.repository);
 
-  Future<List<RankedStock>> call(String keyword) async {
-    return await repository.searchStockRankings(keyword);
+  Future<List<RankedStock>> call(String keyword, String market, List<String> sectors) async {
+    return await repository.searchStockRankings(keyword, market, sectors);
   }
 }

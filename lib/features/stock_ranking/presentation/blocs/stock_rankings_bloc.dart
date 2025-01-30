@@ -73,7 +73,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
           ));
         } else {
           print('else state is StockRankingsLoaded');
-          final filteredStocks = await searchStockRankings.call(event.searchFieldValue);
+          final filteredStocks = await searchStockRankings.call(event.searchFieldValue, event.market, event.sectors);
           emit(StockRankingsLoaded(
             rankedStocks: filteredStocks,
             hasReachedMaxData: true, // Disable pagination during search

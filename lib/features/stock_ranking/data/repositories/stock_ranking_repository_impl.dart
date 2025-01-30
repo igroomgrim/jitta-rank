@@ -31,7 +31,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
   }
 
   @override
-  Future<List<RankedStock>> searchStockRankings(String keyword) async {
-    return await localDatasource.searchStockRankings(keyword);
+  Future<List<RankedStock>> searchStockRankings(String keyword, String market, List<String> sectors) async {
+    return await localDatasource.searchStockRankings(keyword, market, sectors);
   }
 }
