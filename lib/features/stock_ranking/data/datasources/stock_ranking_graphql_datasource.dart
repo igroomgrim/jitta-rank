@@ -26,6 +26,7 @@ class StockRankingGraphqlDatasource extends StockRankingDatasource {
             id
             name
           }
+          market
         updatedAt
         }
       }

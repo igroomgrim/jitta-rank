@@ -9,6 +9,7 @@ class RankedStock {
   final String industry;
   final DateTime updatedAt;
   final Sector? sector;
+  final String? market;
 
   RankedStock({
     required this.id,
@@ -21,6 +22,7 @@ class RankedStock {
     required this.industry,
     required this.updatedAt,
     this.sector,
+    this.market,
   });
 }
 

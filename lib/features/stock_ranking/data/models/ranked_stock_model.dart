@@ -25,6 +25,8 @@ class RankedStockModel extends RankedStock {
   final SectorModel? sector;
   @HiveField(9)
   final DateTime updatedAt;
+  @HiveField(10)
+  final String? market;
 
   RankedStockModel({
     required this.id,
@@ -36,6 +38,7 @@ class RankedStockModel extends RankedStock {
     required this.latestPrice,
     required this.industry,
     required this.sector,
+    required this.market,
     required this.updatedAt,
   }) : super(
     id: id,
@@ -47,6 +50,7 @@ class RankedStockModel extends RankedStock {
     latestPrice: latestPrice,
     industry: industry,
     sector: sector,
+    market: market,
     updatedAt: updatedAt,
   );
 
@@ -55,17 +59,18 @@ class RankedStockModel extends RankedStock {
     final sector = sectorJson != null 
       ? SectorModel.fromJson(sectorJson as Map<String, dynamic>)
       : null;
-
+      
     return RankedStockModel(
       id: json['id'],
       stockId: json['stockId'],
-      symbol: json['symbol'],
-      title: json['title'],
+      symbol: json['symbol'] ?? '',
+      title: json['title'] ?? '',
       jittaScore: json['jittaScore']?.toDouble() ?? 0.0,
-      currency: json['currency'],
+      currency: json['currency'] ?? '',
       latestPrice: json['latestPrice']?.toDouble() ?? 0.0,
       industry: json['industry']?.toString() ?? 'Unknown',
       sector: sector,
+      market: json['market'] == null ? 'Unknown' : json['market'].toString(),
       updatedAt: parseDateString(json['updatedAt']) ?? DateTime.now(),
     );
   }
