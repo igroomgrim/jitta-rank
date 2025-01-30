@@ -35,11 +35,14 @@ void main() async {
   await Hive.openBox<StockGraphPriceItemModel>('stock_graph_price_item');
   await Hive.openBox<StockGraphPriceModel>('stock_graph_price');
   // TODO: move to the right place - maybe dependency injection?
-  runApp(const MyApp());
+
+  final networkInfoService = NetworkInfoServiceImpl();
+  runApp(MyApp(networkInfoService: networkInfoService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final NetworkInfoService networkInfoService;
+  const MyApp({super.key, required this.networkInfoService});
 
   // This widget is the root of your application.
   @override
@@ -47,8 +50,17 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => NavigationCubit()),
-        BlocProvider(create: (context) => StockRankingsBloc(GetStockRankingsUsecase(StockRankingRepositoryImpl(StockRankingGraphqlDatasource(GraphqlService()), StockRankingLocalDatasourceImpl())))), // TODO: Find a better way to do this
-        BlocProvider(create: (context) => NetworkInfoBloc(NetworkInfoServiceImpl())),
+        BlocProvider(
+            create: (context) => StockRankingsBloc(
+                  GetStockRankingsUsecase(
+                    StockRankingRepositoryImpl(
+                      StockRankingGraphqlDatasource(GraphqlService()),
+                      StockRankingLocalDatasourceImpl(),
+                      networkInfoService,
+                    ),
+                  ),
+                )),
+        BlocProvider(create: (context) => NetworkInfoBloc(networkInfoService)),
       ],
       child: MaterialApp(
         onGenerateRoute: AppRouter.generateRoute,
