@@ -7,6 +7,7 @@ import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/debounced_search_field.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/sector_filter.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/market_filter.dart';
+import 'package:jitta_rank/core/networking/network_info_bloc.dart';
 
 class StockRankingListScreen extends StatefulWidget {
   const StockRankingListScreen({super.key});
@@ -19,6 +20,12 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   List<String> _selectedSectors = [];
   String _selectedMarket = ApiConstants.defaultMarket;
   String _currentSearchFieldValue = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _checkInternetConnection();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -28,6 +35,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 12),
             const Text(
               'Stock Rankings',
               textAlign: TextAlign.center,
@@ -40,6 +48,18 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
               ),
               textAlign: TextAlign.center,
             ),
+            BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
+              builder: (context, state) {
+                return Text(
+                  state.isConnected ? 'Connected' : 'Disconnected',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
+                        decoration: TextDecoration.none,
+                      ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
           ],
         ),
         centerTitle: true,
@@ -52,7 +72,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(112),
+          preferredSize: Size.fromHeight(120),
           child: Column(
             children: [
               Padding(
@@ -205,5 +225,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
         }
       }
     });
+  }
+
+  void _checkInternetConnection() {
+    context.read<NetworkInfoBloc>().add(CheckConnectionEvent());
   }
 }

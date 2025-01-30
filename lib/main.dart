@@ -4,6 +4,9 @@ import 'core/navigation/app_router.dart';
 import 'core/navigation/navigation_cubit.dart';
 import 'features/stock_ranking/stock_ranking.dart';
 import 'core/networking/graphql_service.dart';
+import 'package:jitta_rank/core/networking/network_info_service.dart';
+import 'package:jitta_rank/core/networking/network_info_bloc.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -18,6 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => NavigationCubit()),
         BlocProvider(create: (context) => StockRankingsBloc(GetStockRankingsUsecase(StockRankingRepositoryImpl(StockRankingGraphqlDatasource(GraphqlService()))))), // TODO: Find a better way to do this
+        BlocProvider(create: (context) => NetworkInfoBloc(NetworkInfoServiceImpl())),
       ],
       child: MaterialApp(
         onGenerateRoute: AppRouter.generateRoute,
