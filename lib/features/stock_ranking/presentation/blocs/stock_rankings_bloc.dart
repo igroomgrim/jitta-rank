@@ -14,7 +14,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
 
   StockRankingsBloc(this.getStockRankings) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
-    on<RefreshStockRankingsEvent>(_onRefreshStockRankings);
+    on<PullToRefreshStockRankingsEvent>(_onPullToRefreshStockRankings);
     on<SearchStockRankingsEvent>(_onSearchStockRankings);
     on<FilterStockRankingsEvent>(_onFilterStockRankings);
   }
@@ -63,7 +63,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     }
   }
 
-  void _onRefreshStockRankings(RefreshStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
+  void _onPullToRefreshStockRankings(PullToRefreshStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     try {
       final rankedStocks = await getStockRankings.call(
           _limit, _currentMarket, 1, _currentSectors);

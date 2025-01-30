@@ -140,7 +140,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
-                            context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent());
+                            context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
                           },
                           child: const Text('Reload Stocks'),
                         ),
@@ -165,7 +165,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
     return RefreshIndicator(
       onRefresh: () async {
         if (_currentSearchFieldValue.isEmpty) {
-          context.read<StockRankingsBloc>().add(RefreshStockRankingsEvent(sectors: _selectedSectors));
+          context.read<StockRankingsBloc>().add(PullToRefreshStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
         }
       },
       notificationPredicate: (ScrollNotification scrollInfo) {
