@@ -14,18 +14,24 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
   @override
   Future<List<RankedStock>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
     if (await networkInfoService.isConnected) {
-      print('Internet connection - loading from remote');
       try {
         final rankedStocks = await graphqlDatasource.getStockRankings(limit, market, page, sectors);
+        print('StockRankingRepositoryImpl: ONLINE - page: $page market: $market sectors: $sectors limit: $limit rankedStocks: ${rankedStocks.length}');
         await localDatasource.saveStockRankings(rankedStocks);
         return rankedStocks;
       } catch (e) {
+        print('StockRankingRepositoryImpl: ONLINE - error: $e');
         throw Exception('Failed to fetch stock rankings from remote datasource');
       }
     } else {
-      print('No internet connection - loading from local');
+      print('StockRankingRepositoryImpl: OFFLINE - loading from local');
       final rankedStocksFromLocal = await localDatasource.getStockRankings(limit, market, page, sectors);
       return rankedStocksFromLocal;
     }
+  }
+
+  @override
+  Future<List<RankedStock>> searchStockRankings(String keyword) async {
+    return await localDatasource.searchStockRankings(keyword);
   }
 }

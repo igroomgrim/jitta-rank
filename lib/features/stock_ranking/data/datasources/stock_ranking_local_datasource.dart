@@ -6,6 +6,7 @@ abstract class StockRankingLocalDatasource extends StockRankingDatasource {
   @override
   Future<List<RankedStockModel>> getStockRankings(int limit, String market, int page, List<String> sectors);
   Future<void> saveStockRankings(List<RankedStockModel> stockRankings);
+  Future<List<RankedStockModel>> searchStockRankings(String keyword);
 }
 
 class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
@@ -17,7 +18,6 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
   @override
   Future<List<RankedStockModel>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
     final List<RankedStockModel> rankedStocks = box.values.toList();
-    // TODO: filter by market, page, and sectors
     return rankedStocks;
   }
 
@@ -35,5 +35,15 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
 
     await box.clear();
     await box.addAll(stocksToSave);
+  }
+
+  @override
+  Future<List<RankedStockModel>> searchStockRankings(String keyword) async {
+    final rankedStocks = box.values.toList();
+    final filteredStocks = rankedStocks.where((stock) => 
+      stock.symbol.toLowerCase().contains(keyword.toLowerCase()) || 
+      stock.title.toLowerCase().contains(keyword.toLowerCase()))
+      .toList();
+    return filteredStocks;
   }
 }

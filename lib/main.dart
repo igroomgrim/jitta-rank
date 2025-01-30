@@ -54,7 +54,6 @@ class MyApp extends StatelessWidget {
   final GraphqlService graphqlService;
   final StockRankingGraphqlDatasource stockRankingGraphqlDatasource;
   final StockRankingLocalDatasource stockRankingLocalDatasource;
-
   final StockRankingRepository stockRankingRepository;
 
   MyApp({
@@ -77,20 +76,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => NavigationCubit()),
         BlocProvider(
             create: (context) => StockRankingsBloc(
-                  GetStockRankingsUsecase(
-                    StockRankingRepositoryImpl(
-                      stockRankingGraphqlDatasource,
-                      stockRankingLocalDatasource,
-                      networkInfoService,
-                    ),
-                  ),
-                  LoadMoreStockRankingsUsecase(
-                    StockRankingRepositoryImpl(
-                      stockRankingGraphqlDatasource,
-                      stockRankingLocalDatasource,
-                      networkInfoService,
-                    ),
-                  ),
+                  GetStockRankingsUsecase(stockRankingRepository),
+                  LoadMoreStockRankingsUsecase(stockRankingRepository),
+                  PullToRefreshStockRankingsUsecase(stockRankingRepository),
+                  SearchStockRankingsUsecase(stockRankingRepository),
                 )),
         BlocProvider(create: (context) => NetworkInfoBloc(networkInfoService)),
       ],

@@ -1,14 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jitta_rank/features/stock_ranking/domain/usecases/get_stock_rankings.dart';
-import 'package:jitta_rank/features/stock_ranking/domain/usecases/load_more_stock_rankings.dart';
-import 'stock_rankings_event.dart';
-import 'stock_rankings_state.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
-import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.dart';
+import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   final GetStockRankingsUsecase getStockRankings;
   final LoadMoreStockRankingsUsecase loadMoreStockRankings;
+  final PullToRefreshStockRankingsUsecase pullToRefreshStockRankings;
+  final SearchStockRankingsUsecase searchStockRankings;
+
   final int _defaultLoadLimit = ApiConstants.defaultLoadLimit;
   final int _defaultLoadPage = ApiConstants.defaultLoadPage;
   final String _defaultMarket = ApiConstants.defaultMarket;
@@ -17,7 +16,12 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   // List<String> _currentSectors = [];
   List<RankedStock> _loadedRankedStocks = [];
 
-  StockRankingsBloc(this.getStockRankings, this.loadMoreStockRankings) : super(StockRankingsInitial()) {
+  StockRankingsBloc(
+    this.getStockRankings,
+    this.loadMoreStockRankings,
+    this.pullToRefreshStockRankings,
+    this.searchStockRankings,
+  ) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
     on<PullToRefreshStockRankingsEvent>(_onPullToRefreshStockRankings);
     on<SearchStockRankingsEvent>(_onSearchStockRankings);
@@ -45,7 +49,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   void _onPullToRefreshStockRankings(PullToRefreshStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     print('StockRankingsBloc: PULLING TO REFRESH - market: ${event.market} sectors: ${event.sectors}');
     try {
-      final rankedStocks = await getStockRankings.call(
+      final rankedStocks = await pullToRefreshStockRankings.call(
           _defaultLoadLimit, event.market, _defaultLoadPage, event.sectors);
       _loadedRankedStocks = rankedStocks;
 
@@ -69,28 +73,9 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
           ));
         } else {
           print('else state is StockRankingsLoaded');
-          final filteredStocks = _loadedRankedStocks
-              .where((stock) =>
-                  stock.symbol
-                      .toLowerCase()
-                      .contains(event.searchFieldValue.toLowerCase()) ||
-                  stock.title
-                      .toLowerCase()
-                      .contains(event.searchFieldValue.toLowerCase()))
-              .toList();
-
-          final uniqueStocks = filteredStocks
-              .fold<Map<String, RankedStock>>({}, (map, stock) {
-                if (!map.containsKey(stock.symbol)) {
-                  map[stock.symbol] = stock;
-                }
-                return map;
-              })
-              .values
-              .toList();
-
+          final filteredStocks = await searchStockRankings.call(event.searchFieldValue);
           emit(StockRankingsLoaded(
-            rankedStocks: uniqueStocks,
+            rankedStocks: filteredStocks,
             hasReachedMaxData: true, // Disable pagination during search
           ));
         }
