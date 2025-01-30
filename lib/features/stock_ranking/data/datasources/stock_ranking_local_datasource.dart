@@ -23,10 +23,17 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
 
   @override
   Future<void> saveStockRankings(List<RankedStockModel> stockRankings) async {
-    if (stockRankings.isNotEmpty) {
-      // TODO: check if the stock rankings are already in the box
-      await box.clear();
-      await box.addAll(stockRankings);
-    }
+    if (stockRankings.isEmpty) return;
+    const maxStorageLimit = 40;
+    
+    final existingStocks = box.values.toList();
+    final deduplicatedExistingStocks = existingStocks.where((stock) => !stockRankings.any((newStock) => newStock.symbol == stock.symbol)).toList();
+    final allStocks = [...deduplicatedExistingStocks, ...stockRankings];
+    final stocksToSave = allStocks.length <= maxStorageLimit 
+        ? allStocks 
+        : allStocks.sublist(allStocks.length - maxStorageLimit);
+
+    await box.clear();
+    await box.addAll(stocksToSave);
   }
 }
