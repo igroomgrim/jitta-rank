@@ -1,5 +1,6 @@
 // data
 export 'data/datasources/stock_detail_graphql_datasource.dart';
+export 'data/datasources/stock_detail_local_datasource.dart';
 export 'data/models/stock_model.dart';
 export 'data/repositories/stock_detail_repository_impl.dart';
 

@@ -16,7 +16,8 @@ class StockDetailScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => StockDetailBloc(GetStockDetailUsecase(
           StockDetailRepositoryImpl(
-              StockDetailGraphqlDatasource(GraphqlService())))),
+              StockDetailGraphqlDatasource(GraphqlService()),
+              StockDetailLocalDatasourceImpl()))),
       child: _StockDetailView(stockId: stockId),
     );
   }

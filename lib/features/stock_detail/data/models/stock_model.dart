@@ -1,26 +1,86 @@
 import 'package:jitta_rank/features/stock_detail/domain/entities/stock.dart';
+import 'package:hive/hive.dart';
 
+part 'stock_model.g.dart';
+
+@HiveType(typeId: 11)
 class StockModel extends Stock {
+  @HiveField(0)
+  final int stockId;
+  @HiveField(1)
+  final String symbol;
+  @HiveField(2)
+  final String name;
+  @HiveField(3)
+  final String nativeName;
+  @HiveField(4)
+  final StockPrice price;
+  @HiveField(5)
+  final String currency;
+  @HiveField(6)
+  final String currencySign;
+  @HiveField(7)
+  final String industry;
+  @HiveField(8)
+  final String market;
+  @HiveField(9)
+  final double jittaRankScore;
+  @HiveField(10)
+  final StockJitta jitta;
+  @HiveField(11)
+  final double lossChance;
+  @HiveField(12)
+  final String sectorName;
+  @HiveField(13)
+  final DateTime? ipoDate;
+  @HiveField(14)
+  final String companyLink;
+  @HiveField(15)
+  final StockGraphPrice graphPrice;
+  @HiveField(16)
+  final String summary;
+  @HiveField(17)
+  final DateTime? updatedAt;
+
   StockModel({
-    required super.stockId,
-    required super.symbol,
-    required super.name,
-    required super.nativeName,
-    required super.price,
-    required super.currency,
-    required super.currencySign,
-    required super.industry,
-    required super.market,
-    required super.jittaRankScore,
-    required super.jitta,
-    required super.lossChance,
-    required super.sectorName,
-    required super.ipoDate,
-    required super.companyLink,
-    required super.graphPrice,
-    required super.summary,
-    required super.updatedAt,
-  });
+    required this.stockId,
+    required this.symbol,
+    required this.name,
+    required this.nativeName,
+    required this.price,
+    required this.currency,
+    required this.currencySign,
+    required this.industry,
+    required this.market,
+    required this.jittaRankScore,
+    required this.jitta,
+    required this.lossChance,
+    required this.sectorName,
+    required this.ipoDate,
+    required this.companyLink,
+    required this.graphPrice,
+    required this.summary,
+    required this.updatedAt,
+  }) : super(
+    stockId: stockId,
+    symbol: symbol,
+    name: name,
+    nativeName: nativeName,
+    price: price,
+    currency: currency,
+    currencySign: currencySign,
+    industry: industry,
+    market: market,
+    jittaRankScore: jittaRankScore,
+    jitta: jitta,
+    lossChance: lossChance,
+    sectorName: sectorName,
+    ipoDate: ipoDate,
+    companyLink: companyLink,
+    graphPrice: graphPrice,
+    summary: summary,
+    updatedAt: updatedAt,
+  );
 
   factory StockModel.fromJson(Map<String, dynamic> json) {
     return StockModel(
@@ -46,11 +106,20 @@ class StockModel extends Stock {
   }
 }
 
+@HiveType(typeId: 12)
 class StockPriceModel extends StockPrice {
+  @HiveField(0)
+  final double close;
+  @HiveField(1)
+  final DateTime? latestPriceTimestamp;
+
   StockPriceModel({
-    required super.close,
-    super.latestPriceTimestamp,
-  });
+    required this.close,
+    this.latestPriceTimestamp,
+  }) : super(
+    close: close,
+    latestPriceTimestamp: latestPriceTimestamp,
+  );
 
   factory StockPriceModel.fromJson(Map<String, dynamic>? json) {
     if (json?['latest'] == null) return StockPriceModel(close: 0.0);
@@ -63,13 +132,28 @@ class StockPriceModel extends StockPrice {
   }
 }
 
+@HiveType(typeId: 13)
 class StockJittaModel extends StockJitta {
+  @HiveField(0)
+  final int total;
+  @HiveField(1)
+  final double score;
+  @HiveField(2)
+  final double priceDiff;
+  @HiveField(3)
+  final StockJittaFactor factor;
+
   StockJittaModel({
-    required super.total,
-    required super.score,
-    required super.priceDiff,
-    required super.factor,
-  });
+    required this.total,
+    required this.score,
+    required this.priceDiff,
+    required this.factor,
+  }) : super(
+    total: total,
+    score: score,
+    priceDiff: priceDiff,
+    factor: factor,
+  );
 
   factory StockJittaModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaModel(
@@ -81,12 +165,24 @@ class StockJittaModel extends StockJitta {
   }
 }
 
+@HiveType(typeId: 14)
 class StockJittaFactorModel extends StockJittaFactor {
+  @HiveField(0)
+  final StockJittaFactorGrowth growth;
+  @HiveField(1)
+  final StockJittaFactorFinancial financial;
+  @HiveField(2)
+  final StockJittaFactorManagement management;
+
   StockJittaFactorModel({
-    required super.growth,
-    required super.financial,
-    required super.management,
-  });
+    required this.growth,
+    required this.financial,
+    required this.management,
+  }) : super(
+    growth: growth,
+    financial: financial,
+    management: management,
+  );
 
   factory StockJittaFactorModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorModel(
@@ -97,12 +193,24 @@ class StockJittaFactorModel extends StockJittaFactor {
   }
 }
 
+@HiveType(typeId: 15)
 class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
+  @HiveField(0)
+  final int value;
+  @HiveField(1)
+  final String name;
+  @HiveField(2)
+  final String level;
+
   StockJittaFactorGrowthModel({
-    required super.value,
-    required super.name,
-    required super.level,
-  });
+    required this.value,
+    required this.name,
+    required this.level,
+  }) : super(
+    value: value,
+    name: name,
+    level: level,
+  );
 
   factory StockJittaFactorGrowthModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorGrowthModel(
@@ -113,12 +221,24 @@ class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
   }
 }
 
+@HiveType(typeId: 16)
 class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
+  @HiveField(0)
+  final int value;
+  @HiveField(1)
+  final String name;
+  @HiveField(2)
+  final String level;
+
   StockJittaFactorFinancialModel({
-    required super.value,
-    required super.name,
-    required super.level,
-  });
+    required this.value,
+    required this.name,
+    required this.level,
+  }) : super(
+    value: value,
+    name: name,
+    level: level,
+  );
 
   factory StockJittaFactorFinancialModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorFinancialModel(
@@ -129,12 +249,24 @@ class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
   }
 }
 
+@HiveType(typeId: 17)
 class StockJittaFactorManagementModel extends StockJittaFactorManagement {
+  @HiveField(0)
+  final int value;
+  @HiveField(1)
+  final String name;
+  @HiveField(2)
+  final String level;
+
   StockJittaFactorManagementModel({
-    required super.value,
-    required super.name,
-    required super.level,
-  });
+    required this.value,
+    required this.name,
+    required this.level,
+  }) : super(
+    value: value,
+    name: name,
+    level: level,
+  );
 
   factory StockJittaFactorManagementModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorManagementModel(
@@ -145,11 +277,20 @@ class StockJittaFactorManagementModel extends StockJittaFactorManagement {
   }
 }
 
+@HiveType(typeId: 18)
 class StockGraphPriceModel extends StockGraphPrice {
+  @HiveField(0)
+  final String firstGraphPeriod;
+  @HiveField(1)
+  final List<StockGraphPriceItem> graphs;
+
   StockGraphPriceModel({
-    required super.firstGraphPeriod,
-    required super.graphs,
-  });
+    required this.firstGraphPeriod,
+    required this.graphs,
+  }) : super(
+    firstGraphPeriod: firstGraphPeriod,
+    graphs: graphs,
+  );
 
   factory StockGraphPriceModel.fromJson(Map<String, dynamic>? json) {
     final emptyGraph = StockGraphPriceModel(firstGraphPeriod: '', graphs: []);
@@ -172,17 +313,26 @@ class StockGraphPriceModel extends StockGraphPrice {
   }
 }
 
+@HiveType(typeId: 19)
 class StockGraphPriceItemModel extends StockGraphPriceItem {
+  @HiveField(0)
+  final double stockPrice;
+  @HiveField(1)
+  final double linePrice;
+
   StockGraphPriceItemModel({
-    required super.stockPrice,
-    required super.linePrice,
-  });
+    required this.stockPrice,
+    required this.linePrice,
+  }) : super(
+    stockPrice: stockPrice,
+    linePrice: linePrice,
+  );
 
   factory StockGraphPriceItemModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) return StockGraphPriceItemModel(stockPrice: 0.0, linePrice: 0.0);
     return StockGraphPriceItemModel(
-      stockPrice: 0.0,
-      linePrice: 0.0,
+      stockPrice: json['stockPrice']?.toDouble() ?? 0.0,
+      linePrice: json['linePrice']?.toDouble() ?? 0.0,
     );
   }
 }
