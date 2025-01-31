@@ -36,26 +36,15 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 12),
-            const Text(
-              'Stock Rankings',
-              textAlign: TextAlign.center,
-            ),
             Text(
-              MarketFilter.getMarketName(_selectedMarket),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-                decoration: TextDecoration.none,
-              ),
+              '${MarketFilter.getMarketName(_selectedMarket)} Stock Rankings',
               textAlign: TextAlign.center,
             ),
             BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
               builder: (context, state) {
                 return Text(
-                  state.isConnected ? 'Connected' : 'Disconnected',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey,
-                        decoration: TextDecoration.none,
-                      ),
+                  state.isConnected ? 'Online Mode' : 'Offline Mode',
+                  style: TextStyle(fontSize: 10, color: state.isConnected ? Colors.green : Colors.red),
                 );
               },
             ),
