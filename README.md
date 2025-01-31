@@ -143,3 +143,22 @@ flutter test test/features/stock_ranking/repositories/stock_ranking_repository_t
 # Run with coverage
 flutter test --coverage
 ```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/no-more-magic-feature`)
+3. Commit your changes (`git commit -m 'Add more magic feature'`)
+4. Push to the branch (`git push origin feature/no-more-magic-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details
+
+## Acknowledgments
+
+- Jitta for inspiration and stock analysis methodology
+- Flutter team for the amazing framework
+- Contributors and maintainers of used packages
+- My wife and daughter for their **กำลังใจ** (support and encouragement) 👩🏻‍🍳👧🏻
