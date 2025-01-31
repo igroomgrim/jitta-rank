@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 import 'package:jitta_rank/core/networking/graphql_service.dart';
 import 'package:jitta_rank/core/networking/network_info_service.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class StockDetailScreen extends StatelessWidget {
   final int stockId;
@@ -99,9 +100,10 @@ Widget _buildStockDetail(Stock stock) {
       SizedBox(height: 16),
       _buildJittaFactor(stock.jitta.factor),
       SizedBox(height: 16),
-      _buildSummary(stock.summary),
-      SizedBox(height: 16),
       _buildGraphPrice(stock.graphPrice),
+      SizedBox(height: 16),
+      _buildSummary(stock.summary),
+      SizedBox(height: 32),
     ],
   );
 }
@@ -138,12 +140,75 @@ Widget _buildSummary(String summary) {
 
 Widget _buildGraphPrice(StockGraphPrice graphPrice) {
   if (graphPrice.graphs.isEmpty) return const SizedBox.shrink();
+
+  final filteredGraphs = graphPrice.graphs.where((graph) => graph.linePrice != 0 && graph.stockPrice != 0).toList();
+  final linePrices = filteredGraphs.map((graph) => graph.linePrice).toList();
+  final stockPrices = filteredGraphs.map((graph) => graph.stockPrice).toList();
+  final yAxisLabelInterval = linePrices.length / 2;
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text('Graph Price', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-      Text('First Graph Period: ${graphPrice.firstGraphPeriod}', style: TextStyle(fontSize: 16)),
-      // TODO: build graph
+      SizedBox(height: 8),
+      SizedBox(height: 280,
+        child: LineChart(
+          LineChartData(
+            backgroundColor: Colors.white,
+            gridData: FlGridData(show: false),
+            titlesData: FlTitlesData(
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              topTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              rightTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 36,
+                  interval: yAxisLabelInterval,
+                  getTitlesWidget: (value, meta) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Text(value.toStringAsFixed(1), style: TextStyle(fontSize: 12)),
+                    );
+                  },
+                ),
+              ),
+            ),
+            lineBarsData: [
+              LineChartBarData(
+                spots: List.generate(linePrices.length, (index) => FlSpot(index.toDouble(), linePrices[index])),
+                isCurved: true,
+                color: Colors.blue,
+                dotData: FlDotData(show: false),
+              ),
+              LineChartBarData(
+                spots: List.generate(stockPrices.length, (index) => FlSpot(index.toDouble(), stockPrices[index])),
+                isCurved: true,
+                color: Colors.redAccent,
+                dotData: FlDotData(show: false),
+              ),
+            ]
+          ),
+        ),
+      ),
+      SizedBox(height: 8),
+      RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(text: 'Stock Price', style: TextStyle(color: Colors.red, fontSize: 12)),
+            TextSpan(text: ', ', style: TextStyle(color: Colors.black, fontSize: 12)),
+            TextSpan(text: 'Line Price', style: TextStyle(color: Colors.blue, fontSize: 12)),
+          ],
+        ),
+      ),
+      Text('Most recent ${filteredGraphs.length} price entries', style: TextStyle(fontSize: 12)),
     ],
   );
 }
+
