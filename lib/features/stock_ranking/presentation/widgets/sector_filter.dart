@@ -42,8 +42,8 @@ class SectorFilter extends StatelessWidget {
                   onSelected: (bool selected) {
                     onSectorSelected(sector['id']!);
                   },
-                  selectedColor: Theme.of(context).colorScheme.primaryContainer,
-                  checkmarkColor: Theme.of(context).colorScheme.primary,
+                  selectedColor: Colors.blue.shade100,
+                  checkmarkColor: Colors.white,
                 ),
               );
             }),

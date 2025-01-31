@@ -43,8 +43,8 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
             BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
               builder: (context, state) {
                 return Text(
-                  state.isConnected ? 'Online Mode' : 'Offline Mode',
-                  style: TextStyle(fontSize: 10, color: state.isConnected ? Colors.green : Colors.red),
+                  state.isConnected ? 'Online Mode' : 'Offline Mode - Showing cached data',
+                  style: TextStyle(fontSize: 10, color: state.isConnected ? Colors.blue : Colors.red),
                 );
               },
             ),
@@ -118,9 +118,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
             builder: (context, state) {
               if (state is StockRankingsInitial) {
                   context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: Colors.blue));
                 } else if (state is StockRankingsLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: Colors.blue));
                 } else if (state is StockRankingsLoaded) {
                   return _buildStockRankingList(context, state);
                 } else if (state is StockRankingsError) {
@@ -164,10 +164,12 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
         if (_currentSearchFieldValue.isEmpty) {
           context.read<StockRankingsBloc>().add(PullToRefreshStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
         }
+        _checkInternetConnection();
       },
       notificationPredicate: (ScrollNotification scrollInfo) {
         return _currentSearchFieldValue.isEmpty;
       },
+      color: Colors.blue,
       child: ListView.builder(
         itemCount: state.rankedStocks.length + (state.hasReachedMaxData ? 0 : 1),
         itemBuilder: (context, index) {
@@ -234,7 +236,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Colors.green,
+                      color: Colors.blue,
                     ),
                   ),
                 ],

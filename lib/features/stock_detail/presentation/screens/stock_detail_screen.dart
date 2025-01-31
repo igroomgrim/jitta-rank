@@ -23,7 +23,7 @@ class StockDetailScreen extends StatelessWidget {
               StockDetailGraphqlDatasource(GraphqlService()),
               StockDetailLocalDatasourceImpl(),
               networkInfoService))),
-              // TODO: Should be injected or use provider at app level?
+      // TODO: Should be injected or use provider at app level?
       child: _StockDetailView(stockId: stockId),
     );
   }
@@ -43,28 +43,24 @@ class _StockDetailView extends StatelessWidget {
       appBar: AppBar(title: const Text('Stock Detail')),
       body: RefreshIndicator(
         onRefresh: () async {
-          context
-              .read<StockDetailBloc>()
-              .add(RefreshStockDetailEvent(stockId));
+          context.read<StockDetailBloc>().add(RefreshStockDetailEvent(stockId));
         },
+        color: Colors.blue,
         child: BlocBuilder<StockDetailBloc, StockDetailState>(
           builder: (context, state) {
             if (state is StockDetailInitial) {
-              context
-                  .read<StockDetailBloc>()
-                  .add(GetStockDetailEvent(stockId));
-              return const Center(child: CircularProgressIndicator());
+              context.read<StockDetailBloc>().add(GetStockDetailEvent(stockId));
+              return const Center(child: CircularProgressIndicator(color: Colors.blue));
             } else if (state is StockDetailLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(color: Colors.blue));
             } else if (state is StockDetailLoaded) {
               return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
                       _buildStockDetail(state.stock),
                     ],
                   ),
@@ -84,7 +80,9 @@ class _StockDetailView extends StatelessWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<StockDetailBloc>().add(RefreshStockDetailEvent(stockId));
+                        context
+                            .read<StockDetailBloc>()
+                            .add(RefreshStockDetailEvent(stockId));
                       },
                       child: const Text('Try Again'),
                     ),
@@ -105,11 +103,11 @@ Widget _buildStockDetail(Stock stock) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _buildHeader(stock),
-      const SizedBox(height: 8),
+      const SizedBox(height: 4),
       _buildJittaCard(stock, stock.jitta.factor),
-      const SizedBox(height: 8),
+      const SizedBox(height: 4),
       _buildGraphPrice(stock.graphPrice),
-      const SizedBox(height: 8),
+      const SizedBox(height: 4),
       if (stock.summary.isNotEmpty) _buildSummary(stock.summary),
       SizedBox(height: 16),
     ],
@@ -119,13 +117,13 @@ Widget _buildStockDetail(Stock stock) {
 Widget _buildHeader(Stock stock) {
   return Card(
     child: Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             stock.symbol,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
           ),
           Text(
             stock.name,
@@ -133,7 +131,7 @@ Widget _buildHeader(Stock stock) {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Price Information',
+            'Price',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -147,7 +145,7 @@ Widget _buildHeader(Stock stock) {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: Colors.blue,
                 ),
               ),
               const SizedBox(width: 8),
@@ -171,7 +169,6 @@ Widget _buildHeader(Stock stock) {
 
 Widget _buildJittaCard(Stock stock, StockJittaFactor factor) {
   return Card(
-    elevation: 2,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -184,8 +181,9 @@ Widget _buildJittaCard(Stock stock, StockJittaFactor factor) {
               fontWeight: FontWeight.bold,
             ),
           ),
-          MetricRow('Jitta Rank Score', stock.jittaRankScore.toStringAsFixed(2)),
           MetricRow('Jitta Score', stock.jitta.score.toStringAsFixed(2)),
+          MetricRow(
+              'Jitta Rank Score', stock.jittaRankScore.toStringAsFixed(2)),
           MetricRow('Jitta Total', stock.jitta.total.toString()),
           MetricRow('Loss Chance', '${stock.lossChance.toStringAsFixed(2)}%'),
           const SizedBox(height: 12),
@@ -218,86 +216,112 @@ Widget _buildJittaCard(Stock stock, StockJittaFactor factor) {
 Widget _buildGraphPrice(StockGraphPrice graphPrice) {
   if (graphPrice.graphs.isEmpty) return const SizedBox.shrink();
 
-  final filteredGraphs = graphPrice.graphs.where((graph) => graph.linePrice != 0 && graph.stockPrice != 0).toList();
+  final filteredGraphs = graphPrice.graphs
+      .where((graph) => graph.linePrice != 0 && graph.stockPrice != 0)
+      .toList();
   final linePrices = filteredGraphs.map((graph) => graph.linePrice).toList();
   final stockPrices = filteredGraphs.map((graph) => graph.stockPrice).toList();
   final yAxisLabelInterval = linePrices.length / 2;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Graph Price', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      SizedBox(height: 8),
-      SizedBox(height: 280,
-        child: LineChart(
-          LineChartData(
-            backgroundColor: Colors.white,
-            gridData: FlGridData(show: false),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              topTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              rightTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 36,
-                  interval: yAxisLabelInterval,
-                  getTitlesWidget: (value, meta) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Text(value.toStringAsFixed(1), style: TextStyle(fontSize: 12)),
-                    );
-                  },
-                ),
-              ),
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Graph Price',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 8),
+          SizedBox(
+            height: 280,
+            child: LineChart(
+              LineChartData(
+                  backgroundColor: Colors.white,
+                  gridData: FlGridData(show: false),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 36,
+                        interval: yAxisLabelInterval,
+                        getTitlesWidget: (value, meta) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(value.toStringAsFixed(1),
+                                style: TextStyle(fontSize: 12)),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: List.generate(
+                          linePrices.length,
+                          (index) =>
+                              FlSpot(index.toDouble(), linePrices[index])),
+                      isCurved: true,
+                      color: Colors.blue,
+                      dotData: FlDotData(show: false),
+                    ),
+                    LineChartBarData(
+                      spots: List.generate(
+                          stockPrices.length,
+                          (index) =>
+                              FlSpot(index.toDouble(), stockPrices[index])),
+                      isCurved: true,
+                      color: Colors.redAccent,
+                      dotData: FlDotData(show: false),
+                    ),
+                  ]),
             ),
-            lineBarsData: [
-              LineChartBarData(
-                spots: List.generate(linePrices.length, (index) => FlSpot(index.toDouble(), linePrices[index])),
-                isCurved: true,
-                color: Colors.blue,
-                dotData: FlDotData(show: false),
-              ),
-              LineChartBarData(
-                spots: List.generate(stockPrices.length, (index) => FlSpot(index.toDouble(), stockPrices[index])),
-                isCurved: true,
-                color: Colors.redAccent,
-                dotData: FlDotData(show: false),
-              ),
-            ]
           ),
-        ),
+          SizedBox(height: 8),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                    text: 'Stock Price',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+                TextSpan(
+                    text: ', ',
+                    style: TextStyle(color: Colors.black, fontSize: 12)),
+                TextSpan(
+                    text: 'Line Price',
+                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+              ],
+            ),
+          ),
+          Text('Most recent ${filteredGraphs.length} price entries',
+              style: TextStyle(fontSize: 12)),
+        ],
       ),
-      SizedBox(height: 8),
-      RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(text: 'Stock Price', style: TextStyle(color: Colors.red, fontSize: 12)),
-            TextSpan(text: ', ', style: TextStyle(color: Colors.black, fontSize: 12)),
-            TextSpan(text: 'Line Price', style: TextStyle(color: Colors.blue, fontSize: 12)),
-          ],
-        ),
-      ),
-      Text('Most recent ${filteredGraphs.length} price entries', style: TextStyle(fontSize: 12)),
-    ],
+    ),
   );
 }
 
 Widget _buildSummary(String summary) {
   if (summary.isEmpty) return const SizedBox.shrink();
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      Text(summary, style: TextStyle(fontSize: 16)),
-    ],
-  );
+  return Card(
+          child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Summary',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(summary, style: TextStyle(fontSize: 16)),
+            ],
+          )));
 }
 
 class MetricRow extends StatelessWidget {
@@ -335,8 +359,6 @@ class MetricRow extends StatelessWidget {
 
 Widget _buildLatestPriceTimestamp(StockPrice price) {
   return Text(
-    'Latest Price Timestamp: ${price.latestPriceTimestamp != null ? price.latestPriceTimestamp.toString().split(' ')[0] : '-'}',
-    style: TextStyle(fontSize: 14, color: Colors.grey[600])
-  );
+      'Latest Price Timestamp: ${price.latestPriceTimestamp != null ? price.latestPriceTimestamp.toString().split(' ')[0] : '-'}',
+      style: TextStyle(fontSize: 14, color: Colors.grey[600]));
 }
-
