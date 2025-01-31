@@ -2,25 +2,38 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 
 class GraphqlService {
-  static const String _baseUrl = ApiConstants.baseUrl;
+  final GraphQLClient _client;
 
-  static HttpLink httpLink = HttpLink(
-    _baseUrl,
-    defaultHeaders: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  );
+  GraphqlService({GraphQLClient? client})
+      : _client = client ?? _createClient();
 
-  static GraphQLClient client = GraphQLClient(
-    link: httpLink,
-    cache: GraphQLCache(
-      store: InMemoryStore(),
-    ),
-  );
+  static GraphQLClient _createClient() {
+    final HttpLink httpLink = HttpLink(
+      ApiConstants.baseUrl,
+      defaultHeaders: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    return GraphQLClient(
+      link: httpLink,
+      cache: GraphQLCache(
+        store: InMemoryStore(),
+        partialDataPolicy: PartialDataCachePolicy.accept,
+      ),
+      defaultPolicies: DefaultPolicies(
+        query: Policies(
+          fetch: FetchPolicy.networkOnly,
+          error: ErrorPolicy.none,
+          cacheReread: CacheRereadPolicy.mergeOptimistic,
+        ),
+      ),
+    );
+  }
 
   Future<QueryResult> performQuery(String query, [Map<String, dynamic>? variables]) async {
-    return await client.query(
+    return await _client.query(
       QueryOptions(
         document: gql(query),
         variables: variables ?? {},
@@ -28,8 +41,9 @@ class GraphqlService {
     );
   }
 
+  // Prepare for mutation
   Future<QueryResult> performMutation(String mutation, [Map<String, dynamic>? variables]) async {
-    return await client.mutate(
+    return await _client.mutate(
       MutationOptions(
         document: gql(mutation),
         variables: variables ?? {},
