@@ -43,4 +43,8 @@ class MockStockRankingData {
   static List<RankedStock> getMockStockRankings() {
     return [getMockRankedStock()];
   }
+
+  static List<RankedStock> getMockStockRankingsWithLoadMore() {
+    return [getMockRankedStock(), getMockRankedStock()];
+  }
 }
