@@ -129,13 +129,18 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(state.message),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(state.message, textAlign: TextAlign.center),
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
                             context.read<StockRankingsBloc>().add(GetStockRankingsEvent(market: _selectedMarket, sectors: _selectedSectors));
                           },
-                          child: const Text('Reload Stocks'),
+                          child: const Text('Try Again'),
                         ),
                       ],
                     ),

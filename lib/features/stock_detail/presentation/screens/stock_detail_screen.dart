@@ -72,7 +72,25 @@ class _StockDetailView extends StatelessWidget {
               );
             } else if (state is StockDetailError) {
               return Center(
-                  child: Text('Error loading stock detail ${state.message}'));
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(state.message, textAlign: TextAlign.center),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<StockDetailBloc>().add(RefreshStockDetailEvent(stockId));
+                      },
+                      child: const Text('Try Again'),
+                    ),
+                  ],
+                ),
+              );
             }
             return const SizedBox.shrink();
           },
