@@ -46,11 +46,11 @@ lib/
 │ ├── navigation/ 		# Navigation management
 │ └── networking/ 		# Network services and connectivity
 ├── features/ 			# Feature modules
-│ ├── stock_ranking/ 	# Stock ranking feature
+│ ├── stock_ranking/ 	        # Stock ranking feature
 │ │ ├── data/ 			# Data layer (repositories, models, datasources)
 │ │ ├── domain/ 		# Business logic (repositories(abstract), entities, usecases)
-│ │ └── presentation/ 	# UI layer (screens, widgets, blocs)
-│ └── stock_detail/ 	# Stock detail feature
+│ │ └── presentation/ 	        # UI layer (screens, widgets, blocs)
+│ └── stock_detail/ 	        # Stock detail feature
 └── main.dart
 ```
 
