@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:jitta_rank/core/networking/network_info_service.dart';
-import '../../mocks/mock_network_info_service.mocks.dart';
+import '../../mocks/core/networking/mock_network_info_service.mocks.dart';
 
 void main() {
   late NetworkInfoService networkInfoService;

@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 import '../../../mocks/features/stock_detail/mock_stock_detail_graphql_datasource.mocks.dart';
 import '../../../mocks/features/stock_detail/mock_stock_detail_local_datasource.mocks.dart';
-import '../../../mocks/mock_network_info_service.mocks.dart';
+import '../../../mocks/core/networking/mock_network_info_service.mocks.dart';
 import '../../../mocks/features/stock_detail/mock_stock_detail_data.dart';
 
 void main() {

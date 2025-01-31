@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jitta_rank/core/networking/graphql_service.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mockito/mockito.dart';
-import '../../mocks/mock_graphql_service.mocks.dart';
+import '../../mocks/core/networking/mock_graphql_service.mocks.dart';
 
 void main() {
   late GraphqlService service;
