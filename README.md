@@ -35,3 +35,21 @@ Jitta Rank is a mobile application that allows users to:
 - Interactive price history graph
 - Real-time price updates (when online)
 - Offline access to previously loaded data
+
+## Architecture
+The application follows Clean Architecture principles with three main layers:
+
+```
+lib/
+├── core/          		# Shared core functionality
+│ ├── error/	 		# Error handling and exceptions
+│ ├── navigation/ 		# Navigation management
+│ └── networking/ 		# Network services and connectivity
+├── features/ 			# Feature modules
+│ ├── stock_ranking/ 	# Stock ranking feature
+│ │ ├── data/ 			# Data layer (repositories, models, datasources)
+│ │ ├── domain/ 		# Business logic (repositories(abstract), entities, usecases)
+│ │ └── presentation/ 	# UI layer (screens, widgets, blocs)
+│ └── stock_detail/ 	# Stock detail feature
+└── main.dart
+```
