@@ -18,7 +18,9 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
   @override
   Future<List<RankedStockModel>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
     final List<RankedStockModel> rankedStocks = box.values.toList();
-    return rankedStocks;
+    final filteredByMarketStocks = _filterByMarket(rankedStocks, market);
+    final filteredBySectorsStocks = _filterBySectors(filteredByMarketStocks, sectors);
+    return filteredBySectorsStocks.toList();
   }
 
   @override
@@ -43,14 +45,19 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
     final filteredByKeywordStocks = rankedStocks.where((stock) => 
       stock.symbol.toLowerCase().contains(keyword.toLowerCase()) || 
       stock.title.toLowerCase().contains(keyword.toLowerCase())
-    );
+    ).toList();
 
-    final filteredByMarketStocks = filteredByKeywordStocks.where((stock) => stock.market == market);
-    if (sectors.isEmpty) {
-      return filteredByMarketStocks.toList();
-    }
-
-    final filteredBySectorsStocks = filteredByMarketStocks.where((stock) => sectors.contains(stock.sector?.id ?? ''));
+    final filteredByMarketStocks = _filterByMarket(filteredByKeywordStocks, market);
+    final filteredBySectorsStocks = _filterBySectors(filteredByMarketStocks, sectors);
     return filteredBySectorsStocks.toList();
+  }
+
+  List<RankedStockModel> _filterByMarket(List<RankedStockModel> rankedStocks, String market) {
+    return rankedStocks.where((stock) => stock.market == market).toList();
+  }
+
+  List<RankedStockModel> _filterBySectors(List<RankedStockModel> rankedStocks, List<String> sectors) {
+    if (sectors.isEmpty) return rankedStocks;
+    return rankedStocks.where((stock) => sectors.contains(stock.sector?.id ?? '')).toList();
   }
 }
