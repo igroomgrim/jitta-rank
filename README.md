@@ -65,3 +65,50 @@ lib/
    - Falls back to local cache if offline
    - Updates local cache with new data
 5. UI updates based on new states from BLoC
+
+## Setup & Installation
+
+### Prerequisites
+
+- Flutter SDK (2.19.0 or higher)
+- Dart SDK (3.0.0 or higher)
+- Android Studio / VS Code with Flutter extensions
+- A device or emulator running Android/iOS
+
+### Dependencies
+
+Key dependencies used in this project:
+
+```yaml
+dependencies:
+  flutter_bloc: ^8.1.4 # state management
+  equatable: ^2.0.5 # for comparing objects
+  graphql_flutter: ^5.1.2 # for graphql
+  internet_connection_checker: ^1.0.0 # for checking internet connection
+  hive: ^2.2.3 # for local database
+  hive_flutter: ^1.1.0
+  fl_chart: ^0.70.0 # for chart
+  dartz: ^0.10.1 # for error handling
+```
+
+### Getting Started
+
+1. Clone the repository:
+```bash
+git clone https://github.com/igroomgrim/jitta_rank.git
+```
+
+2. Install dependencies:
+```bash
+flutter pub get
+```
+
+3. Generate Hive adapters:
+```bash
+flutter pub run build_runner build
+```
+
+4. Run the app:
+```bash
+flutter run
+```
