@@ -54,6 +54,18 @@ lib/
 └── main.dart
 ```
 
+### High-Level Architecture Diagram
+
+```mermaid
+graph TD
+    A[UI Layer<br/>Screens & Widgets] --> B[BLoC/Cubit<br/>State Management]
+    B --> C[Use Cases<br/>Business Logic]
+    C --> D[Repository<br/>Data Coordination]
+    D --> E[Remote Data Source<br/>GraphQL API]
+    D --> F[Local Data Source<br/>Hive Storage]
+    G[Network Info Service] --> D
+```
+
 ### Data Flow
 
 1. UI triggers events through BLoC/Cubit
