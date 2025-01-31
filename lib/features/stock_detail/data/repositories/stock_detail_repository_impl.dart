@@ -3,6 +3,8 @@ import 'package:jitta_rank/features/stock_detail/data/datasources/stock_detail_g
 import 'package:jitta_rank/features/stock_detail/domain/entities/stock.dart';
 import 'package:jitta_rank/features/stock_detail/data/datasources/stock_detail_local_datasource.dart';
 import 'package:jitta_rank/core/networking/network_info_service.dart';
+import 'package:dartz/dartz.dart';
+import 'package:jitta_rank/core/error/error.dart';
 
 class StockDetailRepositoryImpl extends StockDetailRepository {
   final StockDetailGraphqlDatasource graphqlDatasource;
@@ -12,19 +14,30 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
   StockDetailRepositoryImpl(this.graphqlDatasource, this.localDatasource, this.networkInfoService);
 
   @override
-  Future<Stock> getStockDetail(int stockId) async {
-    if (await networkInfoService.isConnected) {
+  Future<Either<Failure, Stock>> getStockDetail(int stockId) async {
+    if (await networkInfoService.isConnected) { // ONLINE
       try {
         final stockDetail = await graphqlDatasource.getStockDetail(stockId);
-        await localDatasource.saveStockDetail(stockDetail);
-        return stockDetail;
+        try {
+          await localDatasource.saveStockDetail(stockDetail);
+        } catch (e) {
+          print('StockDetailRepositoryImpl: ONLINE - error: $e');
+          return left(CacheFailure('Failed to save stock detail to local datasource'));
+        }
+
+        return right(stockDetail);
       } catch (e) {
-        throw Exception('Failed to fetch stock detail');
+        print('StockDetailRepositoryImpl: ONLINE - error: $e');
+        return left(ServerFailure('Failed to fetch stock detail from remote datasource'));
       }
-    } else {
-      print('StockDetailRepositoryImpl: OFFLINE - loading from local');
-      final stockDetailFromLocal = await localDatasource.getStockDetail(stockId);
-      return stockDetailFromLocal;
+    } else { // OFFLINE
+      try {
+        final stockDetailFromLocal = await localDatasource.getStockDetail(stockId);
+        return right(stockDetailFromLocal);
+      } catch (e) {
+        print('StockDetailRepositoryImpl: OFFLINE - error: $e');
+        return left(CustomFailure(message: 'You are offline, and we couldn’t find any stock detail data. Please check your connection!'));
+      }
     }
   }
 }
