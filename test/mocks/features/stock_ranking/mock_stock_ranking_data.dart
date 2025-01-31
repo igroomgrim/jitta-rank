@@ -39,4 +39,8 @@ class MockStockRankingData {
       market: mockRankedStock.market,
     );
   }
+
+  static List<RankedStock> getMockStockRankings() {
+    return [getMockRankedStock()];
+  }
 }
