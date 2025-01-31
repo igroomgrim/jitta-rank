@@ -53,3 +53,15 @@ lib/
 │ └── stock_detail/ 	# Stock detail feature
 └── main.dart
 ```
+
+### Data Flow
+
+1. UI triggers events through BLoC/Cubit
+2. BLoC executes appropriate use cases
+3. Use cases interact with repositories
+4. Repository:
+   - Checks network connectivity
+   - Fetches from GraphQL API if online
+   - Falls back to local cache if offline
+   - Updates local cache with new data
+5. UI updates based on new states from BLoC
