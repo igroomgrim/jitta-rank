@@ -24,3 +24,7 @@ class NetworkFailure extends Failure {
 class SerializationFailure extends Failure {
   const SerializationFailure([String message = 'Serialization Failure']) : super(message: message);
 }
+
+class CustomFailure extends Failure {
+  const CustomFailure({required super.message});
+}

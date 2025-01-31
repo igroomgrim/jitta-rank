@@ -3,6 +3,8 @@ import 'package:jitta_rank/features/stock_ranking/domain/repositories/stock_rank
 import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_graphql_datasource.dart';
 import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_local_datasource.dart';
 import 'package:jitta_rank/core/networking/network_info_service.dart';
+import 'package:dartz/dartz.dart';
+import 'package:jitta_rank/core/error/error.dart';
 
 class StockRankingRepositoryImpl extends StockRankingRepository {
   final StockRankingGraphqlDatasource graphqlDatasource;
@@ -12,26 +14,50 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
   StockRankingRepositoryImpl(this.graphqlDatasource, this.localDatasource, this.networkInfoService);
 
   @override
-  Future<List<RankedStock>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
-    if (await networkInfoService.isConnected) {
+  Future<Either<Failure, List<RankedStock>>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
+    if (await networkInfoService.isConnected) { // ONLINE
       try {
         final rankedStocks = await graphqlDatasource.getStockRankings(limit, market, page, sectors);
-        print('StockRankingRepositoryImpl: ONLINE - page: $page market: $market sectors: $sectors limit: $limit rankedStocks: ${rankedStocks.length}');
-        await localDatasource.saveStockRankings(rankedStocks);
-        return rankedStocks;
+        try {
+          await localDatasource.saveStockRankings(rankedStocks);
+        } catch (e) {
+          print('StockRankingRepositoryImpl: OFFLINE - error: $e');
+          return left(CacheFailure('Failed to save stock rankings to local datasource'));
+        }
+
+        return right(rankedStocks);        
       } catch (e) {
         print('StockRankingRepositoryImpl: ONLINE - error: $e');
-        throw Exception('Failed to fetch stock rankings from remote datasource');
+        return left(ServerFailure('Failed to fetch stock rankings from remote datasource'));
       }
-    } else {
-      print('StockRankingRepositoryImpl: OFFLINE - loading from local');
-      final rankedStocksFromLocal = await localDatasource.getStockRankings(limit, market, page, sectors);
-      return rankedStocksFromLocal;
+
+    } else { // OFFLINE
+      try {
+        final rankedStocksFromLocal = await localDatasource.getStockRankings(limit, market, page, sectors);
+
+        if (rankedStocksFromLocal.isEmpty) { // OFFLINE + NO DATA
+          return left(CustomFailure(message: 'You are offline, and we couldn’t find any stock rankings data. Please check your connection!'));
+        }
+
+        return right(rankedStocksFromLocal);
+      } catch (e) {
+        print('StockRankingRepositoryImpl: OFFLINE - error: $e');
+        return left(CacheFailure('Failed to fetch stock rankings from local datasource'));
+      }
     }
   }
 
   @override
-  Future<List<RankedStock>> searchStockRankings(String keyword, String market, List<String> sectors) async {
-    return await localDatasource.searchStockRankings(keyword, market, sectors);
+  Future<Either<Failure, List<RankedStock>>> searchStockRankings(String keyword, String market, List<String> sectors) async {
+    // Search stock rankings from local datasource - ONLY
+    try {
+      final rankedStocks = await localDatasource.searchStockRankings(keyword, market, sectors);
+      return right(rankedStocks);
+    } catch (e) {
+      print('StockRankingRepositoryImpl: OFFLINE - error: $e');
+      return left(CacheFailure('Failed to search stock rankings from local datasource'));
+    }
   }
 }
+
+// TODO: Revise error massage and remove print statements
