@@ -55,7 +55,7 @@ class MarketFilter extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text('Cancel', style: TextStyle(color: Colors.red)),
         ),
         FilledButton(
           onPressed: () {
@@ -63,7 +63,10 @@ class MarketFilter extends StatelessWidget {
               'market': selectedMarket,
             });
           },
-          child: const Text('Apply'),
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(Colors.blue),
+          ),
+          child: const Text('Apply', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
