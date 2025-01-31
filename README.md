@@ -140,6 +140,15 @@ Box configurations:
 - stock_graph_price_item: Historical price data for graph
 - stock_graph_price: Graph price data
 
+## Error Handling
+
+The application implements comprehensive error handling:
+- API errors
+- Cache failures
+- Data validation
+- Network connectivity issues
+- UI error messages with retry options
+
 ## Setup & Installation
 
 ## Prerequisites
