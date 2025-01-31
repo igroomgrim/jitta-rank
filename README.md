@@ -78,9 +78,29 @@ graph TD
    - Updates local cache with new data
 5. UI updates based on new states from BLoC
 
-## Network Layer
+## State Management
 
-### GraphQL implementation features:
+The application uses BLoC pattern with the following components:
+
+- **StockRankingsBloc**: 
+    - Manages stock list state
+    - Handles pagination
+    - Implements search and filtering
+    - Manages data refresh
+
+- **StockDetailBloc**: 
+    - Manages stock detail state
+    - Manages data refresh
+
+- **NetworkInfoBloc**: 
+    - Monitors network connectivity
+
+- **NavigationCubit**: 
+    - Handles app navigation
+    - Maintains navigation state
+    - Manages navigation history
+
+## GraphQL implementation features:
 - Network-only fetch policy
 - HTTP link configuration
 - In-memory store
@@ -98,7 +118,7 @@ graph TD
 - Android Studio / VS Code with Flutter extensions
 - A device or emulator running Android/iOS
 
-### Dependencies
+## Dependencies
 
 Key dependencies used in this project:
 
@@ -114,7 +134,7 @@ dependencies:
   dartz: ^0.10.1 # for error handling
 ```
 
-### Getting Started
+## Getting Started
 
 1. Clone the repository:
 ```bash
