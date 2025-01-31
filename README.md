@@ -109,6 +109,37 @@ The application uses BLoC pattern with the following components:
 - Basic error handling
 - Optimistic cache merging
 
+## Local Storage (Hive)
+
+Hive is used for local storage with the following type adapters:
+
+```dart
+- RankedStockModel
+- SectorModel
+- StockModel
+- StockPriceModel
+- StockJittaModel
+- StockJittaFactorModel
+- StockJittaFactorGrowthModel
+- StockJittaFactorFinancialModel
+- StockJittaFactorManagementModel
+- StockGraphPriceItemModel
+- StockGraphPriceModel
+```
+
+Box configurations:
+- ranked_stocks: Cached stock rankings
+- sectors: Available market sectors
+- stock_detail: Detailed stock information
+- stock_price: Historical price data
+- stock_jitta: Jitta analysis data
+- stock_jitta_factor: Jitta factor analysis data
+- stock_jitta_factor_growth: Jitta factor growth analysis data
+- stock_jitta_factor_financial: Jitta factor financial analysis data
+- stock_jitta_factor_management: Jitta factor management analysis data
+- stock_graph_price_item: Historical price data for graph
+- stock_graph_price: Graph price data
+
 ## Setup & Installation
 
 ## Prerequisites
