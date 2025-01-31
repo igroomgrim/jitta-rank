@@ -54,7 +54,7 @@ lib/
 └── main.dart
 ```
 
-### High-Level Architecture Diagram
+## High-Level Architecture Diagram
 
 ```mermaid
 graph TD
@@ -66,7 +66,7 @@ graph TD
     G[Network Info Service] --> D
 ```
 
-### Data Flow
+## Data Flow
 
 1. UI triggers events through BLoC/Cubit
 2. BLoC executes appropriate use cases
@@ -78,9 +78,20 @@ graph TD
    - Updates local cache with new data
 5. UI updates based on new states from BLoC
 
+## Network Layer
+
+### GraphQL implementation features:
+- Network-only fetch policy
+- HTTP link configuration
+- In-memory store
+- Accepts partial data
+- Network-first data fetching
+- Basic error handling
+- Optimistic cache merging
+
 ## Setup & Installation
 
-### Prerequisites
+## Prerequisites
 
 - Flutter SDK (2.19.0 or higher)
 - Dart SDK (3.0.0 or higher)
