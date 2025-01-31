@@ -104,55 +104,114 @@ Widget _buildStockDetail(Stock stock) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('${stock.symbol} - ${stock.name}',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      SizedBox(height: 10),
-      Text(stock.nativeName, style: TextStyle(fontSize: 16)),
-      Text('Jitta Rank Score: ${stock.jittaRankScore.toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
-      Text('Latest Price: ${stock.currencySign}${stock.price.close} ${stock.currency}', style: TextStyle(fontSize: 16)),
-      _buildLatestPriceTimestamp(stock.price),
-      Text('Jitta Score: ${stock.jitta.score.toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
-      Text('Jitta Total: ${stock.jitta.total}', style: TextStyle(fontSize: 16)),
-      Text('Loss Chance: ${stock.lossChance.toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
-      Text('Sector: ${stock.sectorName}', style: TextStyle(fontSize: 16)),
-      SizedBox(height: 16),
-      _buildJittaFactor(stock.jitta.factor),
-      SizedBox(height: 16),
+      _buildHeader(stock),
+      const SizedBox(height: 8),
+      _buildJittaCard(stock, stock.jitta.factor),
+      const SizedBox(height: 8),
       _buildGraphPrice(stock.graphPrice),
+      const SizedBox(height: 8),
+      if (stock.summary.isNotEmpty) _buildSummary(stock.summary),
       SizedBox(height: 16),
-      _buildSummary(stock.summary),
-      SizedBox(height: 32),
     ],
   );
 }
 
-Widget _buildLatestPriceTimestamp(StockPrice price) {
-  return Text(
-    'Latest Price Timestamp: ${price.latestPriceTimestamp != null ? price.latestPriceTimestamp.toString().split(' ')[0] : '-'}',
-    style: TextStyle(fontSize: 16)
+Widget _buildHeader(Stock stock) {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            stock.symbol,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          ),
+          Text(
+            stock.name,
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Price Information',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          // const SizedBox(height: 12),
+          Row(
+            children: [
+              Text(
+                '${stock.currencySign}${stock.price.close}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                stock.currency,
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w200,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          _buildLatestPriceTimestamp(stock.price),
+        ],
+      ),
+    ),
   );
 }
 
-Widget _buildJittaFactor(StockJittaFactor factor) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Jitta Factor', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-      Text('Growth: ${factor.growth.value}', style: TextStyle(fontSize: 16)),
-      Text('Financial: ${factor.financial.value}', style: TextStyle(fontSize: 16)),
-      Text('Management: ${factor.management.value}', style: TextStyle(fontSize: 16)),
-    ],
-  );
-}
-
-Widget _buildSummary(String summary) {
-  if (summary.isEmpty) return const SizedBox.shrink();
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Summary', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-      Text(summary, style: TextStyle(fontSize: 16)),
-    ],
+Widget _buildJittaCard(Stock stock, StockJittaFactor factor) {
+  return Card(
+    elevation: 2,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Jitta Metrics',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          MetricRow('Jitta Rank Score', stock.jittaRankScore.toStringAsFixed(2)),
+          MetricRow('Jitta Score', stock.jitta.score.toStringAsFixed(2)),
+          MetricRow('Jitta Total', stock.jitta.total.toString()),
+          MetricRow('Loss Chance', '${stock.lossChance.toStringAsFixed(2)}%'),
+          const SizedBox(height: 12),
+          const Text(
+            'Jitta Factor',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          MetricRow('Growth', factor.growth.value.toString()),
+          MetricRow('Financial', factor.financial.value.toString()),
+          MetricRow('Management', factor.management.value.toString()),
+          const SizedBox(height: 12),
+          const Text(
+            'Market Information',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          MetricRow('Market', stock.market),
+          MetricRow('Sector', stock.sectorName),
+        ],
+      ),
+    ),
   );
 }
 
@@ -167,7 +226,7 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('Graph Price', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      Text('Graph Price', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       SizedBox(height: 8),
       SizedBox(height: 280,
         child: LineChart(
@@ -227,6 +286,57 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
       ),
       Text('Most recent ${filteredGraphs.length} price entries', style: TextStyle(fontSize: 12)),
     ],
+  );
+}
+
+Widget _buildSummary(String summary) {
+  if (summary.isEmpty) return const SizedBox.shrink();
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      Text(summary, style: TextStyle(fontSize: 16)),
+    ],
+  );
+}
+
+class MetricRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const MetricRow(this.label, this.value, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _buildLatestPriceTimestamp(StockPrice price) {
+  return Text(
+    'Latest Price Timestamp: ${price.latestPriceTimestamp != null ? price.latestPriceTimestamp.toString().split(' ')[0] : '-'}',
+    style: TextStyle(fontSize: 14, color: Colors.grey[600])
   );
 }
 
