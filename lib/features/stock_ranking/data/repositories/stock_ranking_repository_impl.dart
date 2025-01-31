@@ -21,13 +21,11 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
         try {
           await localDatasource.saveStockRankings(rankedStocks);
         } catch (e) {
-          print('StockRankingRepositoryImpl: OFFLINE - error: $e');
           return left(CacheFailure('Failed to save stock rankings to local datasource'));
         }
 
         return right(rankedStocks);        
       } catch (e) {
-        print('StockRankingRepositoryImpl: ONLINE - error: $e');
         return left(ServerFailure('Failed to fetch stock rankings from remote datasource'));
       }
 
@@ -41,7 +39,6 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
 
         return right(rankedStocksFromLocal);
       } catch (e) {
-        print('StockRankingRepositoryImpl: OFFLINE - error: $e');
         return left(CacheFailure('Failed to fetch stock rankings from local datasource'));
       }
     }
@@ -54,7 +51,6 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
       final rankedStocks = await localDatasource.searchStockRankings(keyword, market, sectors);
       return right(rankedStocks);
     } catch (e) {
-      print('StockRankingRepositoryImpl: OFFLINE - error: $e');
       return left(CacheFailure('Failed to search stock rankings from local datasource'));
     }
   }

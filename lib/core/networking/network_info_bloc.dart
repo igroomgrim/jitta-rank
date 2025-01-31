@@ -22,7 +22,6 @@ class NetworkInfoBloc extends Bloc<NetworkInfoEvent, NetworkInfoState> {
 
   void _onCheckConnectionEvent(event, emit) async {
     final isConnected = await networkInfoService.isConnected;
-    print('NetworkInfoBloc: Connection status: $isConnected');
     emit(NetworkInfoState(isConnected: isConnected));
   }
 }

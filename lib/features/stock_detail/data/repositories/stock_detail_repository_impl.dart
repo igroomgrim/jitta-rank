@@ -21,13 +21,11 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
         try {
           await localDatasource.saveStockDetail(stockDetail);
         } catch (e) {
-          print('StockDetailRepositoryImpl: ONLINE - error: $e');
           return left(CacheFailure('Failed to save stock detail to local datasource'));
         }
 
         return right(stockDetail);
       } catch (e) {
-        print('StockDetailRepositoryImpl: ONLINE - error: $e');
         return left(ServerFailure('Failed to fetch stock detail from remote datasource'));
       }
     } else { // OFFLINE
@@ -35,7 +33,6 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
         final stockDetailFromLocal = await localDatasource.getStockDetail(stockId);
         return right(stockDetailFromLocal);
       } catch (e) {
-        print('StockDetailRepositoryImpl: OFFLINE - error: $e');
         return left(CustomFailure(message: 'You are offline, and we couldn’t find any stock detail data. Please check your connection!'));
       }
     }
