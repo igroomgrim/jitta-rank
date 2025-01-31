@@ -112,3 +112,22 @@ flutter pub run build_runner build
 ```bash
 flutter run
 ```
+
+## Testing
+
+The project includes:
+
+- [x] Unit Tests (Services, Repositories, Use Cases)
+- [ ] Widget Tests (UI Components)
+- [ ] Integration Tests (End-to-End Testing)
+
+```bash
+# Run all tests
+flutter test
+
+# Run specific test file
+flutter test test/features/stock_ranking/repositories/stock_ranking_repository_test.dart
+
+# Run with coverage
+flutter test --coverage
+```
