@@ -7,9 +7,13 @@ abstract class NetworkInfoService {
 class NetworkInfoServiceImpl implements NetworkInfoService {
   final InternetConnectionChecker _internetConnectionChecker;
 
-  NetworkInfoServiceImpl({
-    InternetConnectionChecker? internetConnectionChecker
-  }) : _internetConnectionChecker = internetConnectionChecker ?? InternetConnectionChecker();
+  NetworkInfoServiceImpl({InternetConnectionChecker? internetConnectionChecker})
+      : _internetConnectionChecker =
+            internetConnectionChecker ?? _createInternetConnectionChecker();
+
+  static InternetConnectionChecker _createInternetConnectionChecker() {
+    return InternetConnectionChecker();
+  }
     
   @override
   Future<bool> get isConnected => _internetConnectionChecker.hasConnection;
