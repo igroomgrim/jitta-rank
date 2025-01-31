@@ -223,6 +223,17 @@ flutter test --coverage
 4. Push to the branch (`git push origin feature/no-more-magic-feature`)
 5. Open a Pull Request
 
+## After coffee break
+- [ ] More clean code
+- [ ] More tests
+- [ ] More integration tests
+- [ ] More error handling
+- [ ] More UI Animation
+- [ ] More performance optimization
+- [ ] More documentation
+- [ ] More dependency injection
+- [ ] More sleep
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details
