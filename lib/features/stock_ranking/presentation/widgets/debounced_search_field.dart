@@ -43,6 +43,14 @@ class _DebouncedSearchFieldState extends State<DebouncedSearchField> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide:BorderSide(color: Colors.grey.shade600, width: 2),
+        ),
         filled: true,
         fillColor: Theme.of(context).colorScheme.surface,
       ),

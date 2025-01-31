@@ -48,7 +48,6 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 );
               },
             ),
-            const SizedBox(height: 12),
           ],
         ),
         centerTitle: true,
@@ -61,11 +60,11 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(120),
+          preferredSize: Size.fromHeight(112),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 4),
                 child: DebouncedSearchField(
                   hintText: 'Search by symbol or title...',
                   onSearch: (searchFieldValue) {
@@ -189,20 +188,128 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   }
 
   Widget _buildStockRankingItem(BuildContext context, RankedStock rankedStock) {
-    return ListTile(
-        title: Text('${rankedStock.symbol} - ${rankedStock.title}'),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Jitta Score: ${rankedStock.jittaScore}'),
-          Text('Latest Price: ${rankedStock.currency}${rankedStock.latestPrice}'),
-          Text('Sector: ${rankedStock.sector?.name ?? '-'}'),
-          Text('Market: ${rankedStock.market}'),
-        ],
-      ),
-      onTap: () {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: InkWell(
+        onTap: () {
           context.read<NavigationCubit>().navigateToStockDetailScreen(rankedStock.stockId);
-      },
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Symbol + Title and Price part
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: rankedStock.symbol,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' - ${rankedStock.title}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${rankedStock.currency}${rankedStock.latestPrice}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              
+              // Jitta Score part
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Jitta Score',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    rankedStock.jittaScore.toString(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              
+              // Market part
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Market',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    rankedStock.market ?? '-',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              
+              // Sector part
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Sector',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      rankedStock.sector?.name ?? '-',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

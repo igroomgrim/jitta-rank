@@ -29,13 +29,13 @@ class SectorFilter extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           children: [
             ...sectors.map((sector) {
               final isSelected = selectedSectors.contains(sector['id']);
               return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(right: 8),
                 child: FilterChip(
                   selected: isSelected,
                   label: Text(sector['name']!),
