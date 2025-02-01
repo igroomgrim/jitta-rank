@@ -27,36 +27,48 @@ void main() {
     mockStockModel = MockStockDetailData.getMockStockModel();
   });
 
-  test('should return stock detail from remote data source when device is online', () async {
+  test(
+      'should return stock detail from remote data source when device is online',
+      () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => true);
-    when(mockStockDetailGraphqlDatasource.getStockDetail(any)).thenAnswer((_) async => mockStockModel);
-    
+    when(mockStockDetailGraphqlDatasource.getStockDetail(any))
+        .thenAnswer((_) async => mockStockModel);
+
     final result = await stockDetailRepository.getStockDetail(1);
 
     expect(result, isA<Right>());
   });
 
-  test('should return stock detail from local data source when device is offline', () async {
+  test(
+      'should return stock detail from local data source when device is offline',
+      () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => false);
-    when(mockStockDetailLocalDatasource.getStockDetail(any)).thenAnswer((_) async => mockStockModel);
+    when(mockStockDetailLocalDatasource.getStockDetail(any))
+        .thenAnswer((_) async => mockStockModel);
 
     final result = await stockDetailRepository.getStockDetail(1);
 
     expect(result, isA<Right>());
   });
 
-  test('should return error when device is online and stock detail is not found in remote data source', () async {
+  test(
+      'should return error when device is online and stock detail is not found in remote data source',
+      () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => true);
-    when(mockStockDetailGraphqlDatasource.getStockDetail(any)).thenThrow(Exception('Stock detail not found'));
+    when(mockStockDetailGraphqlDatasource.getStockDetail(any))
+        .thenThrow(Exception('Stock detail not found'));
 
     final result = await stockDetailRepository.getStockDetail(1);
 
     expect(result, isA<Left>());
   });
 
-  test('should return error when device is offline and stock detail is not found in local data source', () async {
+  test(
+      'should return error when device is offline and stock detail is not found in local data source',
+      () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => false);
-    when(mockStockDetailLocalDatasource.getStockDetail(any)).thenThrow(Exception('Stock detail not found'));
+    when(mockStockDetailLocalDatasource.getStockDetail(any))
+        .thenThrow(Exception('Stock detail not found'));
 
     final result = await stockDetailRepository.getStockDetail(1);
 

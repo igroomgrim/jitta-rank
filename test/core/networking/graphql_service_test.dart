@@ -18,7 +18,9 @@ void main() {
     final response = QueryResult(
       options: QueryOptions(document: gql('')),
       source: QueryResultSource.network,
-      data: {'stock': {'id': 1, 'symbol': 'AAPL'}},
+      data: {
+        'stock': {'id': 1, 'symbol': 'AAPL'}
+      },
     );
     when(mockClient.query(any)).thenAnswer((_) async => response);
 

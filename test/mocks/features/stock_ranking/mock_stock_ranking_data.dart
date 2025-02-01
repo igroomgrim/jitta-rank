@@ -32,10 +32,12 @@ class MockStockRankingData {
       latestPrice: mockRankedStock.latestPrice,
       industry: mockRankedStock.industry,
       updatedAt: mockRankedStock.updatedAt,
-      sector: mockRankedStock.sector != null ? SectorModel(
-        id: mockRankedStock.sector!.id,
-        name: mockRankedStock.sector!.name,
-      ) : null,
+      sector: mockRankedStock.sector != null
+          ? SectorModel(
+              id: mockRankedStock.sector!.id,
+              name: mockRankedStock.sector!.name,
+            )
+          : null,
       market: mockRankedStock.market,
     );
   }

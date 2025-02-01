@@ -6,14 +6,16 @@ import '../../mocks/core/networking/mock_network_info_service.mocks.dart';
 void main() {
   late NetworkInfoService networkInfoService;
   late MockInternetConnectionChecker mockInternetConnectionChecker;
-  
-    setUp(() {
-      mockInternetConnectionChecker = MockInternetConnectionChecker();
-      networkInfoService = NetworkInfoServiceImpl(internetConnectionChecker: mockInternetConnectionChecker);
-    });
+
+  setUp(() {
+    mockInternetConnectionChecker = MockInternetConnectionChecker();
+    networkInfoService = NetworkInfoServiceImpl(
+        internetConnectionChecker: mockInternetConnectionChecker);
+  });
 
   test('should return true when device is connected to internet', () async {
-    when(mockInternetConnectionChecker.hasConnection).thenAnswer((_) async => true);
+    when(mockInternetConnectionChecker.hasConnection)
+        .thenAnswer((_) async => true);
 
     final result = await networkInfoService.isConnected;
 
