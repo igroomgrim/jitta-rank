@@ -2,6 +2,9 @@
 
 #### A Flutter application for viewing and analyzing stock rankings with offline support, implementing Clean Architecture principles and the BLoC pattern for state management.
 
+![jitta_rank](https://github.com/user-attachments/assets/93989969-4474-4396-81a0-a8f83edcc395)
+
+
 *⚠️ Jitta Rank **is not an official** Jitta product! ⚠️*
 
 *🚀 Built as a 7-day challenge to push my skills in architecture, state management, and performance optimization. Expect clean code, but maybe also some late-night debugging magic. 🌚✨🐛🌝*
