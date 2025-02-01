@@ -90,7 +90,7 @@ class StockDetailGraphqlDatasource extends StockDetailDatasource {
       final result = await graphqlService.performQuery(stockByIdQuery, {
         'stockId': stockId,
       });
-      
+
       if (result.hasException) {
         throw Exception(result.exception?.graphqlErrors.firstOrNull?.message);
       }
@@ -104,7 +104,7 @@ class StockDetailGraphqlDatasource extends StockDetailDatasource {
       if (stock == null) {
         throw Exception('No stock data returned from Jitta server');
       }
-      
+
       final stockModel = StockModel.fromJson(stock);
       return stockModel;
     } catch (e) {

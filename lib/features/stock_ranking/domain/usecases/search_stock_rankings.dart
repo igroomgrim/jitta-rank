@@ -8,7 +8,8 @@ class SearchStockRankingsUsecase {
 
   SearchStockRankingsUsecase(this.repository);
 
-  Future<Either<Failure, List<RankedStock>>> call(String keyword, String market, List<String> sectors) async {
+  Future<Either<Failure, List<RankedStock>>> call(
+      String keyword, String market, List<String> sectors) async {
     return await repository.searchStockRankings(keyword, market, sectors);
   }
 }

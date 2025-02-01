@@ -12,21 +12,27 @@ void main() {
 
   setUp(() {
     mockStockRankingRepository = MockStockRankingRepository();
-    loadMoreStockRankingsUsecase = LoadMoreStockRankingsUsecase(mockStockRankingRepository);
+    loadMoreStockRankingsUsecase =
+        LoadMoreStockRankingsUsecase(mockStockRankingRepository);
   });
 
   test('should return ranked stocks from repository', () async {
-    when(mockStockRankingRepository.getStockRankings(any, any, any, any)).thenAnswer((_) async => Right(MockStockRankingData.getMockStockRankings()));
+    when(mockStockRankingRepository.getStockRankings(any, any, any, any))
+        .thenAnswer(
+            (_) async => Right(MockStockRankingData.getMockStockRankings()));
 
-    final result = await loadMoreStockRankingsUsecase.call(1, 'market', 1, ['sector']);
+    final result =
+        await loadMoreStockRankingsUsecase.call(1, 'market', 1, ['sector']);
 
     expect(result, isA<Right>());
   });
 
   test('should return error when repository returns error', () async {
-    when(mockStockRankingRepository.getStockRankings(any, any, any, any)).thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
+    when(mockStockRankingRepository.getStockRankings(any, any, any, any))
+        .thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
 
-    final result = await loadMoreStockRankingsUsecase.call(1, 'market', 1, ['sector']);
+    final result =
+        await loadMoreStockRankingsUsecase.call(1, 'market', 1, ['sector']);
 
     expect(result, isA<Left>());
   });

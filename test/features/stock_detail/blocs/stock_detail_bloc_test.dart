@@ -13,13 +13,15 @@ void main() {
 
   setUp(() {
     mockStockDetailRepository = MockStockDetailRepository();
-    stockDetailBloc = StockDetailBloc(GetStockDetailUsecase(mockStockDetailRepository));
+    stockDetailBloc =
+        StockDetailBloc(GetStockDetailUsecase(mockStockDetailRepository));
   });
 
   blocTest<StockDetailBloc, StockDetailState>(
     'should emit StockDetailLoading and StockDetailLoaded when StockDetailEvent is GetStockDetailEvent',
     build: () {
-      when(mockStockDetailRepository.getStockDetail(any)).thenAnswer((_) async => Right(MockStockDetailData.getMockStock()));
+      when(mockStockDetailRepository.getStockDetail(any))
+          .thenAnswer((_) async => Right(MockStockDetailData.getMockStock()));
       return stockDetailBloc;
     },
     act: (bloc) => bloc.add(GetStockDetailEvent(1)),
@@ -38,12 +40,11 @@ void main() {
   blocTest<StockDetailBloc, StockDetailState>(
     'should emit StockDetailError when StockDetailEvent is GetStockDetailEvent',
     build: () {
-      when(mockStockDetailRepository.getStockDetail(any)).thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
+      when(mockStockDetailRepository.getStockDetail(any))
+          .thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
       return stockDetailBloc;
     },
     act: (bloc) => bloc.add(GetStockDetailEvent(1)),
-    expect: () => [isA<StockDetailLoading>(),isA<StockDetailError>()],
+    expect: () => [isA<StockDetailLoading>(), isA<StockDetailError>()],
   );
 }
-
-

@@ -9,12 +9,16 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case stockRankingListScreen:
-        return MaterialPageRoute(builder: (_) => const StockRankingListScreen());
+        return MaterialPageRoute(
+            builder: (_) => const StockRankingListScreen());
       case stockDetailScreen:
         final stockId = settings.arguments as int;
-        return MaterialPageRoute(builder: (_) => StockDetailScreen(stockId: stockId));
+        return MaterialPageRoute(
+            builder: (_) => StockDetailScreen(stockId: stockId));
       default:
-        return MaterialPageRoute(builder: (_) => const Scaffold(body: Center(child: Text('Route not found'))));
+        return MaterialPageRoute(
+            builder: (_) =>
+                const Scaffold(body: Center(child: Text('Route not found'))));
     }
   }
 }

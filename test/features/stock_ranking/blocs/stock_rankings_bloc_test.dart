@@ -17,12 +17,20 @@ void main() {
 
   setUp(() {
     mockStockRankingRepository = MockStockRankingRepository();
-    getStockRankingsUsecase = GetStockRankingsUsecase(mockStockRankingRepository);
-    pullToRefreshStockRankingsUsecase = PullToRefreshStockRankingsUsecase(mockStockRankingRepository);
-    loadMoreStockRankingsUsecase = LoadMoreStockRankingsUsecase(mockStockRankingRepository);
-    searchStockRankingsUsecase = SearchStockRankingsUsecase(mockStockRankingRepository);
-    
-    stockRankingsBloc = StockRankingsBloc(getStockRankingsUsecase, loadMoreStockRankingsUsecase, pullToRefreshStockRankingsUsecase, searchStockRankingsUsecase);
+    getStockRankingsUsecase =
+        GetStockRankingsUsecase(mockStockRankingRepository);
+    pullToRefreshStockRankingsUsecase =
+        PullToRefreshStockRankingsUsecase(mockStockRankingRepository);
+    loadMoreStockRankingsUsecase =
+        LoadMoreStockRankingsUsecase(mockStockRankingRepository);
+    searchStockRankingsUsecase =
+        SearchStockRankingsUsecase(mockStockRankingRepository);
+
+    stockRankingsBloc = StockRankingsBloc(
+        getStockRankingsUsecase,
+        loadMoreStockRankingsUsecase,
+        pullToRefreshStockRankingsUsecase,
+        searchStockRankingsUsecase);
   });
 
   group('GetStockRankingsEvent', () {

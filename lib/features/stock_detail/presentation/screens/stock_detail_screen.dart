@@ -50,9 +50,11 @@ class _StockDetailView extends StatelessWidget {
           builder: (context, state) {
             if (state is StockDetailInitial) {
               context.read<StockDetailBloc>().add(GetStockDetailEvent(stockId));
-              return const Center(child: CircularProgressIndicator(color: Colors.blue));
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.blue));
             } else if (state is StockDetailLoading) {
-              return const Center(child: CircularProgressIndicator(color: Colors.blue));
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.blue));
             } else if (state is StockDetailLoaded) {
               return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -312,7 +314,7 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
 Widget _buildSummary(String summary) {
   if (summary.isEmpty) return const SizedBox.shrink();
   return Card(
-          child: Padding(
+      child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

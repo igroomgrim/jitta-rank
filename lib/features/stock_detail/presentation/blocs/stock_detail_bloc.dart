@@ -11,16 +11,16 @@ class StockDetailBloc extends Bloc<StockDetailEvent, StockDetailState> {
     on<RefreshStockDetailEvent>(_onRefreshStockDetail);
   }
 
-  void _onGetStockDetail(GetStockDetailEvent event, Emitter<StockDetailState> emit) async {
+  void _onGetStockDetail(
+      GetStockDetailEvent event, Emitter<StockDetailState> emit) async {
     emit(StockDetailLoading());
     final result = await getStockDetail.call(event.stockId);
-    result.fold(
-      (failure) => emit(StockDetailError(failure.message)),
-      (stock) => emit(StockDetailLoaded(stock))
-    );
+    result.fold((failure) => emit(StockDetailError(failure.message)),
+        (stock) => emit(StockDetailLoaded(stock)));
   }
 
-  void _onRefreshStockDetail(RefreshStockDetailEvent event, Emitter<StockDetailState> emit) async {
+  void _onRefreshStockDetail(
+      RefreshStockDetailEvent event, Emitter<StockDetailState> emit) async {
     emit(StockDetailInitial());
   }
 }

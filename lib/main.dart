@@ -30,15 +30,18 @@ void main() async {
   await Hive.openBox<StockJittaModel>('stock_jitta');
   await Hive.openBox<StockJittaFactorModel>('stock_jitta_factor');
   await Hive.openBox<StockJittaFactorGrowthModel>('stock_jitta_factor_growth');
-  await Hive.openBox<StockJittaFactorFinancialModel>('stock_jitta_factor_financial');
-  await Hive.openBox<StockJittaFactorManagementModel>('stock_jitta_factor_management');
+  await Hive.openBox<StockJittaFactorFinancialModel>(
+      'stock_jitta_factor_financial');
+  await Hive.openBox<StockJittaFactorManagementModel>(
+      'stock_jitta_factor_management');
   await Hive.openBox<StockGraphPriceItemModel>('stock_graph_price_item');
   await Hive.openBox<StockGraphPriceModel>('stock_graph_price');
   // TODO: move to the right place - maybe dependency injection?
 
   final networkInfoService = NetworkInfoServiceImpl();
   final graphqlService = GraphqlService();
-  final stockRankingGraphqlDatasource = StockRankingGraphqlDatasource(graphqlService);
+  final stockRankingGraphqlDatasource =
+      StockRankingGraphqlDatasource(graphqlService);
   final stockRankingLocalDatasource = StockRankingLocalDatasourceImpl();
 
   runApp(MyApp(

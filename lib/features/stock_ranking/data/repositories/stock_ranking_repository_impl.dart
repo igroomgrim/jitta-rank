@@ -11,47 +11,61 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
   final StockRankingLocalDatasource localDatasource;
   final NetworkInfoService networkInfoService;
 
-  StockRankingRepositoryImpl(this.graphqlDatasource, this.localDatasource, this.networkInfoService);
+  StockRankingRepositoryImpl(
+      this.graphqlDatasource, this.localDatasource, this.networkInfoService);
 
   @override
-  Future<Either<Failure, List<RankedStock>>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
-    if (await networkInfoService.isConnected) { // ONLINE
+  Future<Either<Failure, List<RankedStock>>> getStockRankings(
+      int limit, String market, int page, List<String> sectors) async {
+    if (await networkInfoService.isConnected) {
+      // ONLINE
       try {
-        final rankedStocks = await graphqlDatasource.getStockRankings(limit, market, page, sectors);
+        final rankedStocks = await graphqlDatasource.getStockRankings(
+            limit, market, page, sectors);
         try {
           await localDatasource.saveStockRankings(rankedStocks);
         } catch (e) {
-          return left(CacheFailure('Failed to save stock rankings to local datasource'));
+          return left(CacheFailure(
+              'Failed to save stock rankings to local datasource'));
         }
 
-        return right(rankedStocks);        
+        return right(rankedStocks);
       } catch (e) {
-        return left(ServerFailure('Failed to fetch stock rankings from remote datasource'));
+        return left(ServerFailure(
+            'Failed to fetch stock rankings from remote datasource'));
       }
-
-    } else { // OFFLINE
+    } else {
+      // OFFLINE
       try {
-        final rankedStocksFromLocal = await localDatasource.getStockRankings(limit, market, page, sectors);
+        final rankedStocksFromLocal = await localDatasource.getStockRankings(
+            limit, market, page, sectors);
 
-        if (rankedStocksFromLocal.isEmpty) { // OFFLINE + NO DATA
-          return left(CustomFailure(message: 'You are offline, and we couldn’t find any stock rankings data. Please check your connection!'));
+        if (rankedStocksFromLocal.isEmpty) {
+          // OFFLINE + NO DATA
+          return left(CustomFailure(
+              message:
+                  'You are offline, and we couldn’t find any stock rankings data. Please check your connection!'));
         }
 
         return right(rankedStocksFromLocal);
       } catch (e) {
-        return left(CacheFailure('Failed to fetch stock rankings from local datasource'));
+        return left(CacheFailure(
+            'Failed to fetch stock rankings from local datasource'));
       }
     }
   }
 
   @override
-  Future<Either<Failure, List<RankedStock>>> searchStockRankings(String keyword, String market, List<String> sectors) async {
+  Future<Either<Failure, List<RankedStock>>> searchStockRankings(
+      String keyword, String market, List<String> sectors) async {
     // Search stock rankings from local datasource - ONLY
     try {
-      final rankedStocks = await localDatasource.searchStockRankings(keyword, market, sectors);
+      final rankedStocks =
+          await localDatasource.searchStockRankings(keyword, market, sectors);
       return right(rankedStocks);
     } catch (e) {
-      return left(CacheFailure('Failed to search stock rankings from local datasource'));
+      return left(CacheFailure(
+          'Failed to search stock rankings from local datasource'));
     }
   }
 }

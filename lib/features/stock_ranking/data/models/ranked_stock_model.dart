@@ -41,25 +41,25 @@ class RankedStockModel extends RankedStock {
     required this.market,
     required this.updatedAt,
   }) : super(
-    id: id,
-    stockId: stockId,
-    symbol: symbol,
-    title: title,
-    jittaScore: jittaScore,
-    currency: currency,
-    latestPrice: latestPrice,
-    industry: industry,
-    sector: sector,
-    market: market,
-    updatedAt: updatedAt,
-  );
+          id: id,
+          stockId: stockId,
+          symbol: symbol,
+          title: title,
+          jittaScore: jittaScore,
+          currency: currency,
+          latestPrice: latestPrice,
+          industry: industry,
+          sector: sector,
+          market: market,
+          updatedAt: updatedAt,
+        );
 
   factory RankedStockModel.fromJson(Map<String, dynamic> json) {
     final sectorJson = json['sector'];
-    final sector = sectorJson != null 
-      ? SectorModel.fromJson(sectorJson as Map<String, dynamic>)
-      : null;
-      
+    final sector = sectorJson != null
+        ? SectorModel.fromJson(sectorJson as Map<String, dynamic>)
+        : null;
+
     return RankedStockModel(
       id: json['id'],
       stockId: json['stockId'],

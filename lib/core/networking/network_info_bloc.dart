@@ -16,7 +16,8 @@ class NetworkInfoState {
 class NetworkInfoBloc extends Bloc<NetworkInfoEvent, NetworkInfoState> {
   final NetworkInfoService networkInfoService;
 
-  NetworkInfoBloc(this.networkInfoService) : super(NetworkInfoState(isConnected: false)) {
+  NetworkInfoBloc(this.networkInfoService)
+      : super(NetworkInfoState(isConnected: false)) {
     on<CheckConnectionEvent>(_onCheckConnectionEvent);
   }
 

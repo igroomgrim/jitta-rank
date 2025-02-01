@@ -14,7 +14,7 @@ class NetworkInfoServiceImpl implements NetworkInfoService {
   static InternetConnectionChecker _createInternetConnectionChecker() {
     return InternetConnectionChecker();
   }
-    
+
   @override
   Future<bool> get isConnected => _internetConnectionChecker.hasConnection;
 }
