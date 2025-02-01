@@ -11,20 +11,21 @@ abstract class StockDetailLocalDatasource extends StockDetailDatasource {
 class StockDetailLocalDatasourceImpl extends StockDetailLocalDatasource {
   final Box<StockModel> box;
 
-  StockDetailLocalDatasourceImpl([Box<StockModel>? box]) 
+  StockDetailLocalDatasourceImpl([Box<StockModel>? box])
       : box = box ?? Hive.box<StockModel>('stock_detail');
 
   @override
   Future<StockModel> getStockDetail(int stockId) async {
     final stock = box.get(stockId);
     if (stock == null) {
-      throw Exception('Stock on local storage not found');  // or handle this case as needed
+      throw Exception(
+          'Stock on local storage not found'); // or handle this case as needed
     }
     return stock;
   }
 
   @override
-  Future<void> saveStockDetail(StockModel stockDetail) async {    
+  Future<void> saveStockDetail(StockModel stockDetail) async {
     try {
       await box.put(stockDetail.stockId, stockDetail);
     } catch (e) {

@@ -131,4 +131,3 @@ class StockGraphPriceItem {
     required this.linePrice,
   });
 }
-

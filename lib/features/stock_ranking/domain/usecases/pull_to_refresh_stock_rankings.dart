@@ -8,7 +8,8 @@ class PullToRefreshStockRankingsUsecase {
 
   PullToRefreshStockRankingsUsecase(this.repository);
 
-  Future<Either<Failure, List<RankedStock>>> call(int limit, String market, int page, List<String> sectors) async {
+  Future<Either<Failure, List<RankedStock>>> call(
+      int limit, String market, int page, List<String> sectors) async {
     return await repository.getStockRankings(limit, market, page, sectors);
   }
 }

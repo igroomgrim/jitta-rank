@@ -19,11 +19,14 @@ class MarketFilter extends StatelessWidget {
     {'code': 'KR', 'name': 'South Korea'},
     {'code': 'RU', 'name': 'Russia'},
   ];
-  
+
   final String selectedMarket;
   final Function(String) onMarketSelected;
 
-  const MarketFilter({super.key, required this.selectedMarket, required this.onMarketSelected});
+  const MarketFilter(
+      {super.key,
+      required this.selectedMarket,
+      required this.onMarketSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +76,7 @@ class MarketFilter extends StatelessWidget {
   }
 
   static String getMarketName(String marketCode) {
-    return MarketFilter.markets.firstWhere((market) => market['code'] == marketCode)['name']!;
+    return MarketFilter.markets
+        .firstWhere((market) => market['code'] == marketCode)['name']!;
   }
 }

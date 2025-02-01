@@ -62,25 +62,25 @@ class StockModel extends Stock {
     required this.summary,
     required this.updatedAt,
   }) : super(
-    stockId: stockId,
-    symbol: symbol,
-    name: name,
-    nativeName: nativeName,
-    price: price,
-    currency: currency,
-    currencySign: currencySign,
-    industry: industry,
-    market: market,
-    jittaRankScore: jittaRankScore,
-    jitta: jitta,
-    lossChance: lossChance,
-    sectorName: sectorName,
-    ipoDate: ipoDate,
-    companyLink: companyLink,
-    graphPrice: graphPrice,
-    summary: summary,
-    updatedAt: updatedAt,
-  );
+          stockId: stockId,
+          symbol: symbol,
+          name: name,
+          nativeName: nativeName,
+          price: price,
+          currency: currency,
+          currencySign: currencySign,
+          industry: industry,
+          market: market,
+          jittaRankScore: jittaRankScore,
+          jitta: jitta,
+          lossChance: lossChance,
+          sectorName: sectorName,
+          ipoDate: ipoDate,
+          companyLink: companyLink,
+          graphPrice: graphPrice,
+          summary: summary,
+          updatedAt: updatedAt,
+        );
 
   factory StockModel.fromJson(Map<String, dynamic> json) {
     return StockModel(
@@ -117,17 +117,18 @@ class StockPriceModel extends StockPrice {
     required this.close,
     this.latestPriceTimestamp,
   }) : super(
-    close: close,
-    latestPriceTimestamp: latestPriceTimestamp,
-  );
+          close: close,
+          latestPriceTimestamp: latestPriceTimestamp,
+        );
 
   factory StockPriceModel.fromJson(Map<String, dynamic>? json) {
     if (json?['latest'] == null) return StockPriceModel(close: 0.0);
     final latestPrice = json?['latest'];
-    
+
     return StockPriceModel(
       close: latestPrice['close']?.toDouble() ?? 0.0,
-      latestPriceTimestamp: parseDateString(latestPrice['latest_price_timestamp']),
+      latestPriceTimestamp:
+          parseDateString(latestPrice['latest_price_timestamp']),
     );
   }
 }
@@ -149,11 +150,11 @@ class StockJittaModel extends StockJitta {
     required this.priceDiff,
     required this.factor,
   }) : super(
-    total: total,
-    score: score,
-    priceDiff: priceDiff,
-    factor: factor,
-  );
+          total: total,
+          score: score,
+          priceDiff: priceDiff,
+          factor: factor,
+        );
 
   factory StockJittaModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaModel(
@@ -179,10 +180,10 @@ class StockJittaFactorModel extends StockJittaFactor {
     required this.financial,
     required this.management,
   }) : super(
-    growth: growth,
-    financial: financial,
-    management: management,
-  );
+          growth: growth,
+          financial: financial,
+          management: management,
+        );
 
   factory StockJittaFactorModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorModel(
@@ -207,10 +208,10 @@ class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
     required this.name,
     required this.level,
   }) : super(
-    value: value,
-    name: name,
-    level: level,
-  );
+          value: value,
+          name: name,
+          level: level,
+        );
 
   factory StockJittaFactorGrowthModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorGrowthModel(
@@ -235,10 +236,10 @@ class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
     required this.name,
     required this.level,
   }) : super(
-    value: value,
-    name: name,
-    level: level,
-  );
+          value: value,
+          name: name,
+          level: level,
+        );
 
   factory StockJittaFactorFinancialModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorFinancialModel(
@@ -263,10 +264,10 @@ class StockJittaFactorManagementModel extends StockJittaFactorManagement {
     required this.name,
     required this.level,
   }) : super(
-    value: value,
-    name: name,
-    level: level,
-  );
+          value: value,
+          name: name,
+          level: level,
+        );
 
   factory StockJittaFactorManagementModel.fromJson(Map<String, dynamic>? json) {
     return StockJittaFactorManagementModel(
@@ -288,21 +289,21 @@ class StockGraphPriceModel extends StockGraphPrice {
     required this.firstGraphPeriod,
     required this.graphs,
   }) : super(
-    firstGraphPeriod: firstGraphPeriod,
-    graphs: graphs,
-  );
+          firstGraphPeriod: firstGraphPeriod,
+          graphs: graphs,
+        );
 
   factory StockGraphPriceModel.fromJson(Map<String, dynamic>? json) {
     final emptyGraph = StockGraphPriceModel(firstGraphPeriod: '', graphs: []);
     if (json == null) return emptyGraph;
     final graphs = json['graphs'];
     if (graphs == null) return emptyGraph;
-    
+
     try {
       final graphsList = (graphs as List)
           .map((graph) => StockGraphPriceItemModel.fromJson(graph))
           .toList();
-          
+
       return StockGraphPriceModel(
         firstGraphPeriod: json['first_graph_period']?.toString() ?? '',
         graphs: graphsList,
@@ -324,12 +325,13 @@ class StockGraphPriceItemModel extends StockGraphPriceItem {
     required this.stockPrice,
     required this.linePrice,
   }) : super(
-    stockPrice: stockPrice,
-    linePrice: linePrice,
-  );
+          stockPrice: stockPrice,
+          linePrice: linePrice,
+        );
 
   factory StockGraphPriceItemModel.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return StockGraphPriceItemModel(stockPrice: 0.0, linePrice: 0.0);
+    if (json == null)
+      return StockGraphPriceItemModel(stockPrice: 0.0, linePrice: 0.0);
     return StockGraphPriceItemModel(
       stockPrice: json['stockPrice']?.toDouble() ?? 0.0,
       linePrice: json['linePrice']?.toDouble() ?? 0.0,

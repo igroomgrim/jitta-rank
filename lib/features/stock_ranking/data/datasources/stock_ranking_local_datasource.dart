@@ -4,22 +4,26 @@ import 'package:hive/hive.dart';
 
 abstract class StockRankingLocalDatasource extends StockRankingDatasource {
   @override
-  Future<List<RankedStockModel>> getStockRankings(int limit, String market, int page, List<String> sectors);
+  Future<List<RankedStockModel>> getStockRankings(
+      int limit, String market, int page, List<String> sectors);
   Future<void> saveStockRankings(List<RankedStockModel> stockRankings);
-  Future<List<RankedStockModel>> searchStockRankings(String keyword, String market, List<String> sectors);
+  Future<List<RankedStockModel>> searchStockRankings(
+      String keyword, String market, List<String> sectors);
 }
 
 class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
   final Box<RankedStockModel> box;
 
-  StockRankingLocalDatasourceImpl([Box<RankedStockModel>? box]) 
+  StockRankingLocalDatasourceImpl([Box<RankedStockModel>? box])
       : box = box ?? Hive.box<RankedStockModel>('ranked_stocks');
 
   @override
-  Future<List<RankedStockModel>> getStockRankings(int limit, String market, int page, List<String> sectors) async {
+  Future<List<RankedStockModel>> getStockRankings(
+      int limit, String market, int page, List<String> sectors) async {
     final List<RankedStockModel> rankedStocks = box.values.toList();
     final filteredByMarketStocks = _filterByMarket(rankedStocks, market);
-    final filteredBySectorsStocks = _filterBySectors(filteredByMarketStocks, sectors);
+    final filteredBySectorsStocks =
+        _filterBySectors(filteredByMarketStocks, sectors);
     return filteredBySectorsStocks.toList();
   }
 
@@ -27,12 +31,15 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
   Future<void> saveStockRankings(List<RankedStockModel> stockRankings) async {
     if (stockRankings.isEmpty) return;
     const maxStorageLimit = 40;
-    
+
     final existingStocks = box.values.toList();
-    final deduplicatedExistingStocks = existingStocks.where((stock) => !stockRankings.any((newStock) => newStock.symbol == stock.symbol)).toList();
+    final deduplicatedExistingStocks = existingStocks
+        .where((stock) =>
+            !stockRankings.any((newStock) => newStock.symbol == stock.symbol))
+        .toList();
     final allStocks = [...deduplicatedExistingStocks, ...stockRankings];
-    final stocksToSave = allStocks.length <= maxStorageLimit 
-        ? allStocks 
+    final stocksToSave = allStocks.length <= maxStorageLimit
+        ? allStocks
         : allStocks.sublist(allStocks.length - maxStorageLimit);
 
     await box.clear();
@@ -40,24 +47,32 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
   }
 
   @override
-  Future<List<RankedStockModel>> searchStockRankings(String keyword, String market, List<String> sectors) async {
+  Future<List<RankedStockModel>> searchStockRankings(
+      String keyword, String market, List<String> sectors) async {
     final rankedStocks = box.values.toList();
-    final filteredByKeywordStocks = rankedStocks.where((stock) => 
-      stock.symbol.toLowerCase().contains(keyword.toLowerCase()) || 
-      stock.title.toLowerCase().contains(keyword.toLowerCase())
-    ).toList();
+    final filteredByKeywordStocks = rankedStocks
+        .where((stock) =>
+            stock.symbol.toLowerCase().contains(keyword.toLowerCase()) ||
+            stock.title.toLowerCase().contains(keyword.toLowerCase()))
+        .toList();
 
-    final filteredByMarketStocks = _filterByMarket(filteredByKeywordStocks, market);
-    final filteredBySectorsStocks = _filterBySectors(filteredByMarketStocks, sectors);
+    final filteredByMarketStocks =
+        _filterByMarket(filteredByKeywordStocks, market);
+    final filteredBySectorsStocks =
+        _filterBySectors(filteredByMarketStocks, sectors);
     return filteredBySectorsStocks.toList();
   }
 
-  List<RankedStockModel> _filterByMarket(List<RankedStockModel> rankedStocks, String market) {
+  List<RankedStockModel> _filterByMarket(
+      List<RankedStockModel> rankedStocks, String market) {
     return rankedStocks.where((stock) => stock.market == market).toList();
   }
 
-  List<RankedStockModel> _filterBySectors(List<RankedStockModel> rankedStocks, List<String> sectors) {
+  List<RankedStockModel> _filterBySectors(
+      List<RankedStockModel> rankedStocks, List<String> sectors) {
     if (sectors.isEmpty) return rankedStocks;
-    return rankedStocks.where((stock) => sectors.contains(stock.sector?.id ?? '')).toList();
+    return rankedStocks
+        .where((stock) => sectors.contains(stock.sector?.id ?? ''))
+        .toList();
   }
 }

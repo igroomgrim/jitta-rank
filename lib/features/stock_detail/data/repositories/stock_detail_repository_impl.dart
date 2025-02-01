@@ -11,29 +11,37 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
   final StockDetailLocalDatasource localDatasource;
   final NetworkInfoService networkInfoService;
 
-  StockDetailRepositoryImpl(this.graphqlDatasource, this.localDatasource, this.networkInfoService);
+  StockDetailRepositoryImpl(
+      this.graphqlDatasource, this.localDatasource, this.networkInfoService);
 
   @override
   Future<Either<Failure, Stock>> getStockDetail(int stockId) async {
-    if (await networkInfoService.isConnected) { // ONLINE
+    if (await networkInfoService.isConnected) {
+      // ONLINE
       try {
         final stockDetail = await graphqlDatasource.getStockDetail(stockId);
         try {
           await localDatasource.saveStockDetail(stockDetail);
         } catch (e) {
-          return left(CacheFailure('Failed to save stock detail to local datasource'));
+          return left(
+              CacheFailure('Failed to save stock detail to local datasource'));
         }
 
         return right(stockDetail);
       } catch (e) {
-        return left(ServerFailure('Failed to fetch stock detail from remote datasource'));
+        return left(ServerFailure(
+            'Failed to fetch stock detail from remote datasource'));
       }
-    } else { // OFFLINE
+    } else {
+      // OFFLINE
       try {
-        final stockDetailFromLocal = await localDatasource.getStockDetail(stockId);
+        final stockDetailFromLocal =
+            await localDatasource.getStockDetail(stockId);
         return right(stockDetailFromLocal);
       } catch (e) {
-        return left(CustomFailure(message: 'You are offline, and we couldn’t find any stock detail data. Please check your connection!'));
+        return left(CustomFailure(
+            message:
+                'You are offline, and we couldn’t find any stock detail data. Please check your connection!'));
       }
     }
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SectorFilter extends StatelessWidget {
-  static const List<Map<String, String>> sectors = [ // note: seems like always 11 sectors
+  static const List<Map<String, String>> sectors = [
+    // note: seems like always 11 sectors
     {'id': 'ENERGY', 'name': 'Energy'},
     {'id': 'FINANCIALS', 'name': 'Financials'},
     {'id': 'HEALTHCARE', 'name': 'Healthcare'},
