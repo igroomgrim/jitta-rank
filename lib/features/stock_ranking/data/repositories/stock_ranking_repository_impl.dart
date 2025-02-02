@@ -7,23 +7,29 @@ import 'package:dartz/dartz.dart';
 import 'package:jitta_rank/core/error/error.dart';
 
 class StockRankingRepositoryImpl extends StockRankingRepository {
-  final StockRankingGraphqlDatasource graphqlDatasource;
-  final StockRankingLocalDatasource localDatasource;
-  final NetworkInfoService networkInfoService;
+  final StockRankingGraphqlDatasource _graphqlDatasource;
+  final StockRankingLocalDatasource _localDatasource;
+  final NetworkInfoService _networkInfoService;
 
-  StockRankingRepositoryImpl(
-      this.graphqlDatasource, this.localDatasource, this.networkInfoService);
+  StockRankingRepositoryImpl({
+    StockRankingGraphqlDatasource? graphqlDatasource,
+    StockRankingLocalDatasource? localDatasource,
+    NetworkInfoService? networkInfoService,
+  })  : _graphqlDatasource =
+            graphqlDatasource ?? StockRankingGraphqlDatasource(),
+        _localDatasource = localDatasource ?? StockRankingLocalDatasourceImpl(),
+        _networkInfoService = networkInfoService ?? NetworkInfoServiceImpl();
 
   @override
   Future<Either<Failure, List<RankedStock>>> getStockRankings(
       int limit, String market, int page, List<String> sectors) async {
-    if (await networkInfoService.isConnected) {
+    if (await _networkInfoService.isConnected) {
       // ONLINE
       try {
-        final rankedStocks = await graphqlDatasource.getStockRankings(
+        final rankedStocks = await _graphqlDatasource.getStockRankings(
             limit, market, page, sectors);
         try {
-          await localDatasource.saveStockRankings(rankedStocks);
+          await _localDatasource.saveStockRankings(rankedStocks);
         } catch (e) {
           return left(CacheFailure(
               'Failed to save stock rankings to local datasource'));
@@ -37,7 +43,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
     } else {
       // OFFLINE
       try {
-        final rankedStocksFromLocal = await localDatasource.getStockRankings(
+        final rankedStocksFromLocal = await _localDatasource.getStockRankings(
             limit, market, page, sectors);
 
         if (rankedStocksFromLocal.isEmpty) {
@@ -61,7 +67,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
     // Search stock rankings from local datasource - ONLY
     try {
       final rankedStocks =
-          await localDatasource.searchStockRankings(keyword, market, sectors);
+          await _localDatasource.searchStockRankings(keyword, market, sectors);
       return right(rankedStocks);
     } catch (e) {
       return left(CacheFailure(

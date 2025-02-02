@@ -66,9 +66,9 @@ class MyApp extends StatelessWidget {
     required this.stockRankingGraphqlDatasource,
     required this.stockRankingLocalDatasource,
   }) : stockRankingRepository = StockRankingRepositoryImpl(
-          stockRankingGraphqlDatasource,
-          stockRankingLocalDatasource,
-          networkInfoService,
+          graphqlDatasource: stockRankingGraphqlDatasource,
+          localDatasource: stockRankingLocalDatasource,
+          networkInfoService: networkInfoService,
         );
 
   // This widget is the root of your application.
