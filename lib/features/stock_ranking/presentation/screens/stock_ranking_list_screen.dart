@@ -80,7 +80,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                         hintText: 'Search by symbol or title...',
                         onSearch: (searchFieldValue) {
                           context.read<StockRankingsBloc>().add(
-                              SearchStockRankingsEvent(
+                              FilterStockRankingsEvent(
                                   searchFieldValue: searchFieldValue,
                                   market: state.market,
                                   sectors: state.sectors));
@@ -99,7 +99,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                             : [...state.sectors, sector];
                         context.read<StockRankingsBloc>().add(
                             FilterStockRankingsEvent(
-                                market: state.market, sectors: sectors));
+                                market: state.market,
+                                sectors: sectors,
+                                searchFieldValue: state.searchFieldValue));
                       },
                     );
                   },
@@ -119,11 +121,6 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
             },
             child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
               builder: (context, state) {
-                if (state is StockRankingsInitial) {
-                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(
-                      market: state.market, sectors: state.sectors));
-                }
-
                 switch (state) {
                   case StockRankingsInitial _:
                     context
@@ -361,7 +358,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
       if (result != null && mounted) {
         final market = result['market'] ?? ApiConstants.defaultMarket;
         bloc.add(FilterStockRankingsEvent(
-            market: market, sectors: bloc.state.sectors));
+            searchFieldValue: bloc.state.searchFieldValue,
+            market: market,
+            sectors: bloc.state.sectors));
       }
     });
   }

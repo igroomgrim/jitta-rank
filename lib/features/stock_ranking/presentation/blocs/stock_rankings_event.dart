@@ -57,21 +57,6 @@ class PullToRefreshStockRankingsEvent extends StockRankingsEvent {
   List<Object> get props => [market, sectors];
 }
 
-class SearchStockRankingsEvent extends StockRankingsEvent {
-  final String searchFieldValue;
-  final String market;
-  final List<String> sectors;
-
-  SearchStockRankingsEvent({
-    this.market = ApiConstants.defaultMarket,
-    this.sectors = const [],
-    required this.searchFieldValue,
-  });
-
-  @override
-  List<Object> get props => [searchFieldValue, market, sectors];
-}
-
 class FilterStockRankingsEvent extends StockRankingsEvent {
   final String market;
   final List<String> sectors;

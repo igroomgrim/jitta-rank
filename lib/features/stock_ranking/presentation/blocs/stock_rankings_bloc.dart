@@ -6,7 +6,7 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   final GetStockRankingsUsecase getStockRankings;
   final LoadMoreStockRankingsUsecase loadMoreStockRankings;
   final PullToRefreshStockRankingsUsecase pullToRefreshStockRankings;
-  final SearchStockRankingsUsecase searchStockRankings;
+  final FilterStockRankingsUsecase filterStockRankings;
 
   final int _defaultLimit = ApiConstants.defaultLimit;
   final int _defaultPage = ApiConstants.defaultPage;
@@ -16,18 +16,16 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     this.getStockRankings,
     this.loadMoreStockRankings,
     this.pullToRefreshStockRankings,
-    this.searchStockRankings,
+    this.filterStockRankings,
   ) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
-    on<PullToRefreshStockRankingsEvent>(_onPullToRefreshStockRankings);
-    on<SearchStockRankingsEvent>(_onSearchStockRankings);
-    on<FilterStockRankingsEvent>(_onFilterStockRankings);
     on<LoadMoreStockRankingsEvent>(_onLoadMoreStockRankings);
+    on<PullToRefreshStockRankingsEvent>(_onPullToRefreshStockRankings);
+    on<FilterStockRankingsEvent>(_onFilterStockRankings);
   }
 
   void _onGetStockRankings(
       GetStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
-    print("GetStockRankingsEvent: ${event.market} ${event.sectors}");
     if (state is StockRankingsInitial) {
       emit(StockRankingsLoading(
           market: event.market,
@@ -59,7 +57,6 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
 
   void _onPullToRefreshStockRankings(PullToRefreshStockRankingsEvent event,
       Emitter<StockRankingsState> emit) async {
-    print("PullToRefreshStockRankingsEvent: ${event.market} ${event.sectors}");
     final result = await pullToRefreshStockRankings.call(
         _defaultLimit, event.market, _defaultPage, event.sectors);
     result.fold(
@@ -82,51 +79,15 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     );
   }
 
-  void _onSearchStockRankings(
-      SearchStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
-    print(
-        "SearchStockRankingsEvent: ${event.searchFieldValue} ${event.market} ${event.sectors}");
-    if (state is StockRankingsLoaded) {
-      final loadedState = state as StockRankingsLoaded;
-      if (event.searchFieldValue.isEmpty) {
-        emit(StockRankingsLoaded(
-            market: event.market,
-            sectors: event.sectors,
-            searchFieldValue: event.searchFieldValue,
-            rankedStocks: _loadedRankedStocks,
-            hasReachedMaxData: loadedState.hasReachedMaxData));
-      } else {
-        final result = await searchStockRankings.call(
-            event.searchFieldValue, event.market, event.sectors);
-        result.fold(
-          (failure) => emit(StockRankingsError(
-              market: event.market,
-              sectors: event.sectors,
-              searchFieldValue: event.searchFieldValue,
-              message: failure.message)),
-          (rankedStocks) {
-            emit(StockRankingsLoaded(
-                market: event.market,
-                sectors: event.sectors,
-                searchFieldValue: event.searchFieldValue,
-                rankedStocks: rankedStocks,
-                hasReachedMaxData: true)); // Disable pagination during search
-          },
-        );
-      }
-    }
-  }
-
   void _onFilterStockRankings(
       FilterStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
-    print("FilterStockRankingsEvent: ${event.market} ${event.sectors}");
     emit(StockRankingsLoading(
         market: event.market,
         sectors: event.sectors,
         searchFieldValue: event.searchFieldValue));
 
-    final result = await getStockRankings.call(
-        _defaultLimit, event.market, _defaultPage, event.sectors);
+    final result = await filterStockRankings.call(
+        event.searchFieldValue, event.market, event.sectors);
     result.fold(
       (failure) => emit(StockRankingsError(
           market: event.market,
@@ -149,8 +110,6 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
 
   void _onLoadMoreStockRankings(LoadMoreStockRankingsEvent event,
       Emitter<StockRankingsState> emit) async {
-    print(
-        "LoadMoreStockRankingsEvent: ${event.market} ${event.page} ${event.sectors}");
     final result = await loadMoreStockRankings.call(
         _defaultLimit, event.market, event.page, event.sectors);
     result.fold(

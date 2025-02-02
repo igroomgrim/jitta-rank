@@ -10,7 +10,7 @@ export 'domain/repositories/stock_ranking_repository.dart';
 export 'domain/usecases/get_stock_rankings.dart';
 export 'domain/usecases/load_more_stock_rankings.dart';
 export 'domain/usecases/pull_to_refresh_stock_rankings.dart';
-export 'domain/usecases/search_stock_rankings.dart';
+export 'domain/usecases/filter_stock_rankings.dart';
 
 // presentation
 export 'presentation/blocs/stock_rankings_bloc.dart';

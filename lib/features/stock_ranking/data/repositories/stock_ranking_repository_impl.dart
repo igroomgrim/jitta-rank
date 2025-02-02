@@ -1,10 +1,7 @@
-import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.dart';
-import 'package:jitta_rank/features/stock_ranking/domain/repositories/stock_ranking_repository.dart';
-import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_graphql_datasource.dart';
-import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_local_datasource.dart';
-import 'package:jitta_rank/core/networking/network_info_service.dart';
 import 'package:dartz/dartz.dart';
 import 'package:jitta_rank/core/error/error.dart';
+import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
+import 'package:jitta_rank/core/networking/network_info_service.dart';
 
 class StockRankingRepositoryImpl extends StockRankingRepository {
   final StockRankingGraphqlDatasource _graphqlDatasource;
@@ -27,7 +24,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
       // ONLINE
       try {
         final rankedStocks = await _graphqlDatasource.getStockRankings(
-            limit, market, page, sectors);
+            limit: limit, market: market, page: page, sectors: sectors);
         try {
           await _localDatasource.saveStockRankings(rankedStocks);
         } catch (e) {
@@ -44,7 +41,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
       // OFFLINE
       try {
         final rankedStocksFromLocal = await _localDatasource.getStockRankings(
-            limit, market, page, sectors);
+            market: market, sectors: sectors);
 
         if (rankedStocksFromLocal.isEmpty) {
           // OFFLINE + NO DATA
@@ -62,27 +59,92 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
   }
 
   @override
-  Future<Either<Failure, List<RankedStock>>> searchStockRankings(
+  Future<Either<Failure, List<RankedStock>>> filterStockRankings(
       String keyword, String market, List<String> sectors) async {
-    // Search stock rankings from local datasource - ONLY
-    try {
-      final rankedStocks =
-          await _localDatasource.searchStockRankings(keyword, market, sectors);
-      return right(rankedStocks);
-    } catch (e) {
-      return left(CacheFailure(
-          'Failed to search stock rankings from local datasource'));
+    if (await _networkInfoService.isConnected) {
+      // ONLINE
+      try {
+        final rankedStocks = await _graphqlDatasource.getStockRankings(
+            market: market, sectors: sectors);
+        try {
+          await _localDatasource.saveStockRankings(rankedStocks);
+        } catch (e) {
+          return left(CacheFailure(
+              'Failed to save stock rankings to local datasource'));
+        }
+
+        if (keyword.isEmpty) {
+          final filteredStocksByMarket = _filterByMarket(rankedStocks, market);
+          final filteredStocksBySectors =
+              _filterBySectors(filteredStocksByMarket, sectors);
+          return right(filteredStocksBySectors);
+        } else {
+          final filteredStocksByKeyword =
+              _filterByKeyword(rankedStocks, keyword);
+          final filteredStocksByMarket =
+              _filterByMarket(filteredStocksByKeyword, market);
+          final filteredStocksBySectors =
+              _filterBySectors(filteredStocksByMarket, sectors);
+          return right(filteredStocksBySectors);
+        }
+      } catch (e) {
+        return left(ServerFailure(
+            'Failed to fetch stock rankings from remote datasource'));
+      }
+    } else {
+      // OFFLINE
+      try {
+        final rankedStocksFromLocal = await _localDatasource.getStockRankings();
+
+        if (rankedStocksFromLocal.isEmpty) {
+          // OFFLINE + NO DATA
+          return left(CustomFailure(
+              message:
+                  'You are offline, and we couldn’t find any stock rankings data. Please check your connection!'));
+        }
+
+        if (keyword.isEmpty) {
+          final filteredStocksByMarket =
+              _filterByMarket(rankedStocksFromLocal, market);
+          final filteredStocksBySectors =
+              _filterBySectors(filteredStocksByMarket, sectors);
+          return right(filteredStocksBySectors);
+        } else {
+          final filteredStocksByKeyword =
+              _filterByKeyword(rankedStocksFromLocal, keyword);
+          final filteredStocksByMarket =
+              _filterByMarket(filteredStocksByKeyword, market);
+          final filteredStocksBySectors =
+              _filterBySectors(filteredStocksByMarket, sectors);
+          return right(filteredStocksBySectors);
+        }
+      } catch (e) {
+        return left(CacheFailure(
+            'Failed to fetch stock rankings from local datasource'));
+      }
     }
   }
 
-  @override
-  Future<Either<Failure, List<RankedStock>>> filterStockRankings(
-      String keyword, String market, List<String> sectors) async {
-    // TODO: Implement filterStockRankings
-    print(
-        'StockRankingRepositoryImpl: filterStockRankings $keyword $market $sectors');
-    return right([]);
+  // UTILITY FILTER FUNCTIONS
+  List<RankedStockModel> _filterByKeyword(
+      List<RankedStockModel> rankedStocks, String keyword) {
+    return rankedStocks
+        .where((stock) =>
+            stock.symbol.toLowerCase().contains(keyword.toLowerCase()) ||
+            stock.title.toLowerCase().contains(keyword.toLowerCase()))
+        .toList();
+  }
+
+  List<RankedStockModel> _filterByMarket(
+      List<RankedStockModel> rankedStocks, String market) {
+    return rankedStocks.where((stock) => stock.market == market).toList();
+  }
+
+  List<RankedStockModel> _filterBySectors(
+      List<RankedStockModel> rankedStocks, List<String> sectors) {
+    if (sectors.isEmpty) return rankedStocks;
+    return rankedStocks
+        .where((stock) => sectors.contains(stock.sector?.id ?? ''))
+        .toList();
   }
 }
-
-// TODO: Revise error massage and remove print statements

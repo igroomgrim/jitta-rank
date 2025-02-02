@@ -1,6 +1,7 @@
 import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_datasource.dart';
 import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart';
 import 'package:jitta_rank/core/networking/graphql_service.dart';
+import 'package:jitta_rank/core/constants/api_constants.dart';
 
 class StockRankingGraphqlDatasource extends StockRankingDatasource {
   final GraphqlService _graphqlService;
@@ -10,7 +11,10 @@ class StockRankingGraphqlDatasource extends StockRankingDatasource {
 
   @override
   Future<List<RankedStockModel>> getStockRankings(
-      int limit, String market, int page, List<String> sectors) async {
+      {int limit = ApiConstants.defaultLimit,
+      String market = ApiConstants.defaultMarket,
+      int page = ApiConstants.defaultPage,
+      List<String> sectors = ApiConstants.defaultSectors}) async {
     String stockByRankingQuery = '''
     query stockByRanking(\$market: String!, \$sectors: [String], \$page: Int, \$limit: Int) {
       jittaRanking(filter: { market: \$market, sectors: \$sectors, page: \$page, limit: \$limit }) {

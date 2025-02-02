@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
                   GetStockRankingsUsecase(stockRankingRepository),
                   LoadMoreStockRankingsUsecase(stockRankingRepository),
                   PullToRefreshStockRankingsUsecase(stockRankingRepository),
-                  SearchStockRankingsUsecase(stockRankingRepository),
+                  FilterStockRankingsUsecase(stockRankingRepository),
                 )),
         BlocProvider(create: (context) => NetworkInfoBloc(networkInfoService)),
       ],
