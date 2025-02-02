@@ -203,7 +203,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
           if (index >= state.rankedStocks.length &&
               state.rankedStocks.isNotEmpty) {
             final nextPage =
-                (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) +
+                (state.rankedStocks.length ~/ ApiConstants.defaultLimit) +
                     1; // TODO: Should calculate max next page from count
             context.read<StockRankingsBloc>().add(LoadMoreStockRankingsEvent(
                 page: nextPage, market: state.market, sectors: state.sectors));

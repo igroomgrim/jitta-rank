@@ -16,8 +16,8 @@ class GetStockRankingsEvent extends StockRankingsEvent {
   GetStockRankingsEvent({
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
-    this.limit = ApiConstants.defaultLoadLimit,
-    this.page = ApiConstants.defaultLoadPage,
+    this.limit = ApiConstants.defaultLimit,
+    this.page = ApiConstants.defaultPage,
     this.searchFieldValue = "",
   });
 
@@ -32,7 +32,7 @@ class LoadMoreStockRankingsEvent extends StockRankingsEvent {
   final String searchFieldValue;
 
   LoadMoreStockRankingsEvent({
-    this.page = ApiConstants.defaultLoadPage,
+    this.page = ApiConstants.defaultPage,
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
     this.searchFieldValue = "",
