@@ -3,9 +3,10 @@ import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model
 import 'package:jitta_rank/core/networking/graphql_service.dart';
 
 class StockRankingGraphqlDatasource extends StockRankingDatasource {
-  final GraphqlService graphqlService;
+  final GraphqlService _graphqlService;
 
-  StockRankingGraphqlDatasource(this.graphqlService);
+  StockRankingGraphqlDatasource([GraphqlService? graphqlService])
+      : _graphqlService = graphqlService ?? GraphqlService();
 
   @override
   Future<List<RankedStockModel>> getStockRankings(
@@ -35,7 +36,7 @@ class StockRankingGraphqlDatasource extends StockRankingDatasource {
   ''';
 
     try {
-      final result = await graphqlService.performQuery(stockByRankingQuery, {
+      final result = await _graphqlService.performQuery(stockByRankingQuery, {
         'limit': limit,
         'market': market,
         'page': page,

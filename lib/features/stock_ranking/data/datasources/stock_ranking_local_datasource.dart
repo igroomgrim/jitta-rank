@@ -12,15 +12,15 @@ abstract class StockRankingLocalDatasource extends StockRankingDatasource {
 }
 
 class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
-  final Box<RankedStockModel> box;
+  final Box<RankedStockModel> _box;
 
   StockRankingLocalDatasourceImpl([Box<RankedStockModel>? box])
-      : box = box ?? Hive.box<RankedStockModel>('ranked_stocks');
+      : _box = box ?? Hive.box<RankedStockModel>('ranked_stocks');
 
   @override
   Future<List<RankedStockModel>> getStockRankings(
       int limit, String market, int page, List<String> sectors) async {
-    final List<RankedStockModel> rankedStocks = box.values.toList();
+    final List<RankedStockModel> rankedStocks = _box.values.toList();
     final filteredByMarketStocks = _filterByMarket(rankedStocks, market);
     final filteredBySectorsStocks =
         _filterBySectors(filteredByMarketStocks, sectors);
@@ -32,7 +32,7 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
     if (stockRankings.isEmpty) return;
     const maxStorageLimit = 40;
 
-    final existingStocks = box.values.toList();
+    final existingStocks = _box.values.toList();
     final deduplicatedExistingStocks = existingStocks
         .where((stock) =>
             !stockRankings.any((newStock) => newStock.symbol == stock.symbol))
@@ -42,14 +42,14 @@ class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
         ? allStocks
         : allStocks.sublist(allStocks.length - maxStorageLimit);
 
-    await box.clear();
-    await box.addAll(stocksToSave);
+    await _box.clear();
+    await _box.addAll(stocksToSave);
   }
 
   @override
   Future<List<RankedStockModel>> searchStockRankings(
       String keyword, String market, List<String> sectors) async {
-    final rankedStocks = box.values.toList();
+    final rankedStocks = _box.values.toList();
     final filteredByKeywordStocks = rankedStocks
         .where((stock) =>
             stock.symbol.toLowerCase().contains(keyword.toLowerCase()) ||
