@@ -18,9 +18,9 @@ void main() {
     mockStockRankingLocalDatasource = MockStockRankingLocalDatasource();
     mockNetworkInfoService = MockNetworkInfoService();
     stockRankingRepository = StockRankingRepositoryImpl(
-      mockStockRankingGraphqlDatasource,
-      mockStockRankingLocalDatasource,
-      mockNetworkInfoService,
+      graphqlDatasource: mockStockRankingGraphqlDatasource,
+      localDatasource: mockStockRankingLocalDatasource,
+      networkInfoService: mockNetworkInfoService,
     );
   });
 
