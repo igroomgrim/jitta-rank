@@ -17,153 +17,161 @@ class StockRankingListScreen extends StatefulWidget {
 }
 
 class _StockRankingListScreenState extends State<StockRankingListScreen> {
-  List<String> _selectedSectors = [];
-  String _selectedMarket = ApiConstants.defaultMarket;
-  String _currentSearchFieldValue = '';
-
   @override
   void initState() {
     super.initState();
     _checkInternetConnection();
   }
 
+  void _checkInternetConnection() {
+    context.read<NetworkInfoBloc>().add(CheckConnectionEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 12),
-            Text(
-              '${MarketFilter.getMarketName(_selectedMarket)} Stock Rankings',
-              textAlign: TextAlign.center,
-            ),
-            BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
-              builder: (context, state) {
-                return Text(
-                  state.isConnected
-                      ? 'Online Mode'
-                      : 'Offline Mode - Showing cached data',
-                  style: TextStyle(
-                      fontSize: 10,
-                      color: state.isConnected ? Colors.blue : Colors.red),
-                );
-              },
-            ),
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              _showMarketFilterDialog(context);
-            },
-            icon: Icon(Icons.filter_list),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(112),
-          child: Column(
+    return BlocProvider(
+      create: (context) => context.read<NetworkInfoBloc>(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 4),
-                child: DebouncedSearchField(
-                  hintText: 'Search by symbol or title...',
-                  onSearch: (searchFieldValue) {
-                    setState(() {
-                      _currentSearchFieldValue = searchFieldValue;
-                    });
-
-                    if (searchFieldValue.isEmpty) {
-                      context.read<StockRankingsBloc>().add(
-                          GetStockRankingsEvent(
-                              market: _selectedMarket,
-                              sectors: _selectedSectors));
-                    } else {
-                      context
-                          .read<StockRankingsBloc>()
-                          .add(SearchStockRankingsEvent(
-                            searchFieldValue: searchFieldValue,
-                            market: _selectedMarket,
-                            sectors: _selectedSectors,
-                          ));
-                    }
-                  },
-                ),
+              const SizedBox(height: 12),
+              BlocBuilder<StockRankingsBloc, StockRankingsState>(
+                builder: (context, state) {
+                  return Text(
+                    "${MarketFilter.getMarketName(state.market)} Stock Rankings",
+                  );
+                },
               ),
-              SectorFilter(
-                selectedSectors: _selectedSectors,
-                onSectorSelected: (sector) {
-                  setState(() {
-                    if (_selectedSectors.contains(sector)) {
-                      _selectedSectors.remove(sector);
-                    } else {
-                      _selectedSectors.add(sector);
-                    }
-                  });
-
-                  context.read<StockRankingsBloc>().add(
-                      FilterStockRankingsEvent(
-                          market: _selectedMarket, sectors: _selectedSectors));
+              BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
+                builder: (context, state) {
+                  return Text(
+                    state.isConnected
+                        ? 'Online Mode'
+                        : 'Offline Mode - Showing cached data',
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: state.isConnected ? Colors.blue : Colors.red),
+                  );
                 },
               ),
             ],
           ),
-        ),
-      ),
-      body: BlocProvider(
-        create: (context) => context.read<StockRankingsBloc>(),
-        child: BlocListener<NavigationCubit, NavigationState?>(
-          listener: (context, state) {
-            if (state is NavigateToStockDetailScreen) {
-              Navigator.pushNamed(context, AppRouter.stockDetailScreen,
-                  arguments: state.stockId);
-            }
-            context.read<NavigationCubit>().resetNavigation();
-          },
-          child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
-            builder: (context, state) {
-              if (state is StockRankingsInitial) {
-                context.read<StockRankingsBloc>().add(GetStockRankingsEvent(
-                    market: _selectedMarket, sectors: _selectedSectors));
-                return const Center(
-                    child: CircularProgressIndicator(color: Colors.blue));
-              } else if (state is StockRankingsLoading) {
-                return const Center(
-                    child: CircularProgressIndicator(color: Colors.blue));
-              } else if (state is StockRankingsLoaded) {
-                return _buildStockRankingList(context, state);
-              } else if (state is StockRankingsError) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child:
-                              Text(state.message, textAlign: TextAlign.center),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                _showMarketFilterDialog(context);
+              },
+              icon: Icon(Icons.filter_list),
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(112),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 4),
+                  child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
+                    builder: (context, state) {
+                      return DebouncedSearchField(
+                        hintText: 'Search by symbol or title...',
+                        onSearch: (searchFieldValue) {
                           context.read<StockRankingsBloc>().add(
-                              GetStockRankingsEvent(
-                                  market: _selectedMarket,
-                                  sectors: _selectedSectors));
+                              SearchStockRankingsEvent(
+                                  searchFieldValue: searchFieldValue,
+                                  market: state.market,
+                                  sectors: state.sectors));
                         },
-                        child: const Text('Try Again'),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                );
-              } else {
-                return const SizedBox.shrink();
+                ),
+                BlocBuilder<StockRankingsBloc, StockRankingsState>(
+                  builder: (context, state) {
+                    return SectorFilter(
+                      selectedSectors: state.sectors,
+                      onSectorSelected: (sector) {
+                        final sectors = state.sectors.contains(sector)
+                            ? state.sectors.where((s) => s != sector).toList()
+                            : [...state.sectors, sector];
+                        context.read<StockRankingsBloc>().add(
+                            FilterStockRankingsEvent(
+                                market: state.market, sectors: sectors));
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: BlocProvider(
+          create: (context) => context.read<StockRankingsBloc>(),
+          child: BlocListener<NavigationCubit, NavigationState?>(
+            listener: (context, state) {
+              if (state is NavigateToStockDetailScreen) {
+                Navigator.pushNamed(context, AppRouter.stockDetailScreen,
+                    arguments: state.stockId);
               }
             },
+            child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
+              builder: (context, state) {
+                if (state is StockRankingsInitial) {
+                  context.read<StockRankingsBloc>().add(GetStockRankingsEvent(
+                      market: state.market, sectors: state.sectors));
+                }
+
+                switch (state) {
+                  case StockRankingsInitial _:
+                    context
+                        .read<StockRankingsBloc>()
+                        .add(GetStockRankingsEvent());
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.blue));
+
+                  case StockRankingsLoading _:
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.blue));
+
+                  case StockRankingsLoaded _:
+                    return _buildStockRankingList(context, state);
+
+                  case StockRankingsError _:
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Text(state.message,
+                                  textAlign: TextAlign.center),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<StockRankingsBloc>().add(
+                                  GetStockRankingsEvent(
+                                      market: state.market,
+                                      sectors: state.sectors));
+                            },
+                            child: const Text('Try Again'),
+                          ),
+                        ],
+                      ),
+                    );
+
+                  default:
+                    return const Center(
+                        child: Text("Oops! Something went wrong!"));
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -178,14 +186,14 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        if (_currentSearchFieldValue.isEmpty) {
+        if (state.searchFieldValue.isEmpty) {
           context.read<StockRankingsBloc>().add(PullToRefreshStockRankingsEvent(
-              market: _selectedMarket, sectors: _selectedSectors));
+              market: state.market, sectors: state.sectors));
         }
         _checkInternetConnection();
       },
       notificationPredicate: (ScrollNotification scrollInfo) {
-        return _currentSearchFieldValue.isEmpty;
+        return state.searchFieldValue.isEmpty;
       },
       color: Colors.blue,
       child: ListView.builder(
@@ -198,9 +206,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 (state.rankedStocks.length ~/ ApiConstants.defaultLoadLimit) +
                     1; // TODO: Should calculate max next page from count
             context.read<StockRankingsBloc>().add(LoadMoreStockRankingsEvent(
-                page: nextPage,
-                market: _selectedMarket,
-                sectors: _selectedSectors));
+                page: nextPage, market: state.market, sectors: state.sectors));
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -338,32 +344,25 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
     );
   }
 
+  // Market filter dialog
   void _showMarketFilterDialog(BuildContext context) {
+    final bloc = context.read<StockRankingsBloc>();
+
     showDialog<Map<String, String>>(
       context: context,
       builder: (context) => MarketFilter(
-          selectedMarket: _selectedMarket,
+          selectedMarket: bloc.state.market,
           onMarketSelected: (market) {
             Navigator.pop(context, {
               'market': market,
             });
           }),
     ).then((result) {
-      if (result != null) {
+      if (result != null && mounted) {
         final market = result['market'] ?? ApiConstants.defaultMarket;
-        if (market != _selectedMarket) {
-          setState(() {
-            _selectedMarket = market;
-          });
-
-          context.read<StockRankingsBloc>().add(FilterStockRankingsEvent(
-              market: _selectedMarket, sectors: _selectedSectors));
-        }
+        bloc.add(FilterStockRankingsEvent(
+            market: market, sectors: bloc.state.sectors));
       }
     });
-  }
-
-  void _checkInternetConnection() {
-    context.read<NetworkInfoBloc>().add(CheckConnectionEvent());
   }
 }

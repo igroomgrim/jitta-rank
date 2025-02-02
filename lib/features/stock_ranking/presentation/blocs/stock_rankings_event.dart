@@ -11,12 +11,14 @@ class GetStockRankingsEvent extends StockRankingsEvent {
   final String market;
   final int page;
   final List<String> sectors;
+  final String searchFieldValue;
 
   GetStockRankingsEvent({
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
     this.limit = ApiConstants.defaultLoadLimit,
     this.page = ApiConstants.defaultLoadPage,
+    this.searchFieldValue = "",
   });
 
   @override
@@ -27,11 +29,13 @@ class LoadMoreStockRankingsEvent extends StockRankingsEvent {
   final int page;
   final String market;
   final List<String> sectors;
+  final String searchFieldValue;
 
   LoadMoreStockRankingsEvent({
     this.page = ApiConstants.defaultLoadPage,
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
+    this.searchFieldValue = "",
   });
 
   @override
@@ -41,10 +45,12 @@ class LoadMoreStockRankingsEvent extends StockRankingsEvent {
 class PullToRefreshStockRankingsEvent extends StockRankingsEvent {
   final String market;
   final List<String> sectors;
+  final String searchFieldValue;
 
   PullToRefreshStockRankingsEvent({
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
+    this.searchFieldValue = "",
   });
 
   @override
@@ -69,10 +75,12 @@ class SearchStockRankingsEvent extends StockRankingsEvent {
 class FilterStockRankingsEvent extends StockRankingsEvent {
   final String market;
   final List<String> sectors;
+  final String searchFieldValue;
 
   FilterStockRankingsEvent({
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
+    this.searchFieldValue = "",
   });
 
   @override

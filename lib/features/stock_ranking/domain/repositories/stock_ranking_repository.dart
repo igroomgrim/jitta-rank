@@ -7,4 +7,6 @@ abstract class StockRankingRepository {
       int limit, String market, int page, List<String> sectors);
   Future<Either<Failure, List<RankedStock>>> searchStockRankings(
       String keyword, String market, List<String> sectors);
+  Future<Either<Failure, List<RankedStock>>> filterStockRankings(
+      String keyword, String market, List<String> sectors);
 }

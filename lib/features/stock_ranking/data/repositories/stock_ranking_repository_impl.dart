@@ -68,6 +68,15 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
           'Failed to search stock rankings from local datasource'));
     }
   }
+
+  @override
+  Future<Either<Failure, List<RankedStock>>> filterStockRankings(
+      String keyword, String market, List<String> sectors) async {
+    // TODO: Implement filterStockRankings
+    print(
+        'StockRankingRepositoryImpl: filterStockRankings $keyword $market $sectors');
+    return right([]);
+  }
 }
 
 // TODO: Revise error massage and remove print statements
