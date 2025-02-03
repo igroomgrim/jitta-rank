@@ -13,7 +13,7 @@ void main() {
   late GetStockRankingsUsecase getStockRankingsUsecase;
   late PullToRefreshStockRankingsUsecase pullToRefreshStockRankingsUsecase;
   late LoadMoreStockRankingsUsecase loadMoreStockRankingsUsecase;
-  late SearchStockRankingsUsecase searchStockRankingsUsecase;
+  late FilterStockRankingsUsecase filterStockRankingsUsecase;
 
   setUp(() {
     mockStockRankingRepository = MockStockRankingRepository();
@@ -23,14 +23,14 @@ void main() {
         PullToRefreshStockRankingsUsecase(mockStockRankingRepository);
     loadMoreStockRankingsUsecase =
         LoadMoreStockRankingsUsecase(mockStockRankingRepository);
-    searchStockRankingsUsecase =
-        SearchStockRankingsUsecase(mockStockRankingRepository);
+    filterStockRankingsUsecase =
+        FilterStockRankingsUsecase(mockStockRankingRepository);
 
     stockRankingsBloc = StockRankingsBloc(
         getStockRankingsUsecase,
         loadMoreStockRankingsUsecase,
         pullToRefreshStockRankingsUsecase,
-        searchStockRankingsUsecase);
+        filterStockRankingsUsecase);
   });
 
   group('GetStockRankingsEvent', () {
@@ -87,7 +87,7 @@ void main() {
     blocTest<StockRankingsBloc, StockRankingsState>(
       'should emit StockRankingsLoaded when StockRankingsEvent is FilterStockRankingsEvent',
       build: () {
-        when(mockStockRankingRepository.getStockRankings(any, any, any, any))
+        when(mockStockRankingRepository.filterStockRankings(any, any, any))
             .thenAnswer((_) async =>
                 Right(MockStockRankingData.getMockStockRankings()));
         return stockRankingsBloc;
@@ -99,7 +99,7 @@ void main() {
     blocTest<StockRankingsBloc, StockRankingsState>(
       'should emit StockRankingsError when StockRankingsEvent is FilterStockRankingsEvent',
       build: () {
-        when(mockStockRankingRepository.getStockRankings(any, any, any, any))
+        when(mockStockRankingRepository.filterStockRankings(any, any, any))
             .thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
         return stockRankingsBloc;
       },

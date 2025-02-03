@@ -3,13 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i3;
 
-import 'package:jitta_rank/core/networking/graphql_service.dart' as _i2;
 import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_graphql_datasource.dart'
-    as _i3;
+    as _i2;
 import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart'
-    as _i5;
+    as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -26,53 +25,34 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeGraphqlService_0 extends _i1.SmartFake
-    implements _i2.GraphqlService {
-  _FakeGraphqlService_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [StockRankingGraphqlDatasource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockStockRankingGraphqlDatasource extends _i1.Mock
-    implements _i3.StockRankingGraphqlDatasource {
+    implements _i2.StockRankingGraphqlDatasource {
   MockStockRankingGraphqlDatasource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.GraphqlService get graphqlService => (super.noSuchMethod(
-        Invocation.getter(#graphqlService),
-        returnValue: _FakeGraphqlService_0(
-          this,
-          Invocation.getter(#graphqlService),
-        ),
-      ) as _i2.GraphqlService);
-
-  @override
-  _i4.Future<List<_i5.RankedStockModel>> getStockRankings(
-    int? limit,
-    String? market,
-    int? page,
-    List<String>? sectors,
-  ) =>
+  _i3.Future<List<_i4.RankedStockModel>> getStockRankings({
+    int? limit = 20,
+    String? market = 'TH',
+    int? page = 1,
+    List<String>? sectors = const [],
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getStockRankings,
-          [
-            limit,
-            market,
-            page,
-            sectors,
-          ],
+          [],
+          {
+            #limit: limit,
+            #market: market,
+            #page: page,
+            #sectors: sectors,
+          },
         ),
-        returnValue: _i4.Future<List<_i5.RankedStockModel>>.value(
-            <_i5.RankedStockModel>[]),
-      ) as _i4.Future<List<_i5.RankedStockModel>>);
+        returnValue: _i3.Future<List<_i4.RankedStockModel>>.value(
+            <_i4.RankedStockModel>[]),
+      ) as _i3.Future<List<_i4.RankedStockModel>>);
 }

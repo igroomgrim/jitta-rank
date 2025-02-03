@@ -81,14 +81,14 @@ class MockStockRankingRepository extends _i1.Mock
 
   @override
   _i4.Future<
-      _i2.Either<_i5.Failure, List<_i6.RankedStock>>> searchStockRankings(
+      _i2.Either<_i5.Failure, List<_i6.RankedStock>>> filterStockRankings(
     String? keyword,
     String? market,
     List<String>? sectors,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #searchStockRankings,
+          #filterStockRankings,
           [
             keyword,
             market,
@@ -100,7 +100,7 @@ class MockStockRankingRepository extends _i1.Mock
                 _FakeEither_0<_i5.Failure, List<_i6.RankedStock>>(
           this,
           Invocation.method(
-            #searchStockRankings,
+            #filterStockRankings,
             [
               keyword,
               market,

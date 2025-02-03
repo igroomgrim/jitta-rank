@@ -35,21 +35,22 @@ class MockStockRankingLocalDatasource extends _i1.Mock
   }
 
   @override
-  _i3.Future<List<_i4.RankedStockModel>> getStockRankings(
+  _i3.Future<List<_i4.RankedStockModel>> getStockRankings({
     int? limit,
     String? market,
     int? page,
     List<String>? sectors,
-  ) =>
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getStockRankings,
-          [
-            limit,
-            market,
-            page,
-            sectors,
-          ],
+          [],
+          {
+            #limit: limit,
+            #market: market,
+            #page: page,
+            #sectors: sectors,
+          },
         ),
         returnValue: _i3.Future<List<_i4.RankedStockModel>>.value(
             <_i4.RankedStockModel>[]),
@@ -66,23 +67,4 @@ class MockStockRankingLocalDatasource extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<List<_i4.RankedStockModel>> searchStockRankings(
-    String? keyword,
-    String? market,
-    List<String>? sectors,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #searchStockRankings,
-          [
-            keyword,
-            market,
-            sectors,
-          ],
-        ),
-        returnValue: _i3.Future<List<_i4.RankedStockModel>>.value(
-            <_i4.RankedStockModel>[]),
-      ) as _i3.Future<List<_i4.RankedStockModel>>);
 }
