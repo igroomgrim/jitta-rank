@@ -4,6 +4,7 @@ import 'package:jitta_rank/core/networking/network_info_service.dart';
 import 'package:jitta_rank/core/networking/network_info_bloc.dart';
 import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
+import 'package:jitta_rank/core/storage/storage_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -36,4 +37,9 @@ Future<void> initializeDependencies() async {
 
   // Network Info Bloc
   getIt.registerLazySingleton<NetworkInfoBloc>(() => NetworkInfoBloc(getIt()));
+
+  // Storage Service
+  getIt.registerLazySingleton<StorageService>(() => StorageServiceImpl());
+  final storageService = getIt<StorageService>();
+  await storageService.init(); // call for initialize storage service
 }

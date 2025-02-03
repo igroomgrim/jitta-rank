@@ -1,39 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:jitta_rank/core/core.dart';
-import 'features/stock_ranking/stock_ranking.dart';
-import 'features/stock_detail/stock_detail.dart';
+import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  Hive.registerAdapter(RankedStockModelAdapter());
-  Hive.registerAdapter(SectorModelAdapter());
-  Hive.registerAdapter(StockModelAdapter());
-  Hive.registerAdapter(StockPriceModelAdapter());
-  Hive.registerAdapter(StockJittaModelAdapter());
-  Hive.registerAdapter(StockJittaFactorModelAdapter());
-  Hive.registerAdapter(StockJittaFactorGrowthModelAdapter());
-  Hive.registerAdapter(StockJittaFactorFinancialModelAdapter());
-  Hive.registerAdapter(StockJittaFactorManagementModelAdapter());
-  Hive.registerAdapter(StockGraphPriceItemModelAdapter());
-  Hive.registerAdapter(StockGraphPriceModelAdapter());
-  await Hive.openBox<RankedStockModel>('ranked_stocks');
-  await Hive.openBox<SectorModel>('sectors');
-  await Hive.openBox<StockModel>('stock_detail');
-  await Hive.openBox<StockPriceModel>('stock_price');
-  await Hive.openBox<StockJittaModel>('stock_jitta');
-  await Hive.openBox<StockJittaFactorModel>('stock_jitta_factor');
-  await Hive.openBox<StockJittaFactorGrowthModel>('stock_jitta_factor_growth');
-  await Hive.openBox<StockJittaFactorFinancialModel>(
-      'stock_jitta_factor_financial');
-  await Hive.openBox<StockJittaFactorManagementModel>(
-      'stock_jitta_factor_management');
-  await Hive.openBox<StockGraphPriceItemModel>('stock_graph_price_item');
-  await Hive.openBox<StockGraphPriceModel>('stock_graph_price');
-  // TODO: move to the right place - maybe dependency injection?
-
   await initializeDependencies();
   runApp(const MyApp());
 }
