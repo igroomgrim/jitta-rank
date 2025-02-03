@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'core/navigation/app_router.dart';
-import 'core/navigation/navigation_cubit.dart';
+import 'package:jitta_rank/core/core.dart';
 import 'features/stock_ranking/stock_ranking.dart';
 import 'features/stock_detail/stock_detail.dart';
-import 'core/networking/graphql_service.dart';
-import 'package:jitta_rank/core/networking/network_info_service.dart';
-import 'package:jitta_rank/core/networking/network_info_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,53 +34,21 @@ void main() async {
   await Hive.openBox<StockGraphPriceModel>('stock_graph_price');
   // TODO: move to the right place - maybe dependency injection?
 
-  final networkInfoService = NetworkInfoServiceImpl();
-  final graphqlService = GraphqlService();
-  final stockRankingGraphqlDatasource =
-      StockRankingGraphqlDatasource(graphqlService);
-  final stockRankingLocalDatasource = StockRankingLocalDatasourceImpl();
-
-  runApp(MyApp(
-    networkInfoService: networkInfoService,
-    graphqlService: graphqlService,
-    stockRankingGraphqlDatasource: stockRankingGraphqlDatasource,
-    stockRankingLocalDatasource: stockRankingLocalDatasource,
-  ));
+  await initializeDependencies();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final NetworkInfoService networkInfoService;
-  final GraphqlService graphqlService;
-  final StockRankingGraphqlDatasource stockRankingGraphqlDatasource;
-  final StockRankingLocalDatasource stockRankingLocalDatasource;
-  final StockRankingRepository stockRankingRepository;
-
-  MyApp({
-    super.key,
-    required this.networkInfoService,
-    required this.graphqlService,
-    required this.stockRankingGraphqlDatasource,
-    required this.stockRankingLocalDatasource,
-  }) : stockRankingRepository = StockRankingRepositoryImpl(
-          graphqlDatasource: stockRankingGraphqlDatasource,
-          localDatasource: stockRankingLocalDatasource,
-          networkInfoService: networkInfoService,
-        );
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => NavigationCubit()),
-        BlocProvider(
-            create: (context) => StockRankingsBloc(
-                  GetStockRankingsUsecase(stockRankingRepository),
-                  LoadMoreStockRankingsUsecase(stockRankingRepository),
-                  PullToRefreshStockRankingsUsecase(stockRankingRepository),
-                  FilterStockRankingsUsecase(stockRankingRepository),
-                )),
-        BlocProvider(create: (context) => NetworkInfoBloc(networkInfoService)),
+        BlocProvider(create: (context) => getIt<NavigationCubit>()),
+        BlocProvider(create: (context) => getIt<StockRankingsBloc>()),
+        BlocProvider(create: (context) => getIt<NetworkInfoBloc>()),
       ],
       child: MaterialApp(
         onGenerateRoute: AppRouter.generateRoute,
