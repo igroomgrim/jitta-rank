@@ -5,6 +5,7 @@ import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
 import 'package:jitta_rank/core/navigation/app_router.dart';
 import 'package:jitta_rank/core/networking/network_info_bloc.dart';
+import 'package:jitta_rank/core/di/injection_container.dart';
 
 class StockRankingListScreen extends StatefulWidget {
   const StockRankingListScreen({super.key});
@@ -27,89 +28,88 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => context.read<NetworkInfoBloc>(),
+      create: (context) => getIt<StockRankingsBloc>(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 12),
-              BlocBuilder<StockRankingsBloc, StockRankingsState>(
-                builder: (context, state) {
-                  return Text(
-                    "${MarketFilter.getMarketName(state.market)} Stock Rankings",
-                  );
-                },
-              ),
-              BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
-                builder: (context, state) {
-                  return Text(
-                    state.isConnected
-                        ? 'Online Mode'
-                        : 'Offline Mode - Showing cached data',
-                    style: TextStyle(
-                        fontSize: 10,
-                        color: state.isConnected ? Colors.blue : Colors.red),
-                  );
-                },
-              ),
-            ],
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                _showMarketFilterDialog(context);
-              },
-              icon: Icon(Icons.filter_list),
-            ),
-          ],
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(112),
-            child: Column(
+          appBar: AppBar(
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 4),
-                  child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
-                    builder: (context, state) {
-                      return DebouncedSearchField(
-                        hintText: 'Search by symbol or title...',
-                        onSearch: (searchFieldValue) {
-                          context.read<StockRankingsBloc>().add(
-                              FilterStockRankingsEvent(
-                                  searchFieldValue: searchFieldValue,
-                                  market: state.market,
-                                  sectors: state.sectors));
-                        },
-                      );
-                    },
-                  ),
-                ),
+                const SizedBox(height: 12),
                 BlocBuilder<StockRankingsBloc, StockRankingsState>(
                   builder: (context, state) {
-                    return SectorFilter(
-                      selectedSectors: state.sectors,
-                      onSectorSelected: (sector) {
-                        final sectors = state.sectors.contains(sector)
-                            ? state.sectors.where((s) => s != sector).toList()
-                            : [...state.sectors, sector];
-                        context.read<StockRankingsBloc>().add(
-                            FilterStockRankingsEvent(
-                                market: state.market,
-                                sectors: sectors,
-                                searchFieldValue: state.searchFieldValue));
-                      },
+                    return Text(
+                      "${MarketFilter.getMarketName(state.market)} Stock Rankings",
+                    );
+                  },
+                ),
+                BlocBuilder<NetworkInfoBloc, NetworkInfoState>(
+                  builder: (context, state) {
+                    return Text(
+                      state.isConnected
+                          ? 'Online Mode'
+                          : 'Offline Mode - Showing cached data',
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: state.isConnected ? Colors.blue : Colors.red),
                     );
                   },
                 ),
               ],
             ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  _showMarketFilterDialog(context);
+                },
+                icon: Icon(Icons.filter_list),
+              ),
+            ],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(112),
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 8, right: 8, bottom: 4),
+                    child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
+                      builder: (context, state) {
+                        return DebouncedSearchField(
+                          hintText: 'Search by symbol or title...',
+                          onSearch: (searchFieldValue) {
+                            context.read<StockRankingsBloc>().add(
+                                FilterStockRankingsEvent(
+                                    searchFieldValue: searchFieldValue,
+                                    market: state.market,
+                                    sectors: state.sectors));
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  BlocBuilder<StockRankingsBloc, StockRankingsState>(
+                    builder: (context, state) {
+                      return SectorFilter(
+                        selectedSectors: state.sectors,
+                        onSectorSelected: (sector) {
+                          final sectors = state.sectors.contains(sector)
+                              ? state.sectors.where((s) => s != sector).toList()
+                              : [...state.sectors, sector];
+                          context.read<StockRankingsBloc>().add(
+                              FilterStockRankingsEvent(
+                                  market: state.market,
+                                  sectors: sectors,
+                                  searchFieldValue: state.searchFieldValue));
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        body: BlocProvider(
-          create: (context) => context.read<StockRankingsBloc>(),
-          child: BlocListener<NavigationCubit, NavigationState?>(
+          body: BlocListener<NavigationCubit, NavigationState?>(
             listener: (context, state) {
               if (state is NavigateToStockDetailScreen) {
                 Navigator.pushNamed(context, AppRouter.stockDetailScreen,
@@ -167,9 +167,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 }
               },
             ),
-          ),
-        ),
-      ),
+          )),
     );
   }
 
@@ -220,17 +218,21 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
 
   // Market filter dialog
   void _showMarketFilterDialog(BuildContext context) {
-    final bloc = context.read<StockRankingsBloc>();
+    final bloc = getIt<StockRankingsBloc>();
 
     showDialog<Map<String, String>>(
       context: context,
-      builder: (context) => MarketFilter(
+      builder: (dialogContext) => BlocProvider.value(
+        value: bloc,
+        child: MarketFilter(
           selectedMarket: bloc.state.market,
           onMarketSelected: (market) {
-            Navigator.pop(context, {
+            Navigator.pop(dialogContext, {
               'market': market,
             });
-          }),
+          },
+        ),
+      ),
     ).then((result) {
       if (result != null && mounted) {
         final market = result['market'] ?? ApiConstants.defaultMarket;

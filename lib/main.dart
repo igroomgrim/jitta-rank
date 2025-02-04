@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/core/core.dart';
-import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +17,6 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => getIt<NavigationCubit>()),
-        BlocProvider(create: (context) => getIt<StockRankingsBloc>()),
         BlocProvider(create: (context) => getIt<NetworkInfoBloc>()),
       ],
       child: MaterialApp(

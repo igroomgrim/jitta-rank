@@ -11,26 +11,35 @@ final getIt = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Networking Services
   getIt.registerLazySingleton<GraphqlService>(() => GraphqlService());
-  getIt.registerLazySingleton<NetworkInfoService>(() => NetworkInfoServiceImpl());
+  getIt.registerLazySingleton<NetworkInfoService>(
+      () => NetworkInfoServiceImpl());
 
   // Datasources
-  getIt.registerLazySingleton<StockRankingGraphqlDatasource>(() => StockRankingGraphqlDatasource(getIt()));
-  getIt.registerLazySingleton<StockRankingLocalDatasource>(() => StockRankingLocalDatasourceImpl());
+  getIt.registerLazySingleton<StockRankingGraphqlDatasource>(
+      () => StockRankingGraphqlDatasource(getIt()));
+  getIt.registerLazySingleton<StockRankingLocalDatasource>(
+      () => StockRankingLocalDatasourceImpl());
 
   // Repositories
-  getIt.registerLazySingleton<StockRankingRepository>(() => StockRankingRepositoryImpl(
-      graphqlDatasource: getIt(),
-      localDatasource: getIt(),
-      networkInfoService: getIt()));
+  getIt.registerLazySingleton<StockRankingRepository>(() =>
+      StockRankingRepositoryImpl(
+          graphqlDatasource: getIt(),
+          localDatasource: getIt(),
+          networkInfoService: getIt()));
 
   // Usecases
-  getIt.registerLazySingleton<GetStockRankingsUsecase>(() => GetStockRankingsUsecase(getIt()));
-  getIt.registerLazySingleton<LoadMoreStockRankingsUsecase>(() => LoadMoreStockRankingsUsecase(getIt()));
-  getIt.registerLazySingleton<PullToRefreshStockRankingsUsecase>(() => PullToRefreshStockRankingsUsecase(getIt()));
-  getIt.registerLazySingleton<FilterStockRankingsUsecase>(() => FilterStockRankingsUsecase(getIt()));
+  getIt.registerLazySingleton<GetStockRankingsUsecase>(
+      () => GetStockRankingsUsecase(getIt()));
+  getIt.registerLazySingleton<LoadMoreStockRankingsUsecase>(
+      () => LoadMoreStockRankingsUsecase(getIt()));
+  getIt.registerLazySingleton<PullToRefreshStockRankingsUsecase>(
+      () => PullToRefreshStockRankingsUsecase(getIt()));
+  getIt.registerLazySingleton<FilterStockRankingsUsecase>(
+      () => FilterStockRankingsUsecase(getIt()));
 
   // Stock Rankings Bloc
-  getIt.registerLazySingleton<StockRankingsBloc>(() => StockRankingsBloc(getIt(), getIt(), getIt(), getIt()));
+  getIt.registerLazySingleton<StockRankingsBloc>(
+      () => StockRankingsBloc(getIt(), getIt(), getIt(), getIt()));
 
   // Navigation Bloc
   getIt.registerLazySingleton<NavigationCubit>(() => NavigationCubit());
