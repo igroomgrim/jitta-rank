@@ -114,6 +114,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
               if (state is NavigateToStockDetailScreen) {
                 Navigator.pushNamed(context, AppRouter.stockDetailScreen,
                     arguments: state.stockId);
+                context.read<NavigationCubit>().resetNavigation();
               }
             },
             child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
