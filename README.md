@@ -9,6 +9,8 @@
 
 *🚀 Built as a 7-day challenge to push my skills in architecture, state management, and performance optimization. Expect clean code, but maybe also some late-night debugging magic. 🌚✨🐛🌝*
 
+📝**Note:** The **main** branch is frozen as a snapshot of the 7-day challenge. Active development continues on the [**develop**](https://github.com/igroomgrim/jitta-rank/tree/develop "develop") branch, where you'll find the latest improvements and experimental features. Feel free to check it out if you want to see where this project is heading!
+
 ## Overview
 
 Jitta Rank is a mobile application that allows users to:
