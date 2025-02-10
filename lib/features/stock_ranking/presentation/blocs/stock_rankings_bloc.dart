@@ -1,6 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
+import 'package:stream_transform/stream_transform.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+
+EventTransformer<Event> throttleDroppable<Event>() {
+  const throttleDuration = Duration(milliseconds: 100);
+  return (events, mapper) {
+    return droppable<Event>().call(events.throttle(throttleDuration), mapper);
+  };
+}
 
 class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   final GetStockRankingsUsecase getStockRankings;
@@ -19,7 +28,8 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
     this.filterStockRankings,
   ) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
-    on<LoadMoreStockRankingsEvent>(_onLoadMoreStockRankings);
+    on<LoadMoreStockRankingsEvent>(_onLoadMoreStockRankings,
+        transformer: throttleDroppable());
     on<PullToRefreshStockRankingsEvent>(_onPullToRefreshStockRankings);
     on<FilterStockRankingsEvent>(_onFilterStockRankings);
   }
