@@ -38,8 +38,11 @@ Future<void> initializeDependencies() async {
       () => FilterStockRankingsUsecase(getIt()));
 
   // Stock Rankings Bloc
-  getIt.registerLazySingleton<StockRankingsBloc>(
-      () => StockRankingsBloc(getIt(), getIt(), getIt(), getIt()));
+  getIt.registerLazySingleton<StockRankingsBloc>(() => StockRankingsBloc(
+      getStockRankings: getIt(),
+      loadMoreStockRankings: getIt(),
+      pullToRefreshStockRankings: getIt(),
+      filterStockRankings: getIt()));
 
   // Navigation Bloc
   getIt.registerLazySingleton<NavigationCubit>(() => NavigationCubit());

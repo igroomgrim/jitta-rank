@@ -39,7 +39,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 BlocBuilder<StockRankingsBloc, StockRankingsState>(
                   builder: (context, state) {
                     return Text(
-                      "${MarketFilter.getMarketName(state.market)} Stock Rankings",
+                      "${MarketFilter.getMarketName(state.filter.market)} Stock Rankings",
                     );
                   },
                 ),
@@ -81,8 +81,8 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                             context.read<StockRankingsBloc>().add(
                                 FilterStockRankingsEvent(
                                     searchFieldValue: searchFieldValue,
-                                    market: state.market,
-                                    sectors: state.sectors));
+                                    market: state.filter.market,
+                                    sectors: state.filter.sectors));
                           },
                         );
                       },
@@ -91,16 +91,19 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                   BlocBuilder<StockRankingsBloc, StockRankingsState>(
                     builder: (context, state) {
                       return SectorFilter(
-                        selectedSectors: state.sectors,
+                        selectedSectors: state.filter.sectors,
                         onSectorSelected: (sector) {
-                          final sectors = state.sectors.contains(sector)
-                              ? state.sectors.where((s) => s != sector).toList()
-                              : [...state.sectors, sector];
+                          final sectors = state.filter.sectors.contains(sector)
+                              ? state.filter.sectors
+                                  .where((s) => s != sector)
+                                  .toList()
+                              : [...state.filter.sectors, sector];
                           context.read<StockRankingsBloc>().add(
                               FilterStockRankingsEvent(
-                                  market: state.market,
+                                  market: state.filter.market,
                                   sectors: sectors,
-                                  searchFieldValue: state.searchFieldValue));
+                                  searchFieldValue:
+                                      state.filter.searchFieldValue));
                         },
                       );
                     },
@@ -152,8 +155,8 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                             onPressed: () {
                               context.read<StockRankingsBloc>().add(
                                   GetStockRankingsEvent(
-                                      market: state.market,
-                                      sectors: state.sectors));
+                                      market: state.filter.market,
+                                      sectors: state.filter.sectors));
                             },
                             child: const Text('Try Again'),
                           ),
@@ -179,14 +182,14 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        if (state.searchFieldValue.isEmpty) {
+        if (state.filter.searchFieldValue.isEmpty) {
           context.read<StockRankingsBloc>().add(PullToRefreshStockRankingsEvent(
-              market: state.market, sectors: state.sectors));
+              market: state.filter.market, sectors: state.filter.sectors));
         }
         _checkInternetConnection();
       },
       notificationPredicate: (ScrollNotification scrollInfo) {
-        return state.searchFieldValue.isEmpty;
+        return state.filter.searchFieldValue.isEmpty;
       },
       color: Colors.blue,
       child: ListView.builder(
@@ -199,7 +202,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
                 (state.rankedStocks.length ~/ ApiConstants.defaultLimit) +
                     1; // TODO: Should calculate max next page from count
             context.read<StockRankingsBloc>().add(LoadMoreStockRankingsEvent(
-                page: nextPage, market: state.market, sectors: state.sectors));
+                page: nextPage,
+                market: state.filter.market,
+                sectors: state.filter.sectors));
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -225,7 +230,7 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
       builder: (dialogContext) => BlocProvider.value(
         value: bloc,
         child: MarketFilter(
-          selectedMarket: bloc.state.market,
+          selectedMarket: bloc.state.filter.market,
           onMarketSelected: (market) {
             Navigator.pop(dialogContext, {
               'market': market,
@@ -237,9 +242,9 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
       if (result != null && mounted) {
         final market = result['market'] ?? ApiConstants.defaultMarket;
         bloc.add(FilterStockRankingsEvent(
-            searchFieldValue: bloc.state.searchFieldValue,
+            searchFieldValue: bloc.state.filter.searchFieldValue,
             market: market,
-            sectors: bloc.state.sectors));
+            sectors: bloc.state.filter.sectors));
       }
     });
   }

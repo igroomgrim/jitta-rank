@@ -22,7 +22,7 @@ void main() {
             (_) async => Right(MockStockRankingData.getMockStockRankings()));
 
     final result =
-        await loadMoreStockRankingsUsecase.call(1, 'market', 1, ['sector']);
+        await loadMoreStockRankingsUsecase.call('market', 1, ['sector']);
 
     expect(result, isA<Right>());
   });
@@ -32,7 +32,7 @@ void main() {
         .thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
 
     final result =
-        await loadMoreStockRankingsUsecase.call(1, 'market', 1, ['sector']);
+        await loadMoreStockRankingsUsecase.call('market', 1, ['sector']);
 
     expect(result, isA<Left>());
   });

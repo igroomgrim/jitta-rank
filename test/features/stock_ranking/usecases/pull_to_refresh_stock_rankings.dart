@@ -21,8 +21,8 @@ void main() {
         .thenAnswer(
             (_) async => Right(MockStockRankingData.getMockStockRankings()));
 
-    final result = await pullToRefreshStockRankingsUsecase
-        .call(1, 'market', 1, ['sector']);
+    final result =
+        await pullToRefreshStockRankingsUsecase.call('market', ['sector']);
 
     expect(result, isA<Right>());
   });
@@ -31,8 +31,8 @@ void main() {
     when(mockStockRankingRepository.getStockRankings(any, any, any, any))
         .thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
 
-    final result = await pullToRefreshStockRankingsUsecase
-        .call(1, 'market', 1, ['sector']);
+    final result =
+        await pullToRefreshStockRankingsUsecase.call('market', ['sector']);
 
     expect(result, isA<Left>());
   });

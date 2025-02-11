@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jitta_rank/core/constants/api_constants.dart';
+// import 'package:jitta_rank/core/constants/api_constants.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
@@ -17,16 +17,12 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   final PullToRefreshStockRankingsUsecase pullToRefreshStockRankings;
   final FilterStockRankingsUsecase filterStockRankings;
 
-  final int _defaultLimit = ApiConstants.defaultLimit;
-  final int _defaultPage = ApiConstants.defaultPage;
-  List<RankedStock> _loadedRankedStocks = [];
-
-  StockRankingsBloc(
-    this.getStockRankings,
-    this.loadMoreStockRankings,
-    this.pullToRefreshStockRankings,
-    this.filterStockRankings,
-  ) : super(StockRankingsInitial()) {
+  StockRankingsBloc({
+    required this.getStockRankings,
+    required this.loadMoreStockRankings,
+    required this.pullToRefreshStockRankings,
+    required this.filterStockRankings,
+  }) : super(StockRankingsInitial()) {
     on<GetStockRankingsEvent>(_onGetStockRankings);
     on<LoadMoreStockRankingsEvent>(_onLoadMoreStockRankings,
         transformer: throttleDroppable());
@@ -37,125 +33,100 @@ class StockRankingsBloc extends Bloc<StockRankingsEvent, StockRankingsState> {
   void _onGetStockRankings(
       GetStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
     if (state is StockRankingsInitial) {
-      emit(StockRankingsLoading(
-          market: event.market,
-          sectors: event.sectors,
-          searchFieldValue: event.searchFieldValue));
+      emit(StockRankingsLoading(filter: StockRankingsFilter()));
     }
 
-    final result = await getStockRankings.call(
-        _defaultLimit, event.market, _defaultPage, event.sectors);
-    result.fold(
-      (failure) => emit(StockRankingsError(
-          market: event.market,
-          sectors: event.sectors,
-          searchFieldValue: event.searchFieldValue,
-          message: failure.message)),
-      (rankedStocks) {
-        _loadedRankedStocks = rankedStocks;
-        final hasReachedMaxData =
-            (rankedStocks.length < _defaultLimit) && rankedStocks.isNotEmpty;
-        emit(StockRankingsLoaded(
-            market: event.market,
-            sectors: event.sectors,
-            searchFieldValue: event.searchFieldValue,
-            rankedStocks: rankedStocks,
-            hasReachedMaxData: hasReachedMaxData));
-      },
-    );
-  }
-
-  void _onPullToRefreshStockRankings(PullToRefreshStockRankingsEvent event,
-      Emitter<StockRankingsState> emit) async {
-    final result = await pullToRefreshStockRankings.call(
-        _defaultLimit, event.market, _defaultPage, event.sectors);
-    result.fold(
-      (failure) => emit(StockRankingsError(
-          market: event.market,
-          sectors: event.sectors,
-          searchFieldValue: event.searchFieldValue,
-          message: failure.message)),
-      (rankedStocks) {
-        _loadedRankedStocks = rankedStocks;
-        final hasReachedMaxData =
-            (rankedStocks.length < _defaultLimit) && rankedStocks.isNotEmpty;
-        emit(StockRankingsLoaded(
-            market: event.market,
-            sectors: event.sectors,
-            searchFieldValue: event.searchFieldValue,
-            rankedStocks: rankedStocks,
-            hasReachedMaxData: hasReachedMaxData));
-      },
-    );
-  }
-
-  void _onFilterStockRankings(
-      FilterStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
-    emit(StockRankingsLoading(
+    final filter = StockRankingsFilter(
         market: event.market,
         sectors: event.sectors,
-        searchFieldValue: event.searchFieldValue));
-
-    final result = await filterStockRankings.call(
-        event.searchFieldValue, event.market, event.sectors);
+        searchFieldValue: event.searchFieldValue);
+    final result = await getStockRankings.call(
+        limit: event.limit,
+        market: event.market,
+        page: event.page,
+        sectors: event.sectors);
     result.fold(
-      (failure) => emit(StockRankingsError(
-          market: event.market,
-          sectors: event.sectors,
-          searchFieldValue: event.searchFieldValue,
-          message: failure.message)),
-      (rankedStocks) {
-        _loadedRankedStocks = rankedStocks;
-        final hasReachedMaxData =
-            (rankedStocks.length < _defaultLimit) && rankedStocks.isNotEmpty;
+      (failure) =>
+          emit(StockRankingsError(filter: filter, message: failure.message)),
+      (stockRankingsResult) {
         emit(StockRankingsLoaded(
-            market: event.market,
-            sectors: event.sectors,
-            searchFieldValue: event.searchFieldValue,
-            rankedStocks: rankedStocks,
-            hasReachedMaxData: hasReachedMaxData));
+            filter: filter,
+            rankedStocks: stockRankingsResult.rankedStocks,
+            hasReachedMaxData: stockRankingsResult.hasReachedMaxData));
       },
     );
   }
 
   void _onLoadMoreStockRankings(LoadMoreStockRankingsEvent event,
       Emitter<StockRankingsState> emit) async {
+    final filter = StockRankingsFilter(
+        market: event.market,
+        sectors: event.sectors,
+        searchFieldValue: event.searchFieldValue);
     final result = await loadMoreStockRankings.call(
-        _defaultLimit, event.market, event.page, event.sectors);
+        event.market, event.page, event.sectors);
     result.fold(
-      (failure) => emit(StockRankingsError(
-          market: event.market,
-          sectors: event.sectors,
-          searchFieldValue: event.searchFieldValue,
-          message: failure.message)),
-      (rankedStocks) {
-        if (rankedStocks.length < _defaultLimit && rankedStocks.isNotEmpty) {
-          _loadedRankedStocks = [..._loadedRankedStocks, ...rankedStocks];
-          emit(StockRankingsLoaded(
-              market: event.market,
-              sectors: event.sectors,
-              searchFieldValue: event.searchFieldValue,
-              rankedStocks: _loadedRankedStocks,
-              hasReachedMaxData: true));
-          return;
+      (failure) =>
+          emit(StockRankingsError(filter: filter, message: failure.message)),
+      (stockRankingsResult) {
+        if (stockRankingsResult.rankedStocks.isNotEmpty) {
+          if (state is StockRankingsLoaded) {
+            emit(StockRankingsLoaded(
+                filter: filter,
+                rankedStocks: [
+                  ...(state as StockRankingsLoaded).rankedStocks,
+                  ...stockRankingsResult.rankedStocks
+                ],
+                hasReachedMaxData: stockRankingsResult.hasReachedMaxData));
+          } else {
+            emit(StockRankingsLoaded(
+                filter: filter,
+                rankedStocks: stockRankingsResult.rankedStocks,
+                hasReachedMaxData: stockRankingsResult.hasReachedMaxData));
+          }
         }
+      },
+    );
+  }
 
-        if (rankedStocks.isNotEmpty) {
-          _loadedRankedStocks = [..._loadedRankedStocks, ...rankedStocks];
-          emit(StockRankingsLoaded(
-              market: event.market,
-              sectors: event.sectors,
-              searchFieldValue: event.searchFieldValue,
-              rankedStocks: _loadedRankedStocks,
-              hasReachedMaxData: false));
-        } else {
-          emit(StockRankingsLoaded(
-              market: event.market,
-              sectors: event.sectors,
-              searchFieldValue: event.searchFieldValue,
-              rankedStocks: _loadedRankedStocks,
-              hasReachedMaxData: true));
-        }
+  void _onPullToRefreshStockRankings(PullToRefreshStockRankingsEvent event,
+      Emitter<StockRankingsState> emit) async {
+    final filter = StockRankingsFilter(
+        market: event.market,
+        sectors: event.sectors,
+        searchFieldValue: event.searchFieldValue);
+    final result =
+        await pullToRefreshStockRankings.call(event.market, event.sectors);
+    result.fold(
+      (failure) =>
+          emit(StockRankingsError(filter: filter, message: failure.message)),
+      (stockRankingsResult) {
+        emit(StockRankingsLoaded(
+            filter: filter,
+            rankedStocks: stockRankingsResult.rankedStocks,
+            hasReachedMaxData: stockRankingsResult.hasReachedMaxData));
+      },
+    );
+  }
+
+  void _onFilterStockRankings(
+      FilterStockRankingsEvent event, Emitter<StockRankingsState> emit) async {
+    final filter = StockRankingsFilter(
+        market: event.market,
+        sectors: event.sectors,
+        searchFieldValue: event.searchFieldValue);
+    emit(StockRankingsLoading(filter: filter));
+
+    final result = await filterStockRankings.call(
+        event.searchFieldValue, event.market, event.sectors);
+    result.fold(
+      (failure) =>
+          emit(StockRankingsError(filter: filter, message: failure.message)),
+      (stockRankingsResult) {
+        emit(StockRankingsLoaded(
+            filter: filter,
+            rankedStocks: stockRankingsResult.rankedStocks,
+            hasReachedMaxData: stockRankingsResult.hasReachedMaxData));
       },
     );
   }

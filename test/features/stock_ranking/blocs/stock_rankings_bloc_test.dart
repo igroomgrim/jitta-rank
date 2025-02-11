@@ -27,10 +27,10 @@ void main() {
         FilterStockRankingsUsecase(mockStockRankingRepository);
 
     stockRankingsBloc = StockRankingsBloc(
-        getStockRankingsUsecase,
-        loadMoreStockRankingsUsecase,
-        pullToRefreshStockRankingsUsecase,
-        filterStockRankingsUsecase);
+        getStockRankings: getStockRankingsUsecase,
+        loadMoreStockRankings: loadMoreStockRankingsUsecase,
+        pullToRefreshStockRankings: pullToRefreshStockRankingsUsecase,
+        filterStockRankings: filterStockRankingsUsecase);
   });
 
   group('GetStockRankingsEvent', () {

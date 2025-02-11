@@ -2,33 +2,38 @@ import 'package:equatable/equatable.dart';
 import '../../domain/entities/ranked_stock.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 
-abstract class StockRankingsState extends Equatable {
+class StockRankingsFilter {
   final String market;
   final List<String> sectors;
   final String searchFieldValue;
+
+  const StockRankingsFilter({
+    this.market = ApiConstants.defaultMarket,
+    this.sectors = const [],
+    this.searchFieldValue = "",
+  });
+}
+
+abstract class StockRankingsState extends Equatable {
+  final StockRankingsFilter filter;
+
   const StockRankingsState({
-    required this.market,
-    required this.sectors,
-    required this.searchFieldValue,
+    required this.filter,
   });
 
   @override
-  List<Object> get props => [market, sectors];
+  List<Object> get props => [filter];
 }
 
 class StockRankingsInitial extends StockRankingsState {
   const StockRankingsInitial({
-    super.market = ApiConstants.defaultMarket,
-    super.sectors = const [],
-    super.searchFieldValue = "",
+    super.filter = const StockRankingsFilter(),
   });
 }
 
 class StockRankingsLoading extends StockRankingsState {
   const StockRankingsLoading({
-    required super.market,
-    required super.sectors,
-    required super.searchFieldValue,
+    required super.filter,
   });
 }
 
@@ -37,27 +42,23 @@ class StockRankingsLoaded extends StockRankingsState {
   final bool hasReachedMaxData;
 
   const StockRankingsLoaded({
-    required super.market,
-    required super.sectors,
-    required super.searchFieldValue,
+    required super.filter,
     required this.rankedStocks,
     required this.hasReachedMaxData,
   });
 
   @override
-  List<Object> get props => [rankedStocks, hasReachedMaxData];
+  List<Object> get props => [...super.props, rankedStocks, hasReachedMaxData];
 }
 
 class StockRankingsError extends StockRankingsState {
   final String message;
 
   const StockRankingsError({
-    required super.market,
-    required super.sectors,
-    required super.searchFieldValue,
+    required super.filter,
     required this.message,
   });
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [...super.props, message];
 }
