@@ -156,8 +156,8 @@ The application implements comprehensive error handling:
 
 ## Prerequisites
 
-- Flutter SDK (2.19.0 or higher)
-- Dart SDK (3.0.0 or higher)
+- Flutter SDK 3.27 or higher (developed and tested on 3.47.1)
+- Dart SDK 3.6.0 or higher (see `environment.sdk` in `pubspec.yaml`)
 - Android Studio / VS Code with Flutter extensions
 - A device or emulator running Android/iOS
 
@@ -191,12 +191,18 @@ flutter pub get
 
 3. Generate Hive adapters:
 ```bash
-flutter pub run build_runner build
+dart run build_runner build
 ```
 
 4. Run the app:
 ```bash
 flutter run
+```
+
+To point the app at a different GraphQL endpoint:
+
+```bash
+flutter run --dart-define=API_BASE_URL=https://your-endpoint/
 ```
 
 ## Testing

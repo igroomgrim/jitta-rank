@@ -75,8 +75,14 @@ class MarketFilter extends StatelessWidget {
     );
   }
 
+  /// Returns the display name for [marketCode], falling back to the code
+  /// itself when it is not one of the known markets. Without the fallback this
+  /// throws a StateError on any unrecognised code.
   static String getMarketName(String marketCode) {
-    return MarketFilter.markets
-        .firstWhere((market) => market['code'] == marketCode)['name']!;
+    final market = MarketFilter.markets.firstWhere(
+      (market) => market['code'] == marketCode,
+      orElse: () => const {},
+    );
+    return market['name'] ?? marketCode;
   }
 }
