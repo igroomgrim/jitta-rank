@@ -58,6 +58,26 @@ class MockStockRankingLocalDatasource extends _i1.Mock
       ) as _i3.Future<List<_i4.RankedStockModel>>);
 
   @override
+  _i3.Future<List<_i4.RankedStockModel>> filterStockRankings({
+    required String? keyword,
+    required String? market,
+    required List<String>? sectors,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #filterStockRankings,
+          [],
+          {
+            #keyword: keyword,
+            #market: market,
+            #sectors: sectors,
+          },
+        ),
+        returnValue: _i3.Future<List<_i4.RankedStockModel>>.value(
+            <_i4.RankedStockModel>[]),
+      ) as _i3.Future<List<_i4.RankedStockModel>>);
+
+  @override
   _i3.Future<void> saveStockRankings(
           List<_i4.RankedStockModel>? stockRankings) =>
       (super.noSuchMethod(

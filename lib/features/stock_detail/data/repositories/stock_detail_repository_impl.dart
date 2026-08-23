@@ -12,6 +12,11 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
     required this.localDatasource,
     required this.networkInfoService,
   });
+
+  static const _offlineNoData =
+      'You are offline, and we couldn’t find any stock detail data. '
+      'Please check your connection!';
+
   final StockDetailGraphqlDatasource graphqlDatasource;
   final StockDetailLocalDatasource localDatasource;
   final NetworkInfoService networkInfoService;
@@ -19,41 +24,40 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
   @override
   Future<Either<Failure, Stock>> getStockDetail(int stockId) async {
     if (await networkInfoService.isConnected) {
-      // ONLINE
-      try {
-        final stockDetail = await graphqlDatasource.getStockDetail(stockId);
-        try {
-          await localDatasource.saveStockDetail(stockDetail);
-        } catch (e) {
-          return left(
-            const CacheFailure(
-              'Failed to save stock detail to local datasource',
-            ),
-          );
-        }
+      return _fetchAndCache(stockId);
+    }
+    return _fromCache(stockId);
+  }
 
-        return right(stockDetail.toEntity());
-      } catch (e) {
-        return left(
-          const ServerFailure(
-            'Failed to fetch stock detail from remote datasource',
-          ),
-        );
-      }
-    } else {
-      // OFFLINE
+  Future<Either<Failure, Stock>> _fetchAndCache(int stockId) async {
+    final Stock stock;
+    try {
+      final model = await graphqlDatasource.getStockDetail(stockId);
+      stock = model.toEntity();
       try {
-        final stockDetailFromLocal =
-            await localDatasource.getStockDetail(stockId);
-        return right(stockDetailFromLocal.toEntity());
-      } catch (e) {
-        return left(
-          const CustomFailure(
-            message:
-                'You are offline, and we couldn’t find any stock detail data. Please check your connection!',
-          ),
-        );
+        await localDatasource.saveStockDetail(model);
+      } on CacheException catch (e) {
+        return left(CacheFailure(e.message));
       }
+    } on ServerException catch (e) {
+      return left(ServerFailure(e.message));
+    } on SerializationException catch (e) {
+      return left(SerializationFailure(e.message));
+    } on Object catch (e) {
+      // Safety net: an unexpected throw must still surface as a Failure.
+      return left(ServerFailure('Failed to fetch stock detail: $e'));
+    }
+    return right(stock);
+  }
+
+  Future<Either<Failure, Stock>> _fromCache(int stockId) async {
+    try {
+      final model = await localDatasource.getStockDetail(stockId);
+      return right(model.toEntity());
+    } on CacheException {
+      return left(const CustomFailure(message: _offlineNoData));
+    } on Object {
+      return left(const CustomFailure(message: _offlineNoData));
     }
   }
 }
