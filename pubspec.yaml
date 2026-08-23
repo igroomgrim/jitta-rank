@@ -60,6 +60,7 @@ dev_dependencies:
   build_runner: ^2.4.14 # for running the build_runner command
   mockito: ^5.4.0 # for mocking
   bloc_test: ^10.0.0 # for testing blocs
+  mocktail: ^1.0.4 # for mocking blocs in widget tests (bloc_test's MockBloc)
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

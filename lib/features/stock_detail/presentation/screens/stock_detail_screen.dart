@@ -14,21 +14,23 @@ class StockDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<StockDetailBloc>(),
-      child: _StockDetailView(stockId: stockId),
+      child: StockDetailView(stockId: stockId),
     );
   }
 }
 
-class _StockDetailView extends StatefulWidget {
-  const _StockDetailView({required this.stockId});
+/// The screen's actual content, split out from the DI wrapper so widget tests
+/// can provide a mock bloc instead of standing up the whole container.
+class StockDetailView extends StatefulWidget {
+  const StockDetailView({required this.stockId, super.key});
 
   final int stockId;
 
   @override
-  State<_StockDetailView> createState() => _StockDetailViewState();
+  State<StockDetailView> createState() => _StockDetailViewState();
 }
 
-class _StockDetailViewState extends State<_StockDetailView> {
+class _StockDetailViewState extends State<StockDetailView> {
   @override
   void initState() {
     super.initState();

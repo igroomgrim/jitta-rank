@@ -8,6 +8,7 @@ import 'package:jitta_rank/core/networking/network_info_bloc.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/stock_ranking_app_bar.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
+/// Route entry point: resolves the bloc and hands off to [StockRankingListView].
 class StockRankingListScreen extends StatelessWidget {
   const StockRankingListScreen({super.key});
 
@@ -15,19 +16,21 @@ class StockRankingListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<StockRankingsBloc>(),
-      child: const _StockRankingListView(),
+      child: const StockRankingListView(),
     );
   }
 }
 
-class _StockRankingListView extends StatefulWidget {
-  const _StockRankingListView();
+/// The screen's actual content, split out from the DI wrapper so widget tests
+/// can provide a mock bloc instead of standing up the whole container.
+class StockRankingListView extends StatefulWidget {
+  const StockRankingListView({super.key});
 
   @override
-  State<_StockRankingListView> createState() => _StockRankingListViewState();
+  State<StockRankingListView> createState() => _StockRankingListViewState();
 }
 
-class _StockRankingListViewState extends State<_StockRankingListView> {
+class _StockRankingListViewState extends State<StockRankingListView> {
   /// How close to the bottom (in pixels) triggers the next page.
   static const _loadMoreThreshold = 300.0;
 
