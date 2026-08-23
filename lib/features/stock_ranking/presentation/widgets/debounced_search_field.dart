@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-class DebouncedSearchField extends StatefulWidget {
-  final Function(String) onSearch;
-  final String hintText;
-  final Duration debounceTime;
+import 'package:flutter/material.dart';
 
+class DebouncedSearchField extends StatefulWidget {
   const DebouncedSearchField({
-    Key? key,
+    super.key,
     required this.onSearch,
     this.hintText = 'Search...', // default hint text
     this.debounceTime =
         const Duration(milliseconds: 500), // default debounce time
-  }) : super(key: key);
+  });
+  final Function(String) onSearch;
+  final String hintText;
+  final Duration debounceTime;
 
   @override
   State<DebouncedSearchField> createState() => _DebouncedSearchFieldState();

@@ -1,11 +1,10 @@
+import 'package:jitta_rank/core/networking/graphql_service.dart';
 import 'package:jitta_rank/features/stock_detail/data/datasources/stock_detail_datasource.dart';
 import 'package:jitta_rank/features/stock_detail/data/models/stock_model.dart';
-import 'package:jitta_rank/core/networking/graphql_service.dart';
 
 class StockDetailGraphqlDatasource extends StockDetailDatasource {
-  final GraphqlService graphqlService;
-
   StockDetailGraphqlDatasource(this.graphqlService);
+  final GraphqlService graphqlService;
 
   @override
   Future<StockModel> getStockDetail(int stockId) async {

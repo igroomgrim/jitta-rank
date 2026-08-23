@@ -1,33 +1,10 @@
-import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.dart';
 
 part 'ranked_stock_model.g.dart';
 
 @HiveType(typeId: 0)
 class RankedStockModel extends RankedStock {
-  @HiveField(0)
-  final String id;
-  @HiveField(1)
-  final int stockId;
-  @HiveField(2)
-  final String symbol;
-  @HiveField(3)
-  final String title;
-  @HiveField(4)
-  final double jittaScore;
-  @HiveField(5)
-  final String currency;
-  @HiveField(6)
-  final double latestPrice;
-  @HiveField(7)
-  final String industry;
-  @HiveField(8)
-  final SectorModel? sector;
-  @HiveField(9)
-  final DateTime updatedAt;
-  @HiveField(10)
-  final String? market;
-
   RankedStockModel({
     required this.id,
     required this.stockId,
@@ -74,15 +51,43 @@ class RankedStockModel extends RankedStock {
       updatedAt: parseDateString(json['updatedAt']) ?? DateTime.now(),
     );
   }
+  @override
+  @HiveField(0)
+  final String id;
+  @override
+  @HiveField(1)
+  final int stockId;
+  @override
+  @HiveField(2)
+  final String symbol;
+  @override
+  @HiveField(3)
+  final String title;
+  @override
+  @HiveField(4)
+  final double jittaScore;
+  @override
+  @HiveField(5)
+  final String currency;
+  @override
+  @HiveField(6)
+  final double latestPrice;
+  @override
+  @HiveField(7)
+  final String industry;
+  @override
+  @HiveField(8)
+  final SectorModel? sector;
+  @override
+  @HiveField(9)
+  final DateTime updatedAt;
+  @override
+  @HiveField(10)
+  final String? market;
 }
 
 @HiveType(typeId: 1)
 class SectorModel extends Sector {
-  @HiveField(0)
-  final String id;
-  @HiveField(1)
-  final String name;
-
   SectorModel({
     required this.id,
     required this.name,
@@ -94,6 +99,12 @@ class SectorModel extends Sector {
       name: json['name'],
     );
   }
+  @override
+  @HiveField(0)
+  final String id;
+  @override
+  @HiveField(1)
+  final String name;
 }
 
 // Utility function to convert date string to DateTime

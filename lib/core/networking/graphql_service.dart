@@ -2,9 +2,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 
 class GraphqlService {
-  final GraphQLClient _client;
-
   GraphqlService({GraphQLClient? client}) : _client = client ?? _createClient();
+  final GraphQLClient _client;
 
   static GraphQLClient _createClient() {
     final HttpLink httpLink = HttpLink(
@@ -31,8 +30,10 @@ class GraphqlService {
     );
   }
 
-  Future<QueryResult> performQuery(String query,
-      [Map<String, dynamic>? variables]) async {
+  Future<QueryResult> performQuery(
+    String query, [
+    Map<String, dynamic>? variables,
+  ]) async {
     return await _client.query(
       QueryOptions(
         document: gql(query),
@@ -42,8 +43,10 @@ class GraphqlService {
   }
 
   // Prepare for mutation
-  Future<QueryResult> performMutation(String mutation,
-      [Map<String, dynamic>? variables]) async {
+  Future<QueryResult> performMutation(
+    String mutation, [
+    Map<String, dynamic>? variables,
+  ]) async {
     return await _client.mutate(
       MutationOptions(
         document: gql(mutation),

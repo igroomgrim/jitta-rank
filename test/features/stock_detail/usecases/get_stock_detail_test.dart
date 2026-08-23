@@ -1,10 +1,11 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
-import 'package:jitta_rank/features/stock_detail/domain/usecases/get_stock_detail.dart';
-import '../../../mocks/features/stock_detail/mock_stock_detail_repository.mocks.dart';
-import '../../../mocks/features/stock_detail/mock_stock_detail_data.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:jitta_rank/core/error/error.dart';
+import 'package:jitta_rank/features/stock_detail/domain/usecases/get_stock_detail.dart';
+import 'package:mockito/mockito.dart';
+
+import '../../../mocks/features/stock_detail/mock_stock_detail_data.dart';
+import '../../../mocks/features/stock_detail/mock_stock_detail_repository.mocks.dart';
 
 void main() {
   late GetStockDetailUsecase getStockDetailUsecase;
@@ -26,7 +27,7 @@ void main() {
 
   test('should return error when repository returns error', () async {
     when(mockStockDetailRepository.getStockDetail(any))
-        .thenAnswer((_) async => Left(CustomFailure(message: 'Error')));
+        .thenAnswer((_) async => const Left(CustomFailure(message: 'Error')));
 
     final result = await getStockDetailUsecase.call(1);
 

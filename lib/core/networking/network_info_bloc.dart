@@ -8,18 +8,17 @@ class CheckConnectionEvent extends NetworkInfoEvent {}
 
 // States
 class NetworkInfoState {
-  final bool isConnected;
   NetworkInfoState({required this.isConnected});
+  final bool isConnected;
 }
 
 // Bloc
 class NetworkInfoBloc extends Bloc<NetworkInfoEvent, NetworkInfoState> {
-  final NetworkInfoService networkInfoService;
-
   NetworkInfoBloc(this.networkInfoService)
       : super(NetworkInfoState(isConnected: false)) {
     on<CheckConnectionEvent>(_onCheckConnectionEvent);
   }
+  final NetworkInfoService networkInfoService;
 
   void _onCheckConnectionEvent(event, emit) async {
     final isConnected = await networkInfoService.isConnected;

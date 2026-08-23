@@ -4,23 +4,28 @@ import 'stock_detail_event.dart';
 import 'stock_detail_state.dart';
 
 class StockDetailBloc extends Bloc<StockDetailEvent, StockDetailState> {
-  final GetStockDetailUsecase getStockDetail;
-
   StockDetailBloc(this.getStockDetail) : super(StockDetailInitial()) {
     on<GetStockDetailEvent>(_onGetStockDetail);
     on<RefreshStockDetailEvent>(_onRefreshStockDetail);
   }
+  final GetStockDetailUsecase getStockDetail;
 
   void _onGetStockDetail(
-      GetStockDetailEvent event, Emitter<StockDetailState> emit) async {
+    GetStockDetailEvent event,
+    Emitter<StockDetailState> emit,
+  ) async {
     emit(StockDetailLoading());
     final result = await getStockDetail.call(event.stockId);
-    result.fold((failure) => emit(StockDetailError(failure.message)),
-        (stock) => emit(StockDetailLoaded(stock)));
+    result.fold(
+      (failure) => emit(StockDetailError(failure.message)),
+      (stock) => emit(StockDetailLoaded(stock)),
+    );
   }
 
   void _onRefreshStockDetail(
-      RefreshStockDetailEvent event, Emitter<StockDetailState> emit) async {
+    RefreshStockDetailEvent event,
+    Emitter<StockDetailState> emit,
+  ) async {
     emit(StockDetailInitial());
   }
 }

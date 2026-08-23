@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
-import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
-import 'package:jitta_rank/core/navigation/app_router.dart';
-import 'package:jitta_rank/core/networking/network_info_bloc.dart';
 import 'package:jitta_rank/core/di/injection_container.dart';
+import 'package:jitta_rank/core/navigation/app_router.dart';
+import 'package:jitta_rank/core/navigation/navigation_cubit.dart';
+import 'package:jitta_rank/core/networking/network_info_bloc.dart';
 import 'package:jitta_rank/features/stock_ranking/presentation/widgets/stock_ranking_app_bar.dart';
+import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 class StockRankingListScreen extends StatefulWidget {
   const StockRankingListScreen({super.key});
@@ -31,81 +31,99 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
     return BlocProvider(
       create: (context) => getIt<StockRankingsBloc>(),
       child: Scaffold(
-          appBar: StockRankingAppBar(
-              onFilterPressed: () => _showMarketFilterDialog(context)),
-          body: BlocListener<NavigationCubit, NavigationState?>(
-            listener: (context, state) {
-              if (state is NavigateToStockDetailScreen) {
-                Navigator.pushNamed(context, AppRouter.stockDetailScreen,
-                    arguments: state.stockId);
-                context.read<NavigationCubit>().resetNavigation();
-              }
-            },
-            child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
-              builder: (context, state) {
-                switch (state) {
-                  case StockRankingsInitial _:
-                    context
-                        .read<StockRankingsBloc>()
-                        .add(GetStockRankingsEvent());
-                    return const Center(
-                        child: CircularProgressIndicator(color: Colors.blue));
+        appBar: StockRankingAppBar(
+          onFilterPressed: () => _showMarketFilterDialog(context),
+        ),
+        body: BlocListener<NavigationCubit, NavigationState?>(
+          listener: (context, state) {
+            if (state is NavigateToStockDetailScreen) {
+              Navigator.pushNamed(
+                context,
+                AppRouter.stockDetailScreen,
+                arguments: state.stockId,
+              );
+              context.read<NavigationCubit>().resetNavigation();
+            }
+          },
+          child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
+            builder: (context, state) {
+              switch (state) {
+                case StockRankingsInitial _:
+                  context
+                      .read<StockRankingsBloc>()
+                      .add(GetStockRankingsEvent());
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.blue),
+                  );
 
-                  case StockRankingsLoading _:
-                    return const Center(
-                        child: CircularProgressIndicator(color: Colors.blue));
+                case StockRankingsLoading _:
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.blue),
+                  );
 
-                  case StockRankingsLoaded _:
-                    return _buildStockRankingList(context, state);
+                case StockRankingsLoaded _:
+                  return _buildStockRankingList(context, state);
 
-                  case StockRankingsError _:
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Text(state.message,
-                                  textAlign: TextAlign.center),
+                case StockRankingsError _:
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(
+                              state.message,
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              context.read<StockRankingsBloc>().add(
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<StockRankingsBloc>().add(
                                   GetStockRankingsEvent(
-                                      market: state.filter.market,
-                                      sectors: state.filter.sectors));
-                            },
-                            child: const Text('Try Again'),
-                          ),
-                        ],
-                      ),
-                    );
+                                    market: state.filter.market,
+                                    sectors: state.filter.sectors,
+                                  ),
+                                );
+                          },
+                          child: const Text('Try Again'),
+                        ),
+                      ],
+                    ),
+                  );
 
-                  default:
-                    return const Center(
-                        child: Text("Oops! Something went wrong!"));
-                }
-              },
-            ),
-          )),
+                default:
+                  return const Center(
+                    child: Text('Oops! Something went wrong!'),
+                  );
+              }
+            },
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildStockRankingList(
-      BuildContext context, StockRankingsLoaded state) {
+    BuildContext context,
+    StockRankingsLoaded state,
+  ) {
     if (state.rankedStocks.isEmpty) {
-      return const Center(child: Text("No stocks found!"));
+      return const Center(child: Text('No stocks found!'));
     }
 
     return RefreshIndicator(
       onRefresh: () async {
         if (state.filter.searchFieldValue.isEmpty) {
-          context.read<StockRankingsBloc>().add(PullToRefreshStockRankingsEvent(
-              market: state.filter.market, sectors: state.filter.sectors));
+          context.read<StockRankingsBloc>().add(
+                PullToRefreshStockRankingsEvent(
+                  market: state.filter.market,
+                  sectors: state.filter.sectors,
+                ),
+              );
         }
         _checkInternetConnection();
       },
@@ -122,10 +140,13 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
             final nextPage =
                 (state.rankedStocks.length ~/ ApiConstants.defaultLimit) +
                     1; // TODO: Should calculate max next page from count
-            context.read<StockRankingsBloc>().add(LoadMoreStockRankingsEvent(
-                page: nextPage,
-                market: state.filter.market,
-                sectors: state.filter.sectors));
+            context.read<StockRankingsBloc>().add(
+                  LoadMoreStockRankingsEvent(
+                    page: nextPage,
+                    market: state.filter.market,
+                    sectors: state.filter.sectors,
+                  ),
+                );
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -162,10 +183,13 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
     ).then((result) {
       if (result != null && mounted) {
         final market = result['market'] ?? ApiConstants.defaultMarket;
-        bloc.add(FilterStockRankingsEvent(
+        bloc.add(
+          FilterStockRankingsEvent(
             searchFieldValue: bloc.state.filter.searchFieldValue,
             market: market,
-            sectors: bloc.state.filter.sectors));
+            sectors: bloc.state.filter.sectors,
+          ),
+        );
       }
     });
   }

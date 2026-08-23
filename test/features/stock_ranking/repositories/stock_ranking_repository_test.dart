@@ -1,11 +1,12 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
-import '../../../mocks/features/stock_ranking/mock_stock_ranking_graphql_datasource.mocks.dart';
-import '../../../mocks/features/stock_ranking/mock_stock_ranking_local_datasource.mocks.dart';
+import 'package:mockito/mockito.dart';
+
 import '../../../mocks/core/networking/mock_network_info_service.mocks.dart';
 import '../../../mocks/features/stock_ranking/mock_stock_ranking_data.dart';
+import '../../../mocks/features/stock_ranking/mock_stock_ranking_graphql_datasource.mocks.dart';
+import '../../../mocks/features/stock_ranking/mock_stock_ranking_local_datasource.mocks.dart';
 
 void main() {
   late StockRankingRepository stockRankingRepository;
@@ -29,14 +30,18 @@ void main() {
       'should return ranked stocks from remote data source when device is online',
       () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => true);
-    when(mockStockRankingGraphqlDatasource.getStockRankings(
-      limit: anyNamed('limit'),
-      market: anyNamed('market'),
-      page: anyNamed('page'),
-      sectors: anyNamed('sectors'),
-    )).thenAnswer((_) async => [
-          MockStockRankingData.getMockRankedStockModel(),
-        ]);
+    when(
+      mockStockRankingGraphqlDatasource.getStockRankings(
+        limit: anyNamed('limit'),
+        market: anyNamed('market'),
+        page: anyNamed('page'),
+        sectors: anyNamed('sectors'),
+      ),
+    ).thenAnswer(
+      (_) async => [
+        MockStockRankingData.getMockRankedStockModel(),
+      ],
+    );
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
@@ -47,13 +52,16 @@ void main() {
       'should return ranked stocks from local data source when device is offline',
       () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => false);
-    when(mockStockRankingLocalDatasource.getStockRankings(
-            limit: anyNamed('limit'),
-            market: anyNamed('market'),
-            page: anyNamed('page'),
-            sectors: anyNamed('sectors')))
-        .thenAnswer(
-            (_) async => [MockStockRankingData.getMockRankedStockModel()]);
+    when(
+      mockStockRankingLocalDatasource.getStockRankings(
+        limit: anyNamed('limit'),
+        market: anyNamed('market'),
+        page: anyNamed('page'),
+        sectors: anyNamed('sectors'),
+      ),
+    ).thenAnswer(
+      (_) async => [MockStockRankingData.getMockRankedStockModel()],
+    );
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
@@ -62,12 +70,14 @@ void main() {
 
   test('should return error when remote data source fails', () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => true);
-    when(mockStockRankingGraphqlDatasource.getStockRankings(
-            limit: anyNamed('limit'),
-            market: anyNamed('market'),
-            page: anyNamed('page'),
-            sectors: anyNamed('sectors')))
-        .thenThrow(Exception('Error'));
+    when(
+      mockStockRankingGraphqlDatasource.getStockRankings(
+        limit: anyNamed('limit'),
+        market: anyNamed('market'),
+        page: anyNamed('page'),
+        sectors: anyNamed('sectors'),
+      ),
+    ).thenThrow(Exception('Error'));
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
@@ -76,12 +86,14 @@ void main() {
 
   test('should return error when local data source fails', () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => false);
-    when(mockStockRankingLocalDatasource.getStockRankings(
-            limit: anyNamed('limit'),
-            market: anyNamed('market'),
-            page: anyNamed('page'),
-            sectors: anyNamed('sectors')))
-        .thenThrow(Exception('Error'));
+    when(
+      mockStockRankingLocalDatasource.getStockRankings(
+        limit: anyNamed('limit'),
+        market: anyNamed('market'),
+        page: anyNamed('page'),
+        sectors: anyNamed('sectors'),
+      ),
+    ).thenThrow(Exception('Error'));
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
@@ -91,18 +103,22 @@ void main() {
   test('should return error when both remote and local data sources fail',
       () async {
     when(mockNetworkInfoService.isConnected).thenAnswer((_) async => false);
-    when(mockStockRankingGraphqlDatasource.getStockRankings(
-            limit: anyNamed('limit'),
-            market: anyNamed('market'),
-            page: anyNamed('page'),
-            sectors: anyNamed('sectors')))
-        .thenThrow(Exception('Error'));
-    when(mockStockRankingLocalDatasource.getStockRankings(
-            limit: anyNamed('limit'),
-            market: anyNamed('market'),
-            page: anyNamed('page'),
-            sectors: anyNamed('sectors')))
-        .thenThrow(Exception('Error'));
+    when(
+      mockStockRankingGraphqlDatasource.getStockRankings(
+        limit: anyNamed('limit'),
+        market: anyNamed('market'),
+        page: anyNamed('page'),
+        sectors: anyNamed('sectors'),
+      ),
+    ).thenThrow(Exception('Error'));
+    when(
+      mockStockRankingLocalDatasource.getStockRankings(
+        limit: anyNamed('limit'),
+        market: anyNamed('market'),
+        page: anyNamed('page'),
+        sectors: anyNamed('sectors'),
+      ),
+    ).thenThrow(Exception('Error'));
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);

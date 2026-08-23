@@ -11,18 +11,16 @@ class StockDetailInitial extends StockDetailState {}
 class StockDetailLoading extends StockDetailState {}
 
 class StockDetailLoaded extends StockDetailState {
-  final Stock stock;
-
   StockDetailLoaded(this.stock);
+  final Stock stock;
 
   @override
   List<Object> get props => [stock];
 }
 
 class StockDetailError extends StockDetailState {
-  final String message;
-
   StockDetailError(this.message);
+  final String message;
 
   @override
   List<Object> get props => [message];

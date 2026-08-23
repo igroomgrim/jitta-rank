@@ -1,6 +1,6 @@
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
-import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart';
 import 'package:jitta_rank/features/stock_detail/data/models/stock_model.dart';
+import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart';
 
 abstract class StorageService {
   Future<void> init();
@@ -42,11 +42,14 @@ class StorageServiceImpl implements StorageService {
     await Hive.openBox<StockJittaModel>('stock_jitta');
     await Hive.openBox<StockJittaFactorModel>('stock_jitta_factor');
     await Hive.openBox<StockJittaFactorGrowthModel>(
-        'stock_jitta_factor_growth');
+      'stock_jitta_factor_growth',
+    );
     await Hive.openBox<StockJittaFactorFinancialModel>(
-        'stock_jitta_factor_financial');
+      'stock_jitta_factor_financial',
+    );
     await Hive.openBox<StockJittaFactorManagementModel>(
-        'stock_jitta_factor_management');
+      'stock_jitta_factor_management',
+    );
     await Hive.openBox<StockGraphPriceItemModel>('stock_graph_price_item');
     await Hive.openBox<StockGraphPriceModel>('stock_graph_price');
   }

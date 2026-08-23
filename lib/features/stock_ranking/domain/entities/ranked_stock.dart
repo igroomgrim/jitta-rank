@@ -1,16 +1,4 @@
 class RankedStock {
-  final String id;
-  final int stockId;
-  final String symbol;
-  final String title;
-  final double jittaScore;
-  final String currency;
-  final double latestPrice;
-  final String industry;
-  final DateTime updatedAt;
-  final Sector? sector;
-  final String? market;
-
   RankedStock({
     required this.id,
     required this.stockId,
@@ -24,14 +12,24 @@ class RankedStock {
     this.sector,
     this.market,
   });
+  final String id;
+  final int stockId;
+  final String symbol;
+  final String title;
+  final double jittaScore;
+  final String currency;
+  final double latestPrice;
+  final String industry;
+  final DateTime updatedAt;
+  final Sector? sector;
+  final String? market;
 }
 
 class Sector {
-  final String id;
-  final String name;
-
   Sector({
     required this.id,
     required this.name,
   });
+  final String id;
+  final String name;
 }

@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 class StockRankingItem extends StatelessWidget {
-  final RankedStock rankedStock;
-  final Function(RankedStock) onTap;
-
   const StockRankingItem({
     super.key,
     required this.rankedStock,
     required this.onTap,
   });
+  final RankedStock rankedStock;
+  final Function(RankedStock) onTap;
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MarketFilter extends StatelessWidget {
+  const MarketFilter({
+    super.key,
+    required this.selectedMarket,
+    required this.onMarketSelected,
+  });
   static const List<Map<String, String>> markets = [
     {'code': 'TH', 'name': 'Thailand'},
     {'code': 'US', 'name': 'United States'},
@@ -23,11 +28,6 @@ class MarketFilter extends StatelessWidget {
   final String selectedMarket;
   final Function(String) onMarketSelected;
 
-  const MarketFilter(
-      {super.key,
-      required this.selectedMarket,
-      required this.onMarketSelected});
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -40,7 +40,7 @@ class MarketFilter extends StatelessWidget {
             Text('Market', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: selectedMarket,
+              initialValue: selectedMarket,
               isExpanded: true,
               items: MarketFilter.markets.map((market) {
                 return DropdownMenuItem(

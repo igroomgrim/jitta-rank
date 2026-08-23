@@ -1,47 +1,10 @@
-import 'package:jitta_rank/features/stock_detail/domain/entities/stock.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:jitta_rank/features/stock_detail/domain/entities/stock.dart';
 
 part 'stock_model.g.dart';
 
 @HiveType(typeId: 11)
 class StockModel extends Stock {
-  @HiveField(0)
-  final int stockId;
-  @HiveField(1)
-  final String symbol;
-  @HiveField(2)
-  final String name;
-  @HiveField(3)
-  final String nativeName;
-  @HiveField(4)
-  final StockPrice price;
-  @HiveField(5)
-  final String currency;
-  @HiveField(6)
-  final String currencySign;
-  @HiveField(7)
-  final String industry;
-  @HiveField(8)
-  final String market;
-  @HiveField(9)
-  final double jittaRankScore;
-  @HiveField(10)
-  final StockJitta jitta;
-  @HiveField(11)
-  final double lossChance;
-  @HiveField(12)
-  final String sectorName;
-  @HiveField(13)
-  final DateTime? ipoDate;
-  @HiveField(14)
-  final String companyLink;
-  @HiveField(15)
-  final StockGraphPrice graphPrice;
-  @HiveField(16)
-  final String summary;
-  @HiveField(17)
-  final DateTime? updatedAt;
-
   StockModel({
     required this.stockId,
     required this.symbol,
@@ -104,15 +67,64 @@ class StockModel extends Stock {
       updatedAt: parseDateString(json['updatedAt']),
     );
   }
+  @override
+  @HiveField(0)
+  final int stockId;
+  @override
+  @HiveField(1)
+  final String symbol;
+  @override
+  @HiveField(2)
+  final String name;
+  @override
+  @HiveField(3)
+  final String nativeName;
+  @override
+  @HiveField(4)
+  final StockPrice price;
+  @override
+  @HiveField(5)
+  final String currency;
+  @override
+  @HiveField(6)
+  final String currencySign;
+  @override
+  @HiveField(7)
+  final String industry;
+  @override
+  @HiveField(8)
+  final String market;
+  @override
+  @HiveField(9)
+  final double jittaRankScore;
+  @override
+  @HiveField(10)
+  final StockJitta jitta;
+  @override
+  @HiveField(11)
+  final double lossChance;
+  @override
+  @HiveField(12)
+  final String sectorName;
+  @override
+  @HiveField(13)
+  final DateTime? ipoDate;
+  @override
+  @HiveField(14)
+  final String companyLink;
+  @override
+  @HiveField(15)
+  final StockGraphPrice graphPrice;
+  @override
+  @HiveField(16)
+  final String summary;
+  @override
+  @HiveField(17)
+  final DateTime? updatedAt;
 }
 
 @HiveType(typeId: 12)
 class StockPriceModel extends StockPrice {
-  @HiveField(0)
-  final double close;
-  @HiveField(1)
-  final DateTime? latestPriceTimestamp;
-
   StockPriceModel({
     required this.close,
     this.latestPriceTimestamp,
@@ -131,19 +143,16 @@ class StockPriceModel extends StockPrice {
           parseDateString(latestPrice['latest_price_timestamp']),
     );
   }
+  @override
+  @HiveField(0)
+  final double close;
+  @override
+  @HiveField(1)
+  final DateTime? latestPriceTimestamp;
 }
 
 @HiveType(typeId: 13)
 class StockJittaModel extends StockJitta {
-  @HiveField(0)
-  final int total;
-  @HiveField(1)
-  final double score;
-  @HiveField(2)
-  final double priceDiff;
-  @HiveField(3)
-  final StockJittaFactor factor;
-
   StockJittaModel({
     required this.total,
     required this.score,
@@ -164,17 +173,22 @@ class StockJittaModel extends StockJitta {
       factor: StockJittaFactorModel.fromJson(json?['factor']['last']['value']),
     );
   }
+  @override
+  @HiveField(0)
+  final int total;
+  @override
+  @HiveField(1)
+  final double score;
+  @override
+  @HiveField(2)
+  final double priceDiff;
+  @override
+  @HiveField(3)
+  final StockJittaFactor factor;
 }
 
 @HiveType(typeId: 14)
 class StockJittaFactorModel extends StockJittaFactor {
-  @HiveField(0)
-  final StockJittaFactorGrowth growth;
-  @HiveField(1)
-  final StockJittaFactorFinancial financial;
-  @HiveField(2)
-  final StockJittaFactorManagement management;
-
   StockJittaFactorModel({
     required this.growth,
     required this.financial,
@@ -192,17 +206,19 @@ class StockJittaFactorModel extends StockJittaFactor {
       management: StockJittaFactorManagementModel.fromJson(json?['management']),
     );
   }
+  @override
+  @HiveField(0)
+  final StockJittaFactorGrowth growth;
+  @override
+  @HiveField(1)
+  final StockJittaFactorFinancial financial;
+  @override
+  @HiveField(2)
+  final StockJittaFactorManagement management;
 }
 
 @HiveType(typeId: 15)
 class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
-  @HiveField(0)
-  final int value;
-  @HiveField(1)
-  final String name;
-  @HiveField(2)
-  final String level;
-
   StockJittaFactorGrowthModel({
     required this.value,
     required this.name,
@@ -220,17 +236,19 @@ class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
       level: json?['level']?.toString() ?? '',
     );
   }
+  @override
+  @HiveField(0)
+  final int value;
+  @override
+  @HiveField(1)
+  final String name;
+  @override
+  @HiveField(2)
+  final String level;
 }
 
 @HiveType(typeId: 16)
 class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
-  @HiveField(0)
-  final int value;
-  @HiveField(1)
-  final String name;
-  @HiveField(2)
-  final String level;
-
   StockJittaFactorFinancialModel({
     required this.value,
     required this.name,
@@ -248,17 +266,19 @@ class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
       level: json?['level']?.toString() ?? '',
     );
   }
+  @override
+  @HiveField(0)
+  final int value;
+  @override
+  @HiveField(1)
+  final String name;
+  @override
+  @HiveField(2)
+  final String level;
 }
 
 @HiveType(typeId: 17)
 class StockJittaFactorManagementModel extends StockJittaFactorManagement {
-  @HiveField(0)
-  final int value;
-  @HiveField(1)
-  final String name;
-  @HiveField(2)
-  final String level;
-
   StockJittaFactorManagementModel({
     required this.value,
     required this.name,
@@ -276,15 +296,19 @@ class StockJittaFactorManagementModel extends StockJittaFactorManagement {
       level: json?['level']?.toString() ?? '',
     );
   }
+  @override
+  @HiveField(0)
+  final int value;
+  @override
+  @HiveField(1)
+  final String name;
+  @override
+  @HiveField(2)
+  final String level;
 }
 
 @HiveType(typeId: 18)
 class StockGraphPriceModel extends StockGraphPrice {
-  @HiveField(0)
-  final String firstGraphPeriod;
-  @HiveField(1)
-  final List<StockGraphPriceItem> graphs;
-
   StockGraphPriceModel({
     required this.firstGraphPeriod,
     required this.graphs,
@@ -312,15 +336,16 @@ class StockGraphPriceModel extends StockGraphPrice {
       return emptyGraph;
     }
   }
+  @override
+  @HiveField(0)
+  final String firstGraphPeriod;
+  @override
+  @HiveField(1)
+  final List<StockGraphPriceItem> graphs;
 }
 
 @HiveType(typeId: 19)
 class StockGraphPriceItemModel extends StockGraphPriceItem {
-  @HiveField(0)
-  final double stockPrice;
-  @HiveField(1)
-  final double linePrice;
-
   StockGraphPriceItemModel({
     required this.stockPrice,
     required this.linePrice,
@@ -330,13 +355,20 @@ class StockGraphPriceItemModel extends StockGraphPriceItem {
         );
 
   factory StockGraphPriceItemModel.fromJson(Map<String, dynamic>? json) {
-    if (json == null)
+    if (json == null) {
       return StockGraphPriceItemModel(stockPrice: 0.0, linePrice: 0.0);
+    }
     return StockGraphPriceItemModel(
       stockPrice: json['stockPrice']?.toDouble() ?? 0.0,
       linePrice: json['linePrice']?.toDouble() ?? 0.0,
     );
   }
+  @override
+  @HiveField(0)
+  final double stockPrice;
+  @override
+  @HiveField(1)
+  final double linePrice;
 }
 
 // Utility function to convert date string to DateTime

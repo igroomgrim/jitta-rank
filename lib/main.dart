@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => getIt<NavigationCubit>()),
         BlocProvider(create: (context) => getIt<NetworkInfoBloc>()),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         onGenerateRoute: AppRouter.generateRoute,
         initialRoute: AppRouter.stockRankingListScreen,
       ),

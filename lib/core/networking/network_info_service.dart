@@ -5,11 +5,10 @@ abstract class NetworkInfoService {
 }
 
 class NetworkInfoServiceImpl implements NetworkInfoService {
-  final InternetConnectionChecker _internetConnectionChecker;
-
   NetworkInfoServiceImpl({InternetConnectionChecker? internetConnectionChecker})
       : _internetConnectionChecker =
             internetConnectionChecker ?? _createInternetConnectionChecker();
+  final InternetConnectionChecker _internetConnectionChecker;
 
   static InternetConnectionChecker _createInternetConnectionChecker() {
     return InternetConnectionChecker();

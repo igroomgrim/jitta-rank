@@ -1,11 +1,12 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
-import '../../../mocks/features/stock_detail/mock_stock_detail_graphql_datasource.mocks.dart';
-import '../../../mocks/features/stock_detail/mock_stock_detail_local_datasource.mocks.dart';
+import 'package:mockito/mockito.dart';
+
 import '../../../mocks/core/networking/mock_network_info_service.mocks.dart';
 import '../../../mocks/features/stock_detail/mock_stock_detail_data.dart';
+import '../../../mocks/features/stock_detail/mock_stock_detail_graphql_datasource.mocks.dart';
+import '../../../mocks/features/stock_detail/mock_stock_detail_local_datasource.mocks.dart';
 
 void main() {
   late StockDetailRepository stockDetailRepository;
