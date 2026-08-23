@@ -38,7 +38,6 @@ class _StockRankingListViewState extends State<_StockRankingListView> {
     super.initState();
     // Dispatched here, not from BlocBuilder's builder. Firing events during
     // build ran on every rebuild and made the fetch a side effect of painting.
-    _checkInternetConnection();
     context.read<StockRankingsBloc>().add(const GetStockRankingsEvent());
     _scrollController.addListener(_onScroll);
   }
@@ -52,7 +51,7 @@ class _StockRankingListViewState extends State<_StockRankingListView> {
   }
 
   void _checkInternetConnection() {
-    context.read<NetworkInfoBloc>().add(CheckConnectionEvent());
+    context.read<NetworkInfoBloc>().add(const CheckConnectionEvent());
   }
 
   /// Load-more is driven by scroll position rather than by ListView building
@@ -82,17 +81,38 @@ class _StockRankingListViewState extends State<_StockRankingListView> {
       appBar: StockRankingAppBar(
         onFilterPressed: () => _showMarketFilterDialog(context),
       ),
-      body: BlocListener<NavigationCubit, NavigationState?>(
-        listener: (context, state) {
-          if (state is NavigateToStockDetailScreen) {
-            Navigator.pushNamed(
-              context,
-              AppRouter.stockDetailScreen,
-              arguments: state.stockId,
-            );
-            context.read<NavigationCubit>().resetNavigation();
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          // Refetch when connectivity is restored. Deliberately a listener in
+          // the screen rather than a subscription inside StockRankingsBloc:
+          // NetworkInfoBloc is core and StockRankingsBloc is a feature, so
+          // wiring them bloc-to-bloc would invert the layering.
+          BlocListener<NetworkInfoBloc, NetworkInfoState>(
+            listenWhen: (previous, current) =>
+                !previous.isConnected && current.isConnected,
+            listener: (context, _) {
+              final bloc = context.read<StockRankingsBloc>();
+              bloc.add(
+                PullToRefreshStockRankingsEvent(
+                  market: bloc.state.filter.market,
+                  sectors: bloc.state.filter.sectors,
+                ),
+              );
+            },
+          ),
+          BlocListener<NavigationCubit, NavigationState?>(
+            listener: (context, state) {
+              if (state is NavigateToStockDetailScreen) {
+                Navigator.pushNamed(
+                  context,
+                  AppRouter.stockDetailScreen,
+                  arguments: state.stockId,
+                );
+                context.read<NavigationCubit>().resetNavigation();
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<StockRankingsBloc, StockRankingsState>(
           builder: (context, state) {
             if (state.hasFailedWithNoData) {

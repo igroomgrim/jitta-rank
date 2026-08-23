@@ -60,6 +60,12 @@ class MockNetworkInfoService extends _i1.Mock
         Invocation.getter(#isConnected),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);
+
+  @override
+  _i4.Stream<bool> get onStatusChange => (super.noSuchMethod(
+        Invocation.getter(#onStatusChange),
+        returnValue: _i4.Stream<bool>.empty(),
+      ) as _i4.Stream<bool>);
 }
 
 /// A class which mocks [InternetConnectionChecker].
