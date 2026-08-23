@@ -5,13 +5,12 @@ import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 class StockRankingRepositoryImpl extends StockRankingRepository {
   StockRankingRepositoryImpl({
-    StockRankingGraphqlDatasource? graphqlDatasource,
-    StockRankingLocalDatasource? localDatasource,
-    NetworkInfoService? networkInfoService,
-  })  : _graphqlDatasource =
-            graphqlDatasource ?? StockRankingGraphqlDatasource(),
-        _localDatasource = localDatasource ?? StockRankingLocalDatasourceImpl(),
-        _networkInfoService = networkInfoService ?? NetworkInfoServiceImpl();
+    required StockRankingGraphqlDatasource graphqlDatasource,
+    required StockRankingLocalDatasource localDatasource,
+    required NetworkInfoService networkInfoService,
+  })  : _graphqlDatasource = graphqlDatasource,
+        _localDatasource = localDatasource,
+        _networkInfoService = networkInfoService;
   final StockRankingGraphqlDatasource _graphqlDatasource;
   final StockRankingLocalDatasource _localDatasource;
   final NetworkInfoService _networkInfoService;

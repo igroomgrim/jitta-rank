@@ -15,8 +15,9 @@ abstract class StockRankingLocalDatasource extends StockRankingDatasource {
 }
 
 class StockRankingLocalDatasourceImpl extends StockRankingLocalDatasource {
-  StockRankingLocalDatasourceImpl([Box<RankedStockModel>? box])
-      : _box = box ?? Hive.box<RankedStockModel>('ranked_stocks');
+  StockRankingLocalDatasourceImpl({required Box<RankedStockModel> box})
+      : _box = box;
+
   final Box<RankedStockModel> _box;
 
   @override

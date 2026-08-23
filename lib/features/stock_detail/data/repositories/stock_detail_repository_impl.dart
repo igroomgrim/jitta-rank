@@ -7,11 +7,11 @@ import 'package:jitta_rank/features/stock_detail/domain/entities/stock.dart';
 import 'package:jitta_rank/features/stock_detail/domain/repositories/stock_detail_repository.dart';
 
 class StockDetailRepositoryImpl extends StockDetailRepository {
-  StockDetailRepositoryImpl(
-    this.graphqlDatasource,
-    this.localDatasource,
-    this.networkInfoService,
-  );
+  StockDetailRepositoryImpl({
+    required this.graphqlDatasource,
+    required this.localDatasource,
+    required this.networkInfoService,
+  });
   final StockDetailGraphqlDatasource graphqlDatasource;
   final StockDetailLocalDatasource localDatasource;
   final NetworkInfoService networkInfoService;

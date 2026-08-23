@@ -4,8 +4,8 @@ import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking
 import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart';
 
 class StockRankingGraphqlDatasource extends StockRankingDatasource {
-  StockRankingGraphqlDatasource([GraphqlService? graphqlService])
-      : _graphqlService = graphqlService ?? GraphqlService();
+  StockRankingGraphqlDatasource({required GraphqlService graphqlService})
+      : _graphqlService = graphqlService;
   final GraphqlService _graphqlService;
 
   @override

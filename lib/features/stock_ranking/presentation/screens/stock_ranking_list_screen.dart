@@ -165,7 +165,10 @@ class _StockRankingListScreenState extends State<StockRankingListScreen> {
 
   // Market filter dialog
   void _showMarketFilterDialog(BuildContext context) {
-    final bloc = getIt<StockRankingsBloc>();
+    // Must come from the widget tree, not getIt: the bloc is registered as a
+    // factory, so getIt would hand back a different instance than the one this
+    // screen is showing.
+    final bloc = context.read<StockRankingsBloc>();
 
     showDialog<Map<String, String>>(
       context: context,

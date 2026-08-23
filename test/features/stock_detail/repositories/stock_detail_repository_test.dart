@@ -21,9 +21,9 @@ void main() {
     mockStockDetailLocalDatasource = MockStockDetailLocalDatasource();
     mockNetworkInfoService = MockNetworkInfoService();
     stockDetailRepository = StockDetailRepositoryImpl(
-      mockStockDetailGraphqlDatasource,
-      mockStockDetailLocalDatasource,
-      mockNetworkInfoService,
+      graphqlDatasource: mockStockDetailGraphqlDatasource,
+      localDatasource: mockStockDetailLocalDatasource,
+      networkInfoService: mockNetworkInfoService,
     );
 
     mockStockModel = MockStockDetailData.getMockStockModel();

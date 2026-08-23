@@ -9,8 +9,8 @@ abstract class StockDetailLocalDatasource extends StockDetailDatasource {
 }
 
 class StockDetailLocalDatasourceImpl extends StockDetailLocalDatasource {
-  StockDetailLocalDatasourceImpl([Box<StockModel>? box])
-      : box = box ?? Hive.box<StockModel>('stock_detail');
+  StockDetailLocalDatasourceImpl({required this.box});
+
   final Box<StockModel> box;
 
   @override

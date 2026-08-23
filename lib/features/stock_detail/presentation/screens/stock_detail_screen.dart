@@ -1,32 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jitta_rank/core/networking/graphql_service.dart';
-import 'package:jitta_rank/core/networking/network_info_service.dart';
+import 'package:jitta_rank/core/di/injection_container.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 
 class StockDetailScreen extends StatelessWidget {
-  const StockDetailScreen({
-    required this.stockId,
-    super.key,
-  });
+  const StockDetailScreen({required this.stockId, super.key});
+
   final int stockId;
 
   @override
   Widget build(BuildContext context) {
-    final networkInfoService = NetworkInfoServiceImpl();
-
     return BlocProvider(
-      create: (context) => StockDetailBloc(
-        GetStockDetailUsecase(
-          StockDetailRepositoryImpl(
-            StockDetailGraphqlDatasource(GraphqlService()),
-            StockDetailLocalDatasourceImpl(),
-            networkInfoService,
-          ),
-        ),
-      ),
-      // TODO: Should be injected or use provider at app level?
+      create: (_) => getIt<StockDetailBloc>(),
       child: _StockDetailView(stockId: stockId),
     );
   }
