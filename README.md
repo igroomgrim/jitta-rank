@@ -21,7 +21,8 @@ Jitta Rank is a mobile application that allows users to:
 
 - Access data offline through local caching
 
-- Real-time network connectivity monitoring
+- Real-time network connectivity monitoring, with an automatic refetch when the
+  connection comes back
 
 ## Features
 **Stock Ranking List**
@@ -44,16 +45,21 @@ The application follows Clean Architecture principles with three main layers:
 
 ```
 lib/
-├── core/          		# Shared core functionality
-│ ├── error/	 		# Error handling and exceptions
-│ ├── navigation/ 		# Navigation management
-│ └── networking/ 		# Network services and connectivity
-├── features/ 			# Feature modules
-│ ├── stock_ranking/ 	        # Stock ranking feature
-│ │ ├── data/ 			# Data layer (repositories, models, datasources)
-│ │ ├── domain/ 		# Business logic (repositories(abstract), entities, usecases)
-│ │ └── presentation/ 	        # UI layer (screens, widgets, blocs)
-│ └── stock_detail/ 	        # Stock detail feature
+├── core/               # Shared core functionality
+│ ├── constants/        # API and pagination defaults
+│ ├── di/               # GetIt container (single place the graph is wired)
+│ ├── error/            # Typed exceptions (data layer) and failures (domain)
+│ ├── navigation/       # Routes and navigation cubit
+│ ├── networking/       # GraphQL client and connectivity
+│ ├── observers/        # Debug-only BlocObserver
+│ ├── storage/          # Hive setup and box names
+│ └── theme/            # Light/dark themes and semantic colour tokens
+├── features/           # Feature modules
+│ ├── stock_ranking/
+│ │ ├── data/           # Models (Hive + JSON), datasources, repository impl
+│ │ ├── domain/         # Entities, repository interfaces, usecases
+│ │ └── presentation/   # Screens, widgets, blocs
+│ └── stock_detail/     # Same three layers
 └── main.dart
 ```
 
@@ -71,86 +77,97 @@ graph TD
 
 ## Data Flow
 
-1. UI triggers events through BLoC/Cubit
-2. BLoC executes appropriate use cases
-3. Use cases interact with repositories
-4. Repository:
-   - Checks network connectivity
-   - Fetches from GraphQL API if online
-   - Falls back to local cache if offline
-   - Updates local cache with new data
-5. UI updates based on new states from BLoC
+1. UI dispatches an event (from `initState` or a user action — never from
+   `build()`)
+2. Bloc calls a use case
+3. Use case calls a repository, which returns `Either<Failure, T>`
+4. Repository coordinates only:
+   - checks connectivity
+   - online → GraphQL, then writes through to the cache
+   - offline → reads the cache, filtered and paged by the datasource
+   - maps typed exceptions to failures
+5. Datasources hand back **models**; the repository maps them to **entities**,
+   so the domain never sees a Hive or JSON type
+6. Bloc emits a new state; the UI rebuilds
 
 ## State Management
 
 The application uses BLoC pattern with the following components:
 
-- **StockRankingsBloc**: 
-    - Manages stock list state
-    - Handles pagination
-    - Implements search and filtering
-    - Manages data refresh
+Each feature has one bloc holding a **single state class with a status enum**
+(`initial` / `loading` / `loadingMore` / `success` / `failure`) rather than a
+subclass per status. That matters for one specific reason: a failure carries the
+data it failed on, so a load-more that fails mid-scroll shows an inline retry
+under the existing list instead of replacing the screen with an error.
 
-- **StockDetailBloc**: 
-    - Manages stock detail state
-    - Manages data refresh
+- **StockRankingsBloc** — list, pagination, filtering. Load-more is throttled
+  and droppable, and terminates when a page comes back empty.
+- **StockDetailBloc** — one stock's detail, and refresh.
+- **NetworkInfoBloc** — subscribes to a connectivity stream on construction and
+  cancels on close; the list screen refetches on an offline → online edge.
+- **NavigationCubit** — navigation intent, so widgets do not reach for
+  `Navigator` directly.
 
-- **NetworkInfoBloc**: 
-    - Monitors network connectivity
+Blocs are registered with GetIt as **factories**, not singletons: `BlocProvider`
+takes ownership of what its `create` builds and closes it on dispose, so a
+singleton would be handed back already closed.
 
-- **NavigationCubit**: 
-    - Handles app navigation
-    - Maintains navigation state
-    - Manages navigation history
+Events are never dispatched from `build()`. Initial loads happen in `initState`
+and load-more is driven by a `ScrollController`, so no fetch is a side effect of
+painting.
 
-## GraphQL implementation features:
-- Network-only fetch policy
-- HTTP link configuration
-- In-memory store
-- Accepts partial data
-- Network-first data fetching
-- Basic error handling
-- Optimistic cache merging
+## GraphQL
+
+- Network-only fetch policy over an `HttpLink`, with an in-memory store
+- Endpoint is configurable per environment via `--dart-define=API_BASE_URL`
+- Queries live in `data/datasources/queries/`, not inline in the datasources
+- Datasources throw typed exceptions — `ServerException` for a failed or empty
+  response, `SerializationException` for a payload that will not parse — and
+  repositories map those to the matching `Failure`
 
 ## Local Storage (Hive)
 
-Hive is used for local storage with the following type adapters:
+Adapters are generated from the `@HiveType` annotations by `hive_ce_generator`
+into `lib/hive_registrar.g.dart`, so the registration list cannot drift out of
+sync with the models.
 
-```dart
-- RankedStockModel
-- SectorModel
-- StockModel
-- StockPriceModel
-- StockJittaModel
-- StockJittaFactorModel
-- StockJittaFactorGrowthModel
-- StockJittaFactorFinancialModel
-- StockJittaFactorManagementModel
-- StockGraphPriceItemModel
-- StockGraphPriceModel
-```
+Only **two boxes** are opened:
 
-Box configurations:
-- ranked_stocks: Cached stock rankings
-- sectors: Available market sectors
-- stock_detail: Detailed stock information
-- stock_price: Historical price data
-- stock_jitta: Jitta analysis data
-- stock_jitta_factor: Jitta factor analysis data
-- stock_jitta_factor_growth: Jitta factor growth analysis data
-- stock_jitta_factor_financial: Jitta factor financial analysis data
-- stock_jitta_factor_management: Jitta factor management analysis data
-- stock_graph_price_item: Historical price data for graph
-- stock_graph_price: Graph price data
+| Box | Holds |
+| --- | --- |
+| `ranked_stocks` | Cached ranking rows, capped at 40 |
+| `stock_detail` | Cached stock detail, keyed by `stockId` |
+
+The other nine model types (price, jitta, the factor types, the graph types) are
+nested *inside* those two — they need registered adapters, not boxes of their
+own.
+
+Cached ranking rows carry a `rank` field taken from the response order, so the
+API's ordering can be restored offline. It is nullable, so rows written before
+that field existed still deserialize and simply sort last.
+
+> **Note:** this project uses [`hive_ce`](https://pub.dev/packages/hive_ce), the
+> maintained community fork. The original `hive_generator` stopped at 2.0.1 and
+> depends on an `analyzer` that needs the `macros` package, which no longer
+> ships in the Dart SDK — on Dart 3.13 the original packages do not resolve at
+> all.
 
 ## Error Handling
 
-The application implements comprehensive error handling:
-- API errors
-- Cache failures
-- Data validation
-- Network connectivity issues
-- UI error messages with retry options
+Two layers, deliberately separated:
+
+- **`Exception`s** (`core/error/exceptions.dart`) belong to the data layer.
+  Datasources throw `ServerException`, `SerializationException` or
+  `CacheException`, preserving the cause.
+- **`Failure`s** (`core/error/failures.dart`) belong to the domain layer.
+  Repositories catch the typed exceptions and map each to its matching
+  `Failure`, returned as `Either<Failure, T>`. Each also keeps a catch-all, so
+  an unanticipated throw still surfaces as a `Failure` rather than escaping
+  into a bloc.
+
+In the UI, a failure with no data takes over the screen; a failure that *has*
+data (a load-more or refresh that failed) leaves what is on screen alone and
+shows an inline retry.
 
 ## Setup & Installation
 
@@ -167,14 +184,24 @@ Key dependencies used in this project:
 
 ```yaml
 dependencies:
-  flutter_bloc: ^8.1.4 # state management
-  equatable: ^2.0.5 # for comparing objects
-  graphql_flutter: ^5.1.2 # for graphql
-  internet_connection_checker: ^1.0.0 # for checking internet connection
-  hive: ^2.2.3 # for local database
-  hive_flutter: ^1.1.0
-  fl_chart: ^0.70.0 # for chart
-  dartz: ^0.10.1 # for error handling
+  flutter_bloc: ^9.0.0            # state management
+  bloc_concurrency: ^0.3.0        # droppable/throttled event transformers
+  stream_transform: ^2.0.0
+  get_it: ^8.0.3                  # dependency injection
+  equatable: ^2.0.5               # value equality
+  graphql_flutter: ^5.1.2         # API client
+  internet_connection_checker: ^1.0.0
+  hive_ce: ^2.19.3                # local database (maintained fork of hive)
+  hive_ce_flutter: ^2.3.4
+  fl_chart: ^0.70.0               # price chart
+  dartz: ^0.10.1                  # Either, for repository results
+
+dev_dependencies:
+  hive_ce_generator: ^1.11.2      # generates Hive adapters + registrar
+  build_runner: ^2.4.14
+  mockito: ^5.4.0                 # mocks for unit tests
+  mocktail: ^1.0.4                # mocks for bloc/widget tests
+  bloc_test: ^10.0.0
 ```
 
 ## Getting Started
@@ -209,9 +236,18 @@ flutter run --dart-define=API_BASE_URL=https://your-endpoint/
 
 The project includes:
 
-- [x] Unit Tests (Services, Repositories, Use Cases)
-- [ ] Widget Tests (UI Components)
-- [ ] Integration Tests (End-to-End Testing)
+- [x] Unit tests — services, repositories, use cases, blocs
+- [x] Model parsing tests — run against **real recorded API responses** in
+      `test/fixtures/`, including the degradation paths (empty payload, null
+      intermediate nodes, an empty `company.link`)
+- [x] Datasource tests — run against a real Hive box on a temp directory, since
+      the bug they cover was a datasource ignoring the parameters it declared
+- [x] DI container test — resolves every registration, because a GetIt mistake
+      is a runtime failure that neither the analyzer nor a unit suite would see
+- [x] Widget tests — both screens
+- [ ] Integration tests (end-to-end)
+
+93 tests.
 
 ```bash
 # Run all tests
@@ -233,14 +269,13 @@ flutter test --coverage
 5. Open a Pull Request
 
 ## After coffee break
-- [ ] More clean code
-- [ ] More tests
-- [ ] More integration tests
-- [ ] More error handling
-- [ ] More UI Animation
-- [ ] More performance optimization
-- [ ] More documentation
-- [ ] More dependency injection
+- [ ] Integration tests
+- [ ] UI animation
+- [ ] Replace `dartz` with a sealed `Result` type (dartz is unmaintained)
+- [ ] Cache TTL / stale-while-revalidate, instead of network-only with a
+      cache fallback
+- [ ] Server-side keyword search — the API filters by market and sector but has
+      no keyword search, so search currently runs over cached rows
 - [ ] More sleep
 
 ## License
