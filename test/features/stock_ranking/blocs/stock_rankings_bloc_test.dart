@@ -41,7 +41,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.getStockRankings(any, any, any, any))
             .thenAnswer(
-          (_) async => Right(MockStockRankingData.getMockStockRankings()),
+          (_) async => Right<Failure, List<RankedStock>>(
+            MockStockRankingData.getMockStockRankings(),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -54,7 +56,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.getStockRankings(any, any, any, any))
             .thenAnswer(
-          (_) async => const Left(CustomFailure(message: 'Error')),
+          (_) async => const Left<Failure, List<RankedStock>>(
+            CustomFailure(message: 'Error'),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -69,7 +73,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.getStockRankings(any, any, any, any))
             .thenAnswer(
-          (_) async => Right(MockStockRankingData.getMockStockRankings()),
+          (_) async => Right<Failure, List<RankedStock>>(
+            MockStockRankingData.getMockStockRankings(),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -82,7 +88,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.getStockRankings(any, any, any, any))
             .thenAnswer(
-          (_) async => const Left(CustomFailure(message: 'Error')),
+          (_) async => const Left<Failure, List<RankedStock>>(
+            CustomFailure(message: 'Error'),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -97,7 +105,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.filterStockRankings(any, any, any))
             .thenAnswer(
-          (_) async => Right(MockStockRankingData.getMockStockRankings()),
+          (_) async => Right<Failure, List<RankedStock>>(
+            MockStockRankingData.getMockStockRankings(),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -110,7 +120,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.filterStockRankings(any, any, any))
             .thenAnswer(
-          (_) async => const Left(CustomFailure(message: 'Error')),
+          (_) async => const Left<Failure, List<RankedStock>>(
+            CustomFailure(message: 'Error'),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -125,8 +137,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.getStockRankings(any, any, any, any))
             .thenAnswer(
-          (_) async =>
-              Right(MockStockRankingData.getMockStockRankingsWithLoadMore()),
+          (_) async => Right<Failure, List<RankedStock>>(
+            MockStockRankingData.getMockStockRankingsWithLoadMore(),
+          ),
         );
         return stockRankingsBloc;
       },
@@ -139,7 +152,9 @@ void main() {
       build: () {
         when(mockStockRankingRepository.getStockRankings(any, any, any, any))
             .thenAnswer(
-          (_) async => const Left(CustomFailure(message: 'Error')),
+          (_) async => const Left<Failure, List<RankedStock>>(
+            CustomFailure(message: 'Error'),
+          ),
         );
         return stockRankingsBloc;
       },

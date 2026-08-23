@@ -21,8 +21,9 @@ void main() {
   blocTest<StockDetailBloc, StockDetailState>(
     'should emit StockDetailLoading and StockDetailLoaded when StockDetailEvent is GetStockDetailEvent',
     build: () {
-      when(mockStockDetailRepository.getStockDetail(any))
-          .thenAnswer((_) async => Right(MockStockDetailData.getMockStock()));
+      when(mockStockDetailRepository.getStockDetail(any)).thenAnswer(
+        (_) async => Right<Failure, Stock>(MockStockDetailData.getMockStock()),
+      );
       return stockDetailBloc;
     },
     act: (bloc) => bloc.add(GetStockDetailEvent(1)),
@@ -41,8 +42,10 @@ void main() {
   blocTest<StockDetailBloc, StockDetailState>(
     'should emit StockDetailError when StockDetailEvent is GetStockDetailEvent',
     build: () {
-      when(mockStockDetailRepository.getStockDetail(any))
-          .thenAnswer((_) async => const Left(CustomFailure(message: 'Error')));
+      when(mockStockDetailRepository.getStockDetail(any)).thenAnswer(
+        (_) async =>
+            const Left<Failure, Stock>(CustomFailure(message: 'Error')),
+      );
       return stockDetailBloc;
     },
     act: (bloc) => bloc.add(GetStockDetailEvent(1)),

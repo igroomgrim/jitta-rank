@@ -51,16 +51,30 @@ class StockRankingGraphqlDatasource extends StockRankingDatasource {
         throw Exception(result.exception?.graphqlErrors.firstOrNull?.message);
       }
 
-      final data = result.data?['jittaRanking'];
-      if (data == null) {
+      final ranking = result.data?['jittaRanking'];
+      if (ranking is! Map<String, dynamic>) {
+        throw Exception('No data returned from Jitta server');
+      }
+
+      final items = ranking['data'];
+      if (items is! List) {
         throw Exception('No data returned from Jitta server');
       }
 
       try {
-        final List<RankedStockModel> rankedStocks = data['data']
-            .map<RankedStockModel>((json) => RankedStockModel.fromJson(json))
+        final offset = (page - 1) * limit;
+        return items
+            .whereType<Map<String, dynamic>>()
+            .toList()
+            .asMap()
+            .entries
+            .map(
+              (entry) => RankedStockModel.fromJson(
+                entry.value,
+                rank: offset + entry.key,
+              ),
+            )
             .toList();
-        return rankedStocks;
       } catch (e) {
         throw Exception('Failed to parse ranked stocks');
       }

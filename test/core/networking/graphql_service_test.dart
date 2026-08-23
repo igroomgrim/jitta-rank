@@ -30,6 +30,7 @@ void main() {
 
     // Assert
     expect(result.data, isNotNull);
-    expect(result.data!['stock']['symbol'], 'AAPL');
+    final stock = result.data!['stock']! as Map<String, dynamic>;
+    expect(stock['symbol'], 'AAPL');
   });
 }

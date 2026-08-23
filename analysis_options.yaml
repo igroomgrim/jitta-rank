@@ -20,19 +20,12 @@ analyzer:
     - linux/**
     - "**/*.g.dart"
     - "**/*.mocks.dart"
-  # NOTE: `language: strict-casts / strict-raw-types` and the `avoid_dynamic_calls`
-  # lint are enabled in a later commit, together with the fromJson rewrite that
-  # they flag. Turning them on here would mean fixing code that is about to be
-  # replaced.
+  language:
+    strict-casts: true
+    strict-raw-types: true
   errors:
     # Treat unused code as an error so dead code cannot accumulate silently.
     unused_element: error
-    # TEMPORARY: 53 findings, all in ranked_stock_model.dart and
-    # stock_model.dart, caused by the models extending their entities and
-    # redeclaring every field. Suppressed so CI can run with --fatal-infos and
-    # catch NEW lints today. Both the shadowing and this line are removed by
-    # the entity/model split.
-    overridden_fields: ignore
     unused_import: error
     unused_local_variable: error
 
@@ -40,6 +33,7 @@ linter:
   rules:
     # Correctness
     - always_declare_return_types
+    - avoid_dynamic_calls
     - avoid_slow_async_io
     - cancel_subscriptions
     - close_sinks

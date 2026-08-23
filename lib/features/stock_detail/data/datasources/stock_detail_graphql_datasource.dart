@@ -100,12 +100,11 @@ class StockDetailGraphqlDatasource extends StockDetailDatasource {
       }
 
       final stock = data['stock'];
-      if (stock == null) {
+      if (stock is! Map<String, dynamic>) {
         throw Exception('No stock data returned from Jitta server');
       }
 
-      final stockModel = StockModel.fromJson(stock);
-      return stockModel;
+      return StockModel.fromJson(stock);
     } catch (e) {
       throw Exception('Failed to fetch stock detail');
     }

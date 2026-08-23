@@ -32,7 +32,7 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
           );
         }
 
-        return right(stockDetail);
+        return right(stockDetail.toEntity());
       } catch (e) {
         return left(
           const ServerFailure(
@@ -45,7 +45,7 @@ class StockDetailRepositoryImpl extends StockDetailRepository {
       try {
         final stockDetailFromLocal =
             await localDatasource.getStockDetail(stockId);
-        return right(stockDetailFromLocal);
+        return right(stockDetailFromLocal.toEntity());
       } catch (e) {
         return left(
           const CustomFailure(

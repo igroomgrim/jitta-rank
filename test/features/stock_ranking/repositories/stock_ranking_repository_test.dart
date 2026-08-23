@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jitta_rank/core/error/error.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 import 'package:mockito/mockito.dart';
 
@@ -45,7 +46,7 @@ void main() {
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
-    expect(result, isA<Right>());
+    expect(result, isA<Right<Failure, List<RankedStock>>>());
   });
 
   test(
@@ -65,7 +66,7 @@ void main() {
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
-    expect(result, isA<Right>());
+    expect(result, isA<Right<Failure, List<RankedStock>>>());
   });
 
   test('should return error when remote data source fails', () async {
@@ -81,7 +82,7 @@ void main() {
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, List<RankedStock>>>());
   });
 
   test('should return error when local data source fails', () async {
@@ -97,7 +98,7 @@ void main() {
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, List<RankedStock>>>());
   });
 
   test('should return error when both remote and local data sources fail',
@@ -122,6 +123,6 @@ void main() {
 
     final result = await stockRankingRepository
         .getStockRankings(1, 'Test Market', 1, ['Test Sector']);
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, List<RankedStock>>>());
   });
 }

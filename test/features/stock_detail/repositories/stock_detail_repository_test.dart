@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jitta_rank/core/error/error.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 import 'package:mockito/mockito.dart';
 
@@ -37,7 +38,7 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Right>());
+    expect(result, isA<Right<Failure, Stock>>());
   });
 
   test(
@@ -49,7 +50,7 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Right>());
+    expect(result, isA<Right<Failure, Stock>>());
   });
 
   test(
@@ -61,7 +62,7 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, Stock>>());
   });
 
   test(
@@ -73,6 +74,6 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, Stock>>());
   });
 }

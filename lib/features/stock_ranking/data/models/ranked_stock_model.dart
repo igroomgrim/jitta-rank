@@ -3,8 +3,14 @@ import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.d
 
 part 'ranked_stock_model.g.dart';
 
+/// Persistence/transport representation of [RankedStock].
+///
+/// Deliberately does NOT extend the entity: the data layer owns its own shape
+/// (Hive annotations, JSON parsing) and hands the domain a plain entity via
+/// [toEntity]. Extending the entity meant every field was declared twice and
+/// Hive persisted the subclass copy.
 @HiveType(typeId: 0)
-class RankedStockModel extends RankedStock {
+class RankedStockModel {
   const RankedStockModel({
     required this.id,
     required this.stockId,
@@ -17,102 +23,103 @@ class RankedStockModel extends RankedStock {
     required this.sector,
     required this.market,
     required this.updatedAt,
-  }) : super(
-          id: id,
-          stockId: stockId,
-          symbol: symbol,
-          title: title,
-          jittaScore: jittaScore,
-          currency: currency,
-          latestPrice: latestPrice,
-          industry: industry,
-          sector: sector,
-          market: market,
-          updatedAt: updatedAt,
-        );
+    this.rank,
+  });
 
-  factory RankedStockModel.fromJson(Map<String, dynamic> json) {
+  /// [rank] is the item's position in the API's ranking. It is not part of the
+  /// payload — the caller supplies it from the response array index so the
+  /// server's ordering can be restored when reading back from the cache.
+  factory RankedStockModel.fromJson(Map<String, dynamic> json, {int? rank}) {
     final sectorJson = json['sector'];
-    final sector = sectorJson != null
-        ? SectorModel.fromJson(sectorJson as Map<String, dynamic>)
-        : null;
-
     return RankedStockModel(
-      id: json['id'],
-      stockId: json['stockId'],
-      symbol: json['symbol'] ?? '',
-      title: json['title'] ?? '',
-      jittaScore: json['jittaScore']?.toDouble() ?? 0.0,
-      currency: json['currency'] ?? '',
-      latestPrice: json['latestPrice']?.toDouble() ?? 0.0,
+      id: json['id'] as String,
+      stockId: json['stockId'] as int,
+      symbol: json['symbol'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      jittaScore: (json['jittaScore'] as num?)?.toDouble() ?? 0.0,
+      currency: json['currency'] as String? ?? '',
+      latestPrice: (json['latestPrice'] as num?)?.toDouble() ?? 0.0,
       industry: json['industry']?.toString() ?? 'Unknown',
-      sector: sector,
-      market: json['market'] == null ? 'Unknown' : json['market'].toString(),
-      updatedAt: parseDateString(json['updatedAt']) ?? DateTime.now(),
+      sector: sectorJson == null
+          ? null
+          : SectorModel.fromJson(sectorJson as Map<String, dynamic>),
+      market: json['market']?.toString() ?? 'Unknown',
+      updatedAt:
+          parseDateString(json['updatedAt'] as String?) ?? DateTime.now(),
+      rank: rank,
     );
   }
-  @override
+
   @HiveField(0)
   final String id;
-  @override
   @HiveField(1)
   final int stockId;
-  @override
   @HiveField(2)
   final String symbol;
-  @override
   @HiveField(3)
   final String title;
-  @override
   @HiveField(4)
   final double jittaScore;
-  @override
   @HiveField(5)
   final String currency;
-  @override
   @HiveField(6)
   final double latestPrice;
-  @override
   @HiveField(7)
   final String industry;
-  @override
   @HiveField(8)
   final SectorModel? sector;
-  @override
   @HiveField(9)
   final DateTime updatedAt;
-  @override
   @HiveField(10)
   final String? market;
+
+  /// Null for entries written before this field existed; such entries sort
+  /// last rather than breaking the cache.
+  @HiveField(11)
+  final int? rank;
+
+  RankedStock toEntity() => RankedStock(
+        id: id,
+        stockId: stockId,
+        symbol: symbol,
+        title: title,
+        jittaScore: jittaScore,
+        currency: currency,
+        latestPrice: latestPrice,
+        industry: industry,
+        updatedAt: updatedAt,
+        sector: sector?.toEntity(),
+        market: market,
+        rank: rank,
+      );
 }
 
 @HiveType(typeId: 1)
-class SectorModel extends Sector {
-  const SectorModel({
-    required this.id,
-    required this.name,
-  }) : super(id: id, name: name);
+class SectorModel {
+  const SectorModel({required this.id, required this.name});
 
-  factory SectorModel.fromJson(Map<String, dynamic> json) {
-    return SectorModel(
-      id: json['id'],
-      name: json['name'],
-    );
-  }
-  @override
+  factory SectorModel.fromJson(Map<String, dynamic> json) =>
+      SectorModel(id: json['id'] as String, name: json['name'] as String);
+
   @HiveField(0)
   final String id;
-  @override
   @HiveField(1)
   final String name;
+
+  Sector toEntity() => Sector(id: id, name: name);
 }
 
-// Utility function to convert date string to DateTime
+/// Lenient date parsing: the API has been seen to return null and empty
+/// strings for `updatedAt`.
 DateTime? parseDateString(String? dateString) {
   if (dateString == null || dateString.isEmpty) return null;
   try {
     return DateTime.parse(dateString);
-  } catch (e) {
+  } catch (_) {
     return null;
   }
+}
+
+extension RankedStockModelListX on List<RankedStockModel> {
+  List<RankedStock> toEntities() => map((m) => m.toEntity()).toList();
 }

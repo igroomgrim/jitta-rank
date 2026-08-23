@@ -20,7 +20,10 @@ class NetworkInfoBloc extends Bloc<NetworkInfoEvent, NetworkInfoState> {
   }
   final NetworkInfoService networkInfoService;
 
-  void _onCheckConnectionEvent(event, emit) async {
+  Future<void> _onCheckConnectionEvent(
+    CheckConnectionEvent event,
+    Emitter<NetworkInfoState> emit,
+  ) async {
     final isConnected = await networkInfoService.isConnected;
     emit(NetworkInfoState(isConnected: isConnected));
   }

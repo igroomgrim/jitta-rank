@@ -42,7 +42,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
           );
         }
 
-        return right(rankedStocks);
+        return right(rankedStocks.toEntities());
       } catch (e) {
         return left(
           const ServerFailure(
@@ -68,7 +68,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
           );
         }
 
-        return right(rankedStocksFromLocal);
+        return right(rankedStocksFromLocal.toEntities());
       } catch (e) {
         return left(
           const CacheFailure(
@@ -106,7 +106,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
           final filteredStocksByMarket = _filterByMarket(rankedStocks, market);
           final filteredStocksBySectors =
               _filterBySectors(filteredStocksByMarket, sectors);
-          return right(filteredStocksBySectors);
+          return right(filteredStocksBySectors.toEntities());
         } else {
           final filteredStocksByKeyword =
               _filterByKeyword(rankedStocks, keyword);
@@ -114,7 +114,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
               _filterByMarket(filteredStocksByKeyword, market);
           final filteredStocksBySectors =
               _filterBySectors(filteredStocksByMarket, sectors);
-          return right(filteredStocksBySectors);
+          return right(filteredStocksBySectors.toEntities());
         }
       } catch (e) {
         return left(
@@ -143,7 +143,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
               _filterByMarket(rankedStocksFromLocal, market);
           final filteredStocksBySectors =
               _filterBySectors(filteredStocksByMarket, sectors);
-          return right(filteredStocksBySectors);
+          return right(filteredStocksBySectors.toEntities());
         } else {
           final filteredStocksByKeyword =
               _filterByKeyword(rankedStocksFromLocal, keyword);
@@ -151,7 +151,7 @@ class StockRankingRepositoryImpl extends StockRankingRepository {
               _filterByMarket(filteredStocksByKeyword, market);
           final filteredStocksBySectors =
               _filterBySectors(filteredStocksByMarket, sectors);
-          return right(filteredStocksBySectors);
+          return right(filteredStocksBySectors.toEntities());
         }
       } catch (e) {
         return left(
