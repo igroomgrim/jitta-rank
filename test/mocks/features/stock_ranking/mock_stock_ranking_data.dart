@@ -12,7 +12,7 @@ class MockStockRankingData {
       latestPrice: 100,
       industry: 'Test Stock',
       updatedAt: DateTime.now(),
-      sector: Sector(
+      sector: const Sector(
         id: '1',
         name: 'Test Stock',
       ),

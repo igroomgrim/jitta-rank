@@ -5,7 +5,7 @@ part 'ranked_stock_model.g.dart';
 
 @HiveType(typeId: 0)
 class RankedStockModel extends RankedStock {
-  RankedStockModel({
+  const RankedStockModel({
     required this.id,
     required this.stockId,
     required this.symbol,
@@ -88,7 +88,7 @@ class RankedStockModel extends RankedStock {
 
 @HiveType(typeId: 1)
 class SectorModel extends Sector {
-  SectorModel({
+  const SectorModel({
     required this.id,
     required this.name,
   }) : super(id: id, name: name);
