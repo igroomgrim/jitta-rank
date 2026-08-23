@@ -27,6 +27,12 @@ analyzer:
   errors:
     # Treat unused code as an error so dead code cannot accumulate silently.
     unused_element: error
+    # TEMPORARY: 53 findings, all in ranked_stock_model.dart and
+    # stock_model.dart, caused by the models extending their entities and
+    # redeclaring every field. Suppressed so CI can run with --fatal-infos and
+    # catch NEW lints today. Both the shadowing and this line are removed by
+    # the entity/model split.
+    overridden_fields: ignore
     unused_import: error
     unused_local_variable: error
 
