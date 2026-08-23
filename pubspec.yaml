@@ -34,8 +34,8 @@ dependencies:
   equatable: ^2.0.5 # for comparing objects
   graphql_flutter: ^5.1.2 # for graphql
   internet_connection_checker: ^1.0.0 # for checking internet connection
-  hive: ^2.2.3 # for local database
-  hive_flutter: ^1.1.0
+  hive_ce: ^2.19.3 # for local database (maintained fork of hive)
+  hive_ce_flutter: ^2.3.4
   fl_chart: ^0.70.0 # for chart
   dartz: ^0.10.1 # for error handling
   get_it: ^8.0.3 # for dependency injection
@@ -56,7 +56,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  hive_generator: ^2.0.1 # for generating hive models
+  hive_ce_generator: ^1.11.2 # for generating hive adapters
   build_runner: ^2.4.14 # for running the build_runner command
   mockito: ^5.4.0 # for mocking
   bloc_test: ^10.0.0 # for testing blocs

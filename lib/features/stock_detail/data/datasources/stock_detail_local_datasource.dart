@@ -1,6 +1,6 @@
 import 'package:jitta_rank/features/stock_detail/data/models/stock_model.dart';
 import 'package:jitta_rank/features/stock_detail/data/datasources/stock_detail_datasource.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 abstract class StockDetailLocalDatasource extends StockDetailDatasource {
   @override

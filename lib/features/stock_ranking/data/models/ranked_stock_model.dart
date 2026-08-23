@@ -1,5 +1,5 @@
 import 'package:jitta_rank/features/stock_ranking/domain/entities/ranked_stock.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 part 'ranked_stock_model.g.dart';
 

@@ -1,6 +1,6 @@
 import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart';
 import 'package:jitta_rank/features/stock_ranking/data/datasources/stock_ranking_datasource.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 
 abstract class StockRankingLocalDatasource extends StockRankingDatasource {

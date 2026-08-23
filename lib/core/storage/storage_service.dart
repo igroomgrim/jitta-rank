@@ -1,4 +1,4 @@
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:jitta_rank/features/stock_ranking/data/models/ranked_stock_model.dart';
 import 'package:jitta_rank/features/stock_detail/data/models/stock_model.dart';
 
