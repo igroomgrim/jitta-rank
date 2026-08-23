@@ -3,7 +3,7 @@ import 'package:jitta_rank/core/constants/api_constants.dart';
 
 import '../../domain/entities/ranked_stock.dart';
 
-class StockRankingsFilter {
+class StockRankingsFilter extends Equatable {
   const StockRankingsFilter({
     this.market = ApiConstants.defaultMarket,
     this.sectors = const [],
@@ -12,6 +12,9 @@ class StockRankingsFilter {
   final String market;
   final List<String> sectors;
   final String searchFieldValue;
+
+  @override
+  List<Object?> get props => [market, sectors, searchFieldValue];
 }
 
 abstract class StockRankingsState extends Equatable {
