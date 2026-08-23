@@ -18,70 +18,85 @@ class StockDetailScreen extends StatelessWidget {
   }
 }
 
-class _StockDetailView extends StatelessWidget {
-  const _StockDetailView({
-    required this.stockId,
-  });
+class _StockDetailView extends StatefulWidget {
+  const _StockDetailView({required this.stockId});
+
   final int stockId;
+
+  @override
+  State<_StockDetailView> createState() => _StockDetailViewState();
+}
+
+class _StockDetailViewState extends State<_StockDetailView> {
+  @override
+  void initState() {
+    super.initState();
+    // Dispatched here, not from BlocBuilder's builder. The old code fired
+    // GetStockDetailEvent whenever it observed the Initial state during build.
+    context.read<StockDetailBloc>().add(GetStockDetailEvent(widget.stockId));
+  }
+
+  void _refresh() => context.read<StockDetailBloc>().add(
+        RefreshStockDetailEvent(widget.stockId),
+      );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Stock Detail')),
       body: RefreshIndicator(
-        onRefresh: () async {
-          context.read<StockDetailBloc>().add(RefreshStockDetailEvent(stockId));
-        },
-        color: Colors.blue,
+        onRefresh: () async => _refresh(),
         child: BlocBuilder<StockDetailBloc, StockDetailState>(
           builder: (context, state) {
-            if (state is StockDetailInitial) {
-              context.read<StockDetailBloc>().add(GetStockDetailEvent(stockId));
-              return const Center(
-                child: CircularProgressIndicator(color: Colors.blue),
-              );
-            } else if (state is StockDetailLoading) {
-              return const Center(
-                child: CircularProgressIndicator(color: Colors.blue),
-              );
-            } else if (state is StockDetailLoaded) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildStockDetail(state.stock),
-                    ],
-                  ),
-                ),
-              );
-            } else if (state is StockDetailError) {
+            if (state.hasFailedWithNoData) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(state.message, textAlign: TextAlign.center),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        state.errorMessage ?? 'Something went wrong',
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () {
-                        context
-                            .read<StockDetailBloc>()
-                            .add(RefreshStockDetailEvent(stockId));
-                      },
+                      onPressed: _refresh,
                       child: const Text('Try Again'),
                     ),
                   ],
                 ),
               );
             }
-            return const SizedBox.shrink();
+
+            final stock = state.stock;
+            if (stock == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            // A failed refresh keeps the previously loaded stock on screen and
+            // reports the failure above it rather than blanking the page.
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (state.hasFailed)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          state.errorMessage ?? 'Could not refresh',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    _buildStockDetail(stock),
+                  ],
+                ),
+              ),
+            );
           },
         ),
       ),

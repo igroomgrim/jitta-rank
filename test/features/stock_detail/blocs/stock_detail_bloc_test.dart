@@ -9,46 +9,125 @@ import '../../../mocks/features/stock_detail/mock_stock_detail_data.dart';
 import '../../../mocks/features/stock_detail/mock_stock_detail_repository.mocks.dart';
 
 void main() {
-  late StockDetailBloc stockDetailBloc;
-  late MockStockDetailRepository mockStockDetailRepository;
+  late StockDetailBloc bloc;
+  late MockStockDetailRepository repository;
+  late Stock stock;
 
   setUp(() {
-    mockStockDetailRepository = MockStockDetailRepository();
-    stockDetailBloc =
-        StockDetailBloc(GetStockDetailUsecase(mockStockDetailRepository));
+    repository = MockStockDetailRepository();
+    bloc = StockDetailBloc(GetStockDetailUsecase(repository));
+    stock = MockStockDetailData.getMockStock();
   });
 
-  blocTest<StockDetailBloc, StockDetailState>(
-    'should emit StockDetailLoading and StockDetailLoaded when StockDetailEvent is GetStockDetailEvent',
-    build: () {
-      when(mockStockDetailRepository.getStockDetail(any)).thenAnswer(
-        (_) async => Right<Failure, Stock>(MockStockDetailData.getMockStock()),
-      );
-      return stockDetailBloc;
-    },
-    act: (bloc) => bloc.add(GetStockDetailEvent(1)),
-    expect: () => [isA<StockDetailLoading>(), isA<StockDetailLoaded>()],
-  );
+  tearDown(() => bloc.close());
 
-  blocTest<StockDetailBloc, StockDetailState>(
-    'should emit StockDetailInitial when StockDetailEvent is RefreshStockDetailEvent',
-    build: () {
-      return stockDetailBloc;
-    },
-    act: (bloc) => bloc.add(RefreshStockDetailEvent(1)),
-    expect: () => [isA<StockDetailInitial>()],
-  );
+  void stubSuccess() {
+    when(
+      repository.getStockDetail(any),
+    ).thenAnswer((_) async => Right<Failure, Stock>(stock));
+  }
 
-  blocTest<StockDetailBloc, StockDetailState>(
-    'should emit StockDetailError when StockDetailEvent is GetStockDetailEvent',
-    build: () {
-      when(mockStockDetailRepository.getStockDetail(any)).thenAnswer(
-        (_) async =>
-            const Left<Failure, Stock>(CustomFailure(message: 'Error')),
-      );
-      return stockDetailBloc;
-    },
-    act: (bloc) => bloc.add(GetStockDetailEvent(1)),
-    expect: () => [isA<StockDetailLoading>(), isA<StockDetailError>()],
-  );
+  void stubFailure() {
+    when(repository.getStockDetail(any)).thenAnswer(
+      (_) async => const Left<Failure, Stock>(CustomFailure(message: 'Boom')),
+    );
+  }
+
+  group('GetStockDetailEvent', () {
+    blocTest<StockDetailBloc, StockDetailState>(
+      'goes loading then success',
+      build: () {
+        stubSuccess();
+        return bloc;
+      },
+      act: (bloc) => bloc.add(GetStockDetailEvent(1)),
+      expect: () => [
+        isA<StockDetailState>().having(
+          (s) => s.status,
+          'status',
+          StockDetailStatus.loading,
+        ),
+        isA<StockDetailState>()
+            .having((s) => s.status, 'status', StockDetailStatus.success)
+            .having((s) => s.stock, 'stock', stock),
+      ],
+    );
+
+    blocTest<StockDetailBloc, StockDetailState>(
+      'a first-load failure has no stock, so the screen may show a full error',
+      build: () {
+        stubFailure();
+        return bloc;
+      },
+      act: (bloc) => bloc.add(GetStockDetailEvent(1)),
+      expect: () => [
+        isA<StockDetailState>().having(
+          (s) => s.status,
+          'status',
+          StockDetailStatus.loading,
+        ),
+        isA<StockDetailState>()
+            .having((s) => s.status, 'status', StockDetailStatus.failure)
+            .having((s) => s.errorMessage, 'errorMessage', 'Boom')
+            .having(
+              (s) => s.hasFailedWithNoData,
+              'hasFailedWithNoData',
+              isTrue,
+            ),
+      ],
+    );
+  });
+
+  group('RefreshStockDetailEvent', () {
+    blocTest<StockDetailBloc, StockDetailState>(
+      'actually re-fetches',
+      // Regression test. The handler used to only emit StockDetailInitial and
+      // never call the usecase — refresh worked solely because the screen
+      // dispatched GetStockDetailEvent from build() on seeing Initial. With
+      // the build-time side effect removed, this is the only thing keeping
+      // pull-to-refresh alive.
+      build: () {
+        stubSuccess();
+        return bloc;
+      },
+      act: (bloc) => bloc.add(RefreshStockDetailEvent(7)),
+      expect: () => [
+        isA<StockDetailState>().having(
+          (s) => s.status,
+          'status',
+          StockDetailStatus.refreshing,
+        ),
+        isA<StockDetailState>()
+            .having((s) => s.status, 'status', StockDetailStatus.success)
+            .having((s) => s.stock, 'stock', stock),
+      ],
+      verify: (_) => verify(repository.getStockDetail(7)).called(1),
+    );
+
+    blocTest<StockDetailBloc, StockDetailState>(
+      'a failed refresh keeps the stock already on screen',
+      build: () {
+        stubFailure();
+        return bloc;
+      },
+      seed: () =>
+          StockDetailState(status: StockDetailStatus.success, stock: stock),
+      act: (bloc) => bloc.add(RefreshStockDetailEvent(1)),
+      expect: () => [
+        isA<StockDetailState>().having(
+          (s) => s.status,
+          'status',
+          StockDetailStatus.refreshing,
+        ),
+        isA<StockDetailState>()
+            .having((s) => s.status, 'status', StockDetailStatus.failure)
+            .having((s) => s.stock, 'stock', stock)
+            .having(
+              (s) => s.hasFailedWithNoData,
+              'hasFailedWithNoData',
+              isFalse,
+            ),
+      ],
+    );
+  });
 }
