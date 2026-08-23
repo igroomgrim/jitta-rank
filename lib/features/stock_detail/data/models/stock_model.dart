@@ -5,7 +5,7 @@ part 'stock_model.g.dart';
 
 @HiveType(typeId: 11)
 class StockModel extends Stock {
-  StockModel({
+  const StockModel({
     required this.stockId,
     required this.symbol,
     required this.name,
@@ -125,7 +125,7 @@ class StockModel extends Stock {
 
 @HiveType(typeId: 12)
 class StockPriceModel extends StockPrice {
-  StockPriceModel({
+  const StockPriceModel({
     required this.close,
     this.latestPriceTimestamp,
   }) : super(
@@ -134,7 +134,7 @@ class StockPriceModel extends StockPrice {
         );
 
   factory StockPriceModel.fromJson(Map<String, dynamic>? json) {
-    if (json?['latest'] == null) return StockPriceModel(close: 0.0);
+    if (json?['latest'] == null) return const StockPriceModel(close: 0.0);
     final latestPrice = json?['latest'];
 
     return StockPriceModel(
@@ -153,7 +153,7 @@ class StockPriceModel extends StockPrice {
 
 @HiveType(typeId: 13)
 class StockJittaModel extends StockJitta {
-  StockJittaModel({
+  const StockJittaModel({
     required this.total,
     required this.score,
     required this.priceDiff,
@@ -189,7 +189,7 @@ class StockJittaModel extends StockJitta {
 
 @HiveType(typeId: 14)
 class StockJittaFactorModel extends StockJittaFactor {
-  StockJittaFactorModel({
+  const StockJittaFactorModel({
     required this.growth,
     required this.financial,
     required this.management,
@@ -219,7 +219,7 @@ class StockJittaFactorModel extends StockJittaFactor {
 
 @HiveType(typeId: 15)
 class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
-  StockJittaFactorGrowthModel({
+  const StockJittaFactorGrowthModel({
     required this.value,
     required this.name,
     required this.level,
@@ -249,7 +249,7 @@ class StockJittaFactorGrowthModel extends StockJittaFactorGrowth {
 
 @HiveType(typeId: 16)
 class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
-  StockJittaFactorFinancialModel({
+  const StockJittaFactorFinancialModel({
     required this.value,
     required this.name,
     required this.level,
@@ -279,7 +279,7 @@ class StockJittaFactorFinancialModel extends StockJittaFactorFinancial {
 
 @HiveType(typeId: 17)
 class StockJittaFactorManagementModel extends StockJittaFactorManagement {
-  StockJittaFactorManagementModel({
+  const StockJittaFactorManagementModel({
     required this.value,
     required this.name,
     required this.level,
@@ -309,7 +309,7 @@ class StockJittaFactorManagementModel extends StockJittaFactorManagement {
 
 @HiveType(typeId: 18)
 class StockGraphPriceModel extends StockGraphPrice {
-  StockGraphPriceModel({
+  const StockGraphPriceModel({
     required this.firstGraphPeriod,
     required this.graphs,
   }) : super(
@@ -318,7 +318,7 @@ class StockGraphPriceModel extends StockGraphPrice {
         );
 
   factory StockGraphPriceModel.fromJson(Map<String, dynamic>? json) {
-    final emptyGraph = StockGraphPriceModel(firstGraphPeriod: '', graphs: []);
+    const emptyGraph = StockGraphPriceModel(firstGraphPeriod: '', graphs: []);
     if (json == null) return emptyGraph;
     final graphs = json['graphs'];
     if (graphs == null) return emptyGraph;
@@ -346,7 +346,7 @@ class StockGraphPriceModel extends StockGraphPrice {
 
 @HiveType(typeId: 19)
 class StockGraphPriceItemModel extends StockGraphPriceItem {
-  StockGraphPriceItemModel({
+  const StockGraphPriceItemModel({
     required this.stockPrice,
     required this.linePrice,
   }) : super(
@@ -356,7 +356,7 @@ class StockGraphPriceItemModel extends StockGraphPriceItem {
 
   factory StockGraphPriceItemModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) {
-      return StockGraphPriceItemModel(stockPrice: 0.0, linePrice: 0.0);
+      return const StockGraphPriceItemModel(stockPrice: 0.0, linePrice: 0.0);
     }
     return StockGraphPriceItemModel(
       stockPrice: json['stockPrice']?.toDouble() ?? 0.0,

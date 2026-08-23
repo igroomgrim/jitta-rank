@@ -16,7 +16,7 @@ class MockStockDetailData {
       industry: 'Test Stock',
       market: 'Test Stock',
       jittaRankScore: 100,
-      jitta: StockJitta(
+      jitta: const StockJitta(
         total: 100,
         score: 100,
         priceDiff: 100,
@@ -42,7 +42,7 @@ class MockStockDetailData {
       sectorName: 'Test Stock',
       ipoDate: DateTime.now(),
       companyLink: 'Test Stock',
-      graphPrice: StockGraphPrice(
+      graphPrice: const StockGraphPrice(
         firstGraphPeriod: 'Test Stock',
         graphs: [
           StockGraphPriceItem(

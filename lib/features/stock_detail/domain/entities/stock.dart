@@ -1,5 +1,7 @@
-class Stock {
-  Stock({
+import 'package:equatable/equatable.dart';
+
+class Stock extends Equatable {
+  const Stock({
     required this.stockId,
     required this.symbol,
     required this.name,
@@ -37,21 +39,46 @@ class Stock {
   final StockGraphPrice graphPrice;
   final String summary;
   final DateTime? updatedAt;
+
+  @override
+  List<Object?> get props => [
+        stockId,
+        symbol,
+        name,
+        nativeName,
+        price,
+        currency,
+        currencySign,
+        industry,
+        market,
+        jittaRankScore,
+        jitta,
+        lossChance,
+        sectorName,
+        ipoDate,
+        companyLink,
+        graphPrice,
+        summary,
+        updatedAt,
+      ];
 }
 
-class StockPrice {
+class StockPrice extends Equatable {
   // latest.latest_price_timestamp
 
-  StockPrice({
+  const StockPrice({
     required this.close,
     this.latestPriceTimestamp,
   });
   final double close; // latest.close
   final DateTime? latestPriceTimestamp;
+
+  @override
+  List<Object?> get props => [close, latestPriceTimestamp];
 }
 
-class StockJitta {
-  StockJitta({
+class StockJitta extends Equatable {
+  const StockJitta({
     required this.total,
     required this.score,
     required this.priceDiff,
@@ -61,12 +88,15 @@ class StockJitta {
   final double score; // score.last.value
   final double priceDiff; // priceDiff.last.value
   final StockJittaFactor factor;
+
+  @override
+  List<Object?> get props => [total, score, priceDiff, factor];
 }
 
-class StockJittaFactor {
+class StockJittaFactor extends Equatable {
   // factor.last.value.management
 
-  StockJittaFactor({
+  const StockJittaFactor({
     required this.growth,
     required this.financial,
     required this.management,
@@ -74,10 +104,13 @@ class StockJittaFactor {
   final StockJittaFactorGrowth growth; // factor.last.value.growth
   final StockJittaFactorFinancial financial; // factor.last.value.financial
   final StockJittaFactorManagement management;
+
+  @override
+  List<Object?> get props => [growth, financial, management];
 }
 
-class StockJittaFactorGrowth {
-  StockJittaFactorGrowth({
+class StockJittaFactorGrowth extends Equatable {
+  const StockJittaFactorGrowth({
     required this.value,
     required this.name,
     required this.level,
@@ -85,10 +118,13 @@ class StockJittaFactorGrowth {
   final int value;
   final String name;
   final String level;
+
+  @override
+  List<Object?> get props => [value, name, level];
 }
 
-class StockJittaFactorFinancial {
-  StockJittaFactorFinancial({
+class StockJittaFactorFinancial extends Equatable {
+  const StockJittaFactorFinancial({
     required this.value,
     required this.name,
     required this.level,
@@ -96,10 +132,13 @@ class StockJittaFactorFinancial {
   final int value;
   final String name;
   final String level;
+
+  @override
+  List<Object?> get props => [value, name, level];
 }
 
-class StockJittaFactorManagement {
-  StockJittaFactorManagement({
+class StockJittaFactorManagement extends Equatable {
+  const StockJittaFactorManagement({
     required this.value,
     required this.name,
     required this.level,
@@ -107,22 +146,31 @@ class StockJittaFactorManagement {
   final int value;
   final String name;
   final String level;
+
+  @override
+  List<Object?> get props => [value, name, level];
 }
 
-class StockGraphPrice {
-  StockGraphPrice({
+class StockGraphPrice extends Equatable {
+  const StockGraphPrice({
     required this.firstGraphPeriod,
     required this.graphs,
   });
   final String firstGraphPeriod;
   final List<StockGraphPriceItem> graphs;
+
+  @override
+  List<Object?> get props => [firstGraphPeriod, graphs];
 }
 
-class StockGraphPriceItem {
-  StockGraphPriceItem({
+class StockGraphPriceItem extends Equatable {
+  const StockGraphPriceItem({
     required this.stockPrice,
     required this.linePrice,
   });
   final double stockPrice;
   final double linePrice;
+
+  @override
+  List<Object?> get props => [stockPrice, linePrice];
 }
