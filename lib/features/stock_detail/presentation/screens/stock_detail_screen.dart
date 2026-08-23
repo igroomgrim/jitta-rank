@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/core/di/injection_container.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 
 class StockDetailScreen extends StatelessWidget {
@@ -92,7 +93,7 @@ class _StockDetailViewState extends State<_StockDetailView> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    _buildStockDetail(stock),
+                    _buildStockDetail(context, stock),
                   ],
                 ),
               ),
@@ -104,15 +105,15 @@ class _StockDetailViewState extends State<_StockDetailView> {
   }
 }
 
-Widget _buildStockDetail(Stock stock) {
+Widget _buildStockDetail(BuildContext context, Stock stock) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _buildHeader(stock),
+      _buildHeader(context, stock),
       const SizedBox(height: 4),
-      _buildJittaCard(stock, stock.jitta.factor),
+      _buildJittaCard(context, stock, stock.jitta.factor),
       const SizedBox(height: 4),
-      _buildGraphPrice(stock.graphPrice),
+      _buildGraphPrice(context, stock.graphPrice),
       const SizedBox(height: 4),
       if (stock.summary.isNotEmpty) _buildSummary(stock.summary),
       const SizedBox(height: 16),
@@ -120,7 +121,7 @@ Widget _buildStockDetail(Stock stock) {
   );
 }
 
-Widget _buildHeader(Stock stock) {
+Widget _buildHeader(BuildContext context, Stock stock) {
   return Card(
     child: Padding(
       padding: const EdgeInsets.all(16),
@@ -133,7 +134,8 @@ Widget _buildHeader(Stock stock) {
           ),
           Text(
             stock.name,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style:
+                TextStyle(fontSize: 14, color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -148,10 +150,10 @@ Widget _buildHeader(Stock stock) {
             children: [
               Text(
                 '${stock.currencySign}${stock.price.close}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: context.semanticColors.positive,
                 ),
               ),
               const SizedBox(width: 8),
@@ -159,21 +161,25 @@ Widget _buildHeader(Stock stock) {
                 stock.currency,
                 style: TextStyle(
                   fontSize: 24,
-                  color: Colors.grey[600],
+                  color: context.colors.onSurfaceVariant,
                   fontWeight: FontWeight.w200,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          _buildLatestPriceTimestamp(stock.price),
+          _buildLatestPriceTimestamp(context, stock.price),
         ],
       ),
     ),
   );
 }
 
-Widget _buildJittaCard(Stock stock, StockJittaFactor factor) {
+Widget _buildJittaCard(
+  BuildContext context,
+  Stock stock,
+  StockJittaFactor factor,
+) {
   return Card(
     child: Padding(
       padding: const EdgeInsets.all(16.0),
@@ -221,7 +227,7 @@ Widget _buildJittaCard(Stock stock, StockJittaFactor factor) {
   );
 }
 
-Widget _buildGraphPrice(StockGraphPrice graphPrice) {
+Widget _buildGraphPrice(BuildContext context, StockGraphPrice graphPrice) {
   if (graphPrice.graphs.isEmpty) return const SizedBox.shrink();
 
   final filteredGraphs = graphPrice.graphs
@@ -246,7 +252,7 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
             height: 280,
             child: LineChart(
               LineChartData(
-                backgroundColor: Colors.white,
+                backgroundColor: context.colors.surface,
                 gridData: const FlGridData(show: false),
                 titlesData: FlTitlesData(
                   leftTitles: const AxisTitles(
@@ -282,7 +288,7 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
                       (index) => FlSpot(index.toDouble(), linePrices[index]),
                     ),
                     isCurved: true,
-                    color: Colors.blue,
+                    color: context.semanticColors.positive,
                     dotData: const FlDotData(show: false),
                   ),
                   LineChartBarData(
@@ -291,7 +297,7 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
                       (index) => FlSpot(index.toDouble(), stockPrices[index]),
                     ),
                     isCurved: true,
-                    color: Colors.redAccent,
+                    color: context.semanticColors.negative,
                     dotData: const FlDotData(show: false),
                   ),
                 ],
@@ -300,19 +306,26 @@ Widget _buildGraphPrice(StockGraphPrice graphPrice) {
           ),
           const SizedBox(height: 8),
           RichText(
-            text: const TextSpan(
+            text: TextSpan(
               children: [
                 TextSpan(
                   text: 'Stock Price',
-                  style: TextStyle(color: Colors.red, fontSize: 12),
+                  style: TextStyle(
+                    color: context.semanticColors.negative,
+                    fontSize: 12,
+                  ),
                 ),
                 TextSpan(
                   text: ', ',
-                  style: TextStyle(color: Colors.black, fontSize: 12),
+                  style:
+                      TextStyle(color: context.colors.onSurface, fontSize: 12),
                 ),
                 TextSpan(
                   text: 'Line Price',
-                  style: TextStyle(color: Colors.blue, fontSize: 12),
+                  style: TextStyle(
+                    color: context.semanticColors.positive,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -362,7 +375,7 @@ class MetricRow extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey[600],
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           Text(
@@ -378,9 +391,9 @@ class MetricRow extends StatelessWidget {
   }
 }
 
-Widget _buildLatestPriceTimestamp(StockPrice price) {
+Widget _buildLatestPriceTimestamp(BuildContext context, StockPrice price) {
   return Text(
     'Latest Price Timestamp: ${price.latestPriceTimestamp != null ? price.latestPriceTimestamp.toString().split(' ')[0] : '-'}',
-    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+    style: TextStyle(fontSize: 14, color: context.colors.onSurfaceVariant),
   );
 }

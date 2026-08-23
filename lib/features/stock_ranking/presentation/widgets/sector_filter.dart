@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 
 class SectorFilter extends StatelessWidget {
   const SectorFilter({
@@ -42,8 +43,8 @@ class SectorFilter extends StatelessWidget {
                   onSelected: (bool selected) {
                     onSectorSelected(sector['id']!);
                   },
-                  selectedColor: Colors.blue.shade100,
-                  checkmarkColor: Colors.white,
+                  selectedColor: context.colors.primaryContainer,
+                  checkmarkColor: context.colors.onPrimaryContainer,
                 ),
               );
             }),

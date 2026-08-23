@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/core/networking/network_info_bloc.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 class StockRankingAppBar extends StatelessWidget
@@ -37,7 +38,9 @@ class StockRankingAppBar extends StatelessWidget
                       : 'Offline Mode - Showing cached data',
                   style: TextStyle(
                     fontSize: 10,
-                    color: state.isConnected ? Colors.blue : Colors.red,
+                    color: state.isConnected
+                        ? context.semanticColors.online
+                        : context.semanticColors.offline,
                   ),
                 );
               },

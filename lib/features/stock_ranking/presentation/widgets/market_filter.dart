@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 
 class MarketFilter extends StatelessWidget {
   const MarketFilter({
@@ -58,7 +59,10 @@ class MarketFilter extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: context.semanticColors.negative),
+          ),
         ),
         FilledButton(
           onPressed: () {
@@ -66,10 +70,7 @@ class MarketFilter extends StatelessWidget {
               'market': selectedMarket,
             });
           },
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.blue),
-          ),
-          child: const Text('Apply', style: TextStyle(color: Colors.white)),
+          child: const Text('Apply'),
         ),
       ],
     );

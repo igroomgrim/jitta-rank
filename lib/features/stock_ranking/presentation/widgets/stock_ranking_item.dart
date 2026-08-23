@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 import 'package:jitta_rank/features/stock_ranking/stock_ranking.dart';
 
 class StockRankingItem extends StatelessWidget {
@@ -33,17 +34,17 @@ class StockRankingItem extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: rankedStock.symbol,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                              color: context.colors.onSurface,
                             ),
                           ),
                           TextSpan(
                             text: ' - ${rankedStock.title}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],
+                              color: context.colors.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -55,10 +56,10 @@ class StockRankingItem extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     '${rankedStock.currency}${rankedStock.latestPrice}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Colors.blue,
+                      color: context.semanticColors.positive,
                     ),
                   ),
                 ],
@@ -73,7 +74,7 @@ class StockRankingItem extends StatelessWidget {
                     'Jitta Score',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                   Text(
@@ -94,7 +95,7 @@ class StockRankingItem extends StatelessWidget {
                     'Market',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                   Text(
@@ -115,7 +116,7 @@ class StockRankingItem extends StatelessWidget {
                     'Sector',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                   Expanded(

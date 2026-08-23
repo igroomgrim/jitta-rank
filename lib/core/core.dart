@@ -16,3 +16,6 @@ export 'networking/network_info_service.dart';
 export 'observers/app_bloc_observer.dart';
 // storage
 export 'storage/storage_service.dart';
+
+// theme
+export 'theme/app_theme.dart';

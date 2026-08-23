@@ -23,7 +23,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => getIt<NavigationCubit>()),
         BlocProvider(create: (context) => getIt<NetworkInfoBloc>()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
+        title: 'Jitta Rank',
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        // Follows the system setting; both themes are fully defined.
+        themeMode: ThemeMode.system,
         onGenerateRoute: AppRouter.generateRoute,
         initialRoute: AppRouter.stockRankingListScreen,
       ),

@@ -37,22 +37,10 @@ class _DebouncedSearchFieldState extends State<DebouncedSearchField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      // Borders, fill and radius come from inputDecorationTheme.
       decoration: InputDecoration(
         hintText: widget.hintText,
         prefixIcon: const Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.blue.shade200, width: 1),
-        ),
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
       ),
       onChanged: _onSearchChanged,
     );
