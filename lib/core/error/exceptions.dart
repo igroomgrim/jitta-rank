@@ -1,6 +1,6 @@
 abstract class BaseException implements Exception {
-  final String message;
   const BaseException({required this.message});
+  final String message;
 }
 
 class ServerException extends BaseException {

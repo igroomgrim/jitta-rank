@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-class DebouncedSearchField extends StatefulWidget {
-  final Function(String) onSearch;
-  final String hintText;
-  final Duration debounceTime;
+import 'package:flutter/material.dart';
 
+class DebouncedSearchField extends StatefulWidget {
   const DebouncedSearchField({
-    Key? key,
+    super.key,
     required this.onSearch,
     this.hintText = 'Search...', // default hint text
     this.debounceTime =
         const Duration(milliseconds: 500), // default debounce time
-  }) : super(key: key);
+  });
+  final Function(String) onSearch;
+  final String hintText;
+  final Duration debounceTime;
 
   @override
   State<DebouncedSearchField> createState() => _DebouncedSearchFieldState();
@@ -37,22 +37,10 @@ class _DebouncedSearchFieldState extends State<DebouncedSearchField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      // Borders, fill and radius come from inputDecorationTheme.
       decoration: InputDecoration(
         hintText: widget.hintText,
         prefixIcon: const Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.blue.shade200, width: 1),
-        ),
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
       ),
       onChanged: _onSearchChanged,
     );

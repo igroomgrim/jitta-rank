@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 
 class MarketFilter extends StatelessWidget {
+  const MarketFilter({
+    super.key,
+    required this.selectedMarket,
+    required this.onMarketSelected,
+  });
   static const List<Map<String, String>> markets = [
     {'code': 'TH', 'name': 'Thailand'},
     {'code': 'US', 'name': 'United States'},
@@ -23,11 +29,6 @@ class MarketFilter extends StatelessWidget {
   final String selectedMarket;
   final Function(String) onMarketSelected;
 
-  const MarketFilter(
-      {super.key,
-      required this.selectedMarket,
-      required this.onMarketSelected});
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -40,7 +41,7 @@ class MarketFilter extends StatelessWidget {
             Text('Market', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: selectedMarket,
+              initialValue: selectedMarket,
               isExpanded: true,
               items: MarketFilter.markets.map((market) {
                 return DropdownMenuItem(
@@ -58,7 +59,10 @@ class MarketFilter extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: context.semanticColors.negative),
+          ),
         ),
         FilledButton(
           onPressed: () {
@@ -66,17 +70,20 @@ class MarketFilter extends StatelessWidget {
               'market': selectedMarket,
             });
           },
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.blue),
-          ),
-          child: const Text('Apply', style: TextStyle(color: Colors.white)),
+          child: const Text('Apply'),
         ),
       ],
     );
   }
 
+  /// Returns the display name for [marketCode], falling back to the code
+  /// itself when it is not one of the known markets. Without the fallback this
+  /// throws a StateError on any unrecognised code.
   static String getMarketName(String marketCode) {
-    return MarketFilter.markets
-        .firstWhere((market) => market['code'] == marketCode)['name']!;
+    final market = MarketFilter.markets.firstWhere(
+      (market) => market['code'] == marketCode,
+      orElse: () => const {},
+    );
+    return market['name'] ?? marketCode;
   }
 }

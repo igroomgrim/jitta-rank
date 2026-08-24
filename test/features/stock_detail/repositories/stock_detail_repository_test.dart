@@ -1,11 +1,13 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:jitta_rank/core/error/error.dart';
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
-import '../../../mocks/features/stock_detail/mock_stock_detail_graphql_datasource.mocks.dart';
-import '../../../mocks/features/stock_detail/mock_stock_detail_local_datasource.mocks.dart';
+import 'package:mockito/mockito.dart';
+
 import '../../../mocks/core/networking/mock_network_info_service.mocks.dart';
 import '../../../mocks/features/stock_detail/mock_stock_detail_data.dart';
+import '../../../mocks/features/stock_detail/mock_stock_detail_graphql_datasource.mocks.dart';
+import '../../../mocks/features/stock_detail/mock_stock_detail_local_datasource.mocks.dart';
 
 void main() {
   late StockDetailRepository stockDetailRepository;
@@ -19,9 +21,9 @@ void main() {
     mockStockDetailLocalDatasource = MockStockDetailLocalDatasource();
     mockNetworkInfoService = MockNetworkInfoService();
     stockDetailRepository = StockDetailRepositoryImpl(
-      mockStockDetailGraphqlDatasource,
-      mockStockDetailLocalDatasource,
-      mockNetworkInfoService,
+      graphqlDatasource: mockStockDetailGraphqlDatasource,
+      localDatasource: mockStockDetailLocalDatasource,
+      networkInfoService: mockNetworkInfoService,
     );
 
     mockStockModel = MockStockDetailData.getMockStockModel();
@@ -36,7 +38,7 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Right>());
+    expect(result, isA<Right<Failure, Stock>>());
   });
 
   test(
@@ -48,7 +50,7 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Right>());
+    expect(result, isA<Right<Failure, Stock>>());
   });
 
   test(
@@ -60,7 +62,7 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, Stock>>());
   });
 
   test(
@@ -72,6 +74,6 @@ void main() {
 
     final result = await stockDetailRepository.getStockDetail(1);
 
-    expect(result, isA<Left>());
+    expect(result, isA<Left<Failure, Stock>>());
   });
 }

@@ -1,9 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jitta_rank/core/core.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) {
+    Bloc.observer = const AppBlocObserver();
+  }
   await initializeDependencies();
   runApp(const MyApp());
 }
@@ -20,6 +24,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => getIt<NetworkInfoBloc>()),
       ],
       child: MaterialApp(
+        title: 'Jitta Rank',
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        // Follows the system setting; both themes are fully defined.
+        themeMode: ThemeMode.system,
         onGenerateRoute: AppRouter.generateRoute,
         initialRoute: AppRouter.stockRankingListScreen,
       ),

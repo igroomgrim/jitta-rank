@@ -1,13 +1,15 @@
 import 'package:jitta_rank/features/stock_detail/stock_detail.dart';
 
 class MockStockDetailData {
-  static Stock getMockStock() {
-    return Stock(
+  /// The model is the source of truth; the entity is derived from it so the
+  /// two can never drift apart in tests.
+  static StockModel getMockStockModel() {
+    return StockModel(
       stockId: 1,
       symbol: 'Test Stock',
       name: 'Test Stock',
       nativeName: 'Test Stock',
-      price: StockPrice(
+      price: StockPriceModel(
         close: 100,
         latestPriceTimestamp: DateTime.now(),
       ),
@@ -16,22 +18,22 @@ class MockStockDetailData {
       industry: 'Test Stock',
       market: 'Test Stock',
       jittaRankScore: 100,
-      jitta: StockJitta(
+      jitta: const StockJittaModel(
         total: 100,
         score: 100,
         priceDiff: 100,
-        factor: StockJittaFactor(
-          growth: StockJittaFactorGrowth(
+        factor: StockJittaFactorModel(
+          growth: StockJittaFactorGrowthModel(
             value: 100,
             name: 'Test Stock',
             level: 'Test Stock',
           ),
-          financial: StockJittaFactorFinancial(
+          financial: StockJittaFactorFinancialModel(
             value: 100,
             name: 'Test Stock',
             level: 'Test Stock',
           ),
-          management: StockJittaFactorManagement(
+          management: StockJittaFactorManagementModel(
             value: 100,
             name: 'Test Stock',
             level: 'Test Stock',
@@ -42,41 +44,14 @@ class MockStockDetailData {
       sectorName: 'Test Stock',
       ipoDate: DateTime.now(),
       companyLink: 'Test Stock',
-      graphPrice: StockGraphPrice(
+      graphPrice: const StockGraphPriceModel(
         firstGraphPeriod: 'Test Stock',
-        graphs: [
-          StockGraphPriceItem(
-            stockPrice: 100,
-            linePrice: 100,
-          ),
-        ],
+        graphs: [StockGraphPriceItemModel(stockPrice: 100, linePrice: 100)],
       ),
       summary: 'Test Stock',
       updatedAt: DateTime.now(),
     );
   }
 
-  static StockModel getMockStockModel() {
-    final mockStock = getMockStock();
-    return StockModel(
-      stockId: mockStock.stockId,
-      symbol: mockStock.symbol,
-      name: mockStock.name,
-      nativeName: mockStock.nativeName,
-      price: mockStock.price,
-      currency: mockStock.currency,
-      currencySign: mockStock.currencySign,
-      industry: mockStock.industry,
-      market: mockStock.market,
-      jittaRankScore: mockStock.jittaRankScore,
-      jitta: mockStock.jitta,
-      lossChance: mockStock.lossChance,
-      sectorName: mockStock.sectorName,
-      ipoDate: mockStock.ipoDate,
-      companyLink: mockStock.companyLink,
-      graphPrice: mockStock.graphPrice,
-      summary: mockStock.summary,
-      updatedAt: mockStock.updatedAt,
-    );
-  }
+  static Stock getMockStock() => getMockStockModel().toEntity();
 }

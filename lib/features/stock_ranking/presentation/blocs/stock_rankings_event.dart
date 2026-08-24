@@ -1,73 +1,68 @@
 import 'package:equatable/equatable.dart';
 import 'package:jitta_rank/core/constants/api_constants.dart';
 
+/// Every event carries the filter it applies to, so a handler never has to
+/// guess at the current market/sectors.
+///
+/// searchFieldValue was previously declared on each subclass but left out of
+/// props, meaning two events differing only by search term compared equal.
 abstract class StockRankingsEvent extends Equatable {
+  const StockRankingsEvent({
+    this.market = ApiConstants.defaultMarket,
+    this.sectors = const [],
+    this.searchFieldValue = '',
+  });
+
+  final String market;
+  final List<String> sectors;
+  final String searchFieldValue;
+
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [market, sectors, searchFieldValue];
 }
 
 class GetStockRankingsEvent extends StockRankingsEvent {
-  final int limit;
-  final String market;
-  final int page;
-  final List<String> sectors;
-  final String searchFieldValue;
-
-  GetStockRankingsEvent({
-    this.market = ApiConstants.defaultMarket,
-    this.sectors = const [],
+  const GetStockRankingsEvent({
+    super.market,
+    super.sectors,
+    super.searchFieldValue,
     this.limit = ApiConstants.defaultLimit,
     this.page = ApiConstants.defaultPage,
-    this.searchFieldValue = "",
   });
 
+  final int limit;
+  final int page;
+
   @override
-  List<Object> get props => [limit, market, page, sectors];
+  List<Object?> get props => [...super.props, limit, page];
 }
 
 class LoadMoreStockRankingsEvent extends StockRankingsEvent {
-  final int page;
-  final String market;
-  final List<String> sectors;
-  final String searchFieldValue;
-
-  LoadMoreStockRankingsEvent({
+  const LoadMoreStockRankingsEvent({
+    super.market,
+    super.sectors,
+    super.searchFieldValue,
     this.page = ApiConstants.defaultPage,
-    this.market = ApiConstants.defaultMarket,
-    this.sectors = const [],
-    this.searchFieldValue = "",
   });
 
+  final int page;
+
   @override
-  List<Object> get props => [page, market, sectors];
+  List<Object?> get props => [...super.props, page];
 }
 
 class PullToRefreshStockRankingsEvent extends StockRankingsEvent {
-  final String market;
-  final List<String> sectors;
-  final String searchFieldValue;
-
-  PullToRefreshStockRankingsEvent({
-    this.market = ApiConstants.defaultMarket,
-    this.sectors = const [],
-    this.searchFieldValue = "",
+  const PullToRefreshStockRankingsEvent({
+    super.market,
+    super.sectors,
+    super.searchFieldValue,
   });
-
-  @override
-  List<Object> get props => [market, sectors];
 }
 
 class FilterStockRankingsEvent extends StockRankingsEvent {
-  final String market;
-  final List<String> sectors;
-  final String searchFieldValue;
-
-  FilterStockRankingsEvent({
-    this.market = ApiConstants.defaultMarket,
-    this.sectors = const [],
-    this.searchFieldValue = "",
+  const FilterStockRankingsEvent({
+    super.market,
+    super.sectors,
+    super.searchFieldValue,
   });
-
-  @override
-  List<Object> get props => [market, sectors];
 }

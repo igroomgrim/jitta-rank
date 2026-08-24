@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jitta_rank/core/theme/app_theme.dart';
 
 class SectorFilter extends StatelessWidget {
+  const SectorFilter({
+    super.key,
+    required this.selectedSectors,
+    required this.onSectorSelected,
+  });
   static const List<Map<String, String>> sectors = [
     // note: seems like always 11 sectors
     {'id': 'ENERGY', 'name': 'Energy'},
@@ -18,12 +24,6 @@ class SectorFilter extends StatelessWidget {
 
   final List<String> selectedSectors;
   final Function(String) onSectorSelected;
-
-  const SectorFilter({
-    super.key,
-    required this.selectedSectors,
-    required this.onSectorSelected,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,8 @@ class SectorFilter extends StatelessWidget {
                   onSelected: (bool selected) {
                     onSectorSelected(sector['id']!);
                   },
-                  selectedColor: Colors.blue.shade100,
-                  checkmarkColor: Colors.white,
+                  selectedColor: context.colors.primaryContainer,
+                  checkmarkColor: context.colors.onPrimaryContainer,
                 ),
               );
             }),

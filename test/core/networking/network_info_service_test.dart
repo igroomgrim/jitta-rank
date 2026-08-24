@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:jitta_rank/core/networking/network_info_service.dart';
+import 'package:mockito/mockito.dart';
+
 import '../../mocks/core/networking/mock_network_info_service.mocks.dart';
 
 void main() {
@@ -10,7 +11,8 @@ void main() {
   setUp(() {
     mockInternetConnectionChecker = MockInternetConnectionChecker();
     networkInfoService = NetworkInfoServiceImpl(
-        internetConnectionChecker: mockInternetConnectionChecker);
+      internetConnectionChecker: mockInternetConnectionChecker,
+    );
   });
 
   test('should return true when device is connected to internet', () async {

@@ -6,18 +6,16 @@ abstract class StockDetailEvent extends Equatable {
 }
 
 class GetStockDetailEvent extends StockDetailEvent {
-  final int stockId;
-
   GetStockDetailEvent(this.stockId);
+  final int stockId;
 
   @override
   List<Object> get props => [stockId];
 }
 
 class RefreshStockDetailEvent extends StockDetailEvent {
-  final int stockId;
-
   RefreshStockDetailEvent(this.stockId);
+  final int stockId;
 
   @override
   List<Object> get props => [stockId];

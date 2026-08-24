@@ -1,6 +1,7 @@
-import 'package:jitta_rank/features/stock_detail/data/models/stock_model.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:jitta_rank/core/error/error.dart';
 import 'package:jitta_rank/features/stock_detail/data/datasources/stock_detail_datasource.dart';
-import 'package:hive/hive.dart';
+import 'package:jitta_rank/features/stock_detail/data/models/stock_model.dart';
 
 abstract class StockDetailLocalDatasource extends StockDetailDatasource {
   @override
@@ -9,17 +10,16 @@ abstract class StockDetailLocalDatasource extends StockDetailDatasource {
 }
 
 class StockDetailLocalDatasourceImpl extends StockDetailLocalDatasource {
+  StockDetailLocalDatasourceImpl({required this.box});
+
   final Box<StockModel> box;
 
-  StockDetailLocalDatasourceImpl([Box<StockModel>? box])
-      : box = box ?? Hive.box<StockModel>('stock_detail');
-
+  /// Throws [CacheException] when nothing is cached for [stockId].
   @override
   Future<StockModel> getStockDetail(int stockId) async {
     final stock = box.get(stockId);
     if (stock == null) {
-      throw Exception(
-          'Stock on local storage not found'); // or handle this case as needed
+      throw CacheException('No cached stock detail for id $stockId');
     }
     return stock;
   }
@@ -28,8 +28,11 @@ class StockDetailLocalDatasourceImpl extends StockDetailLocalDatasource {
   Future<void> saveStockDetail(StockModel stockDetail) async {
     try {
       await box.put(stockDetail.stockId, stockDetail);
-    } catch (e) {
-      throw Exception(e);
+    } on Object catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+        CacheException('Failed to write stock detail to cache: $e'),
+        stackTrace,
+      );
     }
   }
 }

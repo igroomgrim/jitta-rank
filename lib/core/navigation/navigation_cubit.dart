@@ -5,9 +5,8 @@ abstract class NavigationState {}
 class NavigationToStockRankingListScreen extends NavigationState {}
 
 class NavigateToStockDetailScreen extends NavigationState {
-  final int stockId;
-
   NavigateToStockDetailScreen(this.stockId);
+  final int stockId;
 }
 
 class NavigationCubit extends Cubit<NavigationState?> {
